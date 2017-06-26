@@ -38,11 +38,11 @@ device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
     <!-- Environment variables -->
     <environment_variable>
       <name>MAKEMKV_KEY</name>
-      <description>MakeMKV registration key to use.  The key is writtent to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file.</description>
+      <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file.</description>
       <default>BETA</default>
       <unraid_template>
         <title>Licence Key</title>
-        <description>MakeMKV registration key to use.  The key is writtent to the configuration file during container startup.  When set to [b][i]BETA[/b][/i], the latest beta key is automatically used.  When set to [b][i]UNSET[/b][/i], no key is automatically written to the configuration file.</description>
+        <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to [b][i]BETA[/b][/i], the latest beta key is automatically used.  When set to [b][i]UNSET[/b][/i], no key is automatically written to the configuration file.</description>
         <display>always</display>
         <required>false</required>
         <mask>false</mask>
