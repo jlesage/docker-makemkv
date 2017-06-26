@@ -1,5 +1,5 @@
 #!/bin/sh
-SCRIPT_DIR="$(realpath "$(dirname "$0")")"
+SCRIPT_DIR="$(readlink -f "$(dirname "$0")")"
 BUILDER_DOCKER_IMAGE="ubuntu:xenial"
 
 exec docker run --rm -ti \
