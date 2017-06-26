@@ -79,7 +79,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`KEEP_GUIAPP_RUNNING`| When set to `1`, the application will be automatically restarted if it crashes or if user quits it. | `0` |
 |`APP_NICENESS`| Priority at which the application should run.  A niceness value of -20 is the highest priority and 19 is the lowest priority.  By default, niceness is not set, meaning that the default niceness of 0 is used.  **NOTE**: A negative niceness (priority increase) requires additional permissions.  In this case, the container should be run with the docker option `--cap-add=SYS_NICE`. | (unset) |
 |`MAKEMKV_KEY`| MakeMKV registration key to use.  The key is writtent to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
-|`AUTO_DISC_RIPPER_ENABLED`| When set to `1`, the automatic disc ripper is enabled. | `0` |
+|`AUTO_DISC_RIPPER`| When set to `1`, the automatic disc ripper is enabled. | `0` |
 |`AUTO_DISC_RIPPER_EJECT`| When set to `1`, disc is ejected from the drive when ripping is terminated. | `0` |
 |`AUTO_DISC_RIPPER_MIN_TITLE_LENGTH`| Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken. | (unset) |
 |`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced. | `mkv` |
@@ -192,7 +192,7 @@ other words, MakeMKV decrypts and extracts all titles (such as the main movie,
 bonus features, etc) from the disc to MKV files.
 
 To enable the automatic disc ripper, set the environment variable
-`AUTO_DISC_RIPPER_ENABLED` to `1`.
+`AUTO_DISC_RIPPER` to `1`.
 
 To eject the disc from the drive when ripping is terminated, set the environment
 variable `AUTO_DISC_RIPPER_EJECT` to `1`.

@@ -49,7 +49,7 @@ device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
       </unraid_template>
     </environment_variable>
     <environment_variable>
-      <name>AUTO_DISC_RIPPER_ENABLED</name>
+      <name>AUTO_DISC_RIPPER</name>
       <description>When set to `1`, the automatic disc ripper is enabled.</description>
       <default>0</default>
       <unraid_template>
@@ -156,7 +156,7 @@ other words, MakeMKV decrypts and extracts all titles (such as the main movie,
 bonus features, etc) from the disc to MKV files.
 
 To enable the automatic disc ripper, set the environment variable
-`AUTO_DISC_RIPPER_ENABLED` to `1`.
+`AUTO_DISC_RIPPER` to `1`.
 
 To eject the disc from the drive when ripping is terminated, set the environment
 variable `AUTO_DISC_RIPPER_EJECT` to `1`.

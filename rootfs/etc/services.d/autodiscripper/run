@@ -86,7 +86,7 @@ process_disc() {
 }
 
 # Disable service if not enabled.
-if [ "${AUTO_DISC_RIPPER_ENABLED:-0}" -eq 0 ]; then
+if [ "${AUTO_DISC_RIPPER:-0}" -eq 0 ]; then
     echo "[services.d] automatic disc ripper: disabled."
     s6-svc -d /var/run/s6/services/autodiscripper
     exit 0
