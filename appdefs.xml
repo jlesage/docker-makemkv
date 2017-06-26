@@ -5,7 +5,7 @@ This file is used as data source to generate README.md and unRAID template files
 from Jinja2 templates.
 -->
 <app>
-  <id>3</id>
+  <id>6</id>
   <friendly_name>MakeMKV</friendly_name>
   <name>{{ app.friendly_name|lower|replace(' ', '-') }}</name>
   <project>
