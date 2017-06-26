@@ -33,7 +33,7 @@ device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
   </unraid>
   <container>
     <overview>A fully automated mode is also available: insert a DVD or Blu-ray disc into an optical drive and let MakeMKV rips it without any user interaction.</overview>
-    <rough_download_size>80MB</rough_download_size>
+    <rough_download_size>150MB</rough_download_size>
     <storage_permissions>ro</storage_permissions>
     <!-- Environment variables -->
     <environment_variable>
