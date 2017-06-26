@@ -1,0 +1,18 @@
+--- Makefile.orig	2017-06-02 06:10:06.710194535 -0400
++++ Makefile	2017-06-02 06:11:15.025886169 -0400
+@@ -1,7 +1,5 @@
+ 
+ ARCH=$(shell uname -m)
+-DESTDIR=
+-PREFIX=/usr
+ 
+ ifeq ($(ARCH),i586)
+ ARCH=i386
+@@ -30,7 +28,6 @@
+ 
+ tmp/eula_accepted:
+ 	@mkdir -p tmp
+-	@/bin/bash src/ask_eula.sh src/eula_en_linux.txt
+ 	@echo accepted > $@
+ 
+ install: tmp/eula_accepted bin/$(ARCH)/makemkvcon

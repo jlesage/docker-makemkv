@@ -1,0 +1,48 @@
+#!/bin/sh
+
+usage() {
+    echo "usage: $(basename $0) CONFIG_FILE
+
+This script fetches the latest beta key and updates the MakeMKV configuration if
+needed.
+
+Arguments:
+  CONFIG_FILE         Location of the MakeMKV configuration file
+                      (settings.conf).
+"
+}
+
+CONFIG_FILE=$1
+if [ -z "$1" ]; then
+    echo "ERROR: Path to the configuration file missing."
+    usage
+    exit 1
+fi
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: File not found: $CONFIG_FILE."
+    exit 1
+fi
+
+# Download the web page.
+TMPFILE="$(mktemp)"
+wget --timeout 10 -qO "$TMPFILE" 'http://www.makemkv.com/forum2/viewtopic.php?f=5&t=1053'
+if [ "$?" -ne 0 ]; then
+    echo "ERROR: Failed to fetch download key."
+    exit 1
+fi
+
+# Extract the beta key.
+BETA_KEY="$(sed -n 's|.*<div class="codecontent">\(.*\)</div> .*|\1|gp' $TMPFILE)"
+if [ -z "$BETA_KEY" ]; then
+    echo "ERROR: Failed to extract the beta key."
+    exit 1
+fi
+rm "$TMPFILE"
+
+# Set the beta key.
+/opt/makemkv/bin/makemkv-set-key "$BETA_KEY" "$CONFIG_FILE"
+
+exit $?
+
+# vim: set ft=sh :

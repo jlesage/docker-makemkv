@@ -1,0 +1,49 @@
+#!/bin/sh
+
+usage() {
+    echo "usage: $(basename $0) KEY CONFIG_FILE
+
+This script updates the MakeMKV configuration with the provided key.
+
+Arguments:
+  KEY                 Registration Key.
+  CONFIG_FILE         Location of the MakeMKV configuration file
+                      (settings.conf).
+"
+}
+
+KEY="$1"
+if [ -z "$1" ]; then
+    echo "ERROR: Registration key is missing."
+    usage
+    exit 1
+fi
+
+CONFIG_FILE=$2
+if [ -z "$1" ]; then
+    echo "ERROR: Path to the configuration file is missing."
+    usage
+    exit 1
+fi
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: File not found: $CONFIG_FILE."
+    exit 1
+fi
+
+# Get the current  key.
+CUR_KEY="$(sed -n 's|^[ \t]*app_Key[ \t]*=[ \t]*"\(.*\)"[ \t]*$|\1|gp' "$CONFIG_FILE")"
+
+# If not the same, update it.
+if [ "$CUR_KEY" != "$KEY" ]; then
+    echo "Updating registration key..."
+    if grep -q '^app_Key ' "$CONFIG_FILE"; then
+        sed -i "/^[ \t]*app_Key[ \t]*=/c\app_Key = \"$KEY\"" "$CONFIG_FILE"
+    else
+        echo "app_Key = \"$KEY\"" >> "$CONFIG_FILE"
+    fi
+else
+    echo "Registration key already up-to-date."
+fi
+
+# vim: set ft=sh :

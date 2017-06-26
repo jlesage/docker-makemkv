@@ -1,0 +1,204 @@
+<!--
+Definitions for MakeMKV docker container.
+
+This file is used as data source to generate README.md and unRAID template files
+from Jinja2 templates.
+-->
+<app>
+  <id>3</id>
+  <friendly_name>MakeMKV</friendly_name>
+  <name>{{ app.friendly_name|lower|replace(' ', '-') }}</name>
+  <project>
+    <description>
+MakeMKV is your one-click solution to convert video that you own into free and
+patents-unencumbered format that can be played everywhere. MakeMKV is a format
+converter, otherwise called "transcoder". It converts the video clips from
+proprietary (and usually encrypted) disc into a set of MKV files, preserving
+most information but not changing it in any way. The MKV format can store
+multiple video/audio tracks with all meta-information and preserve chapters.
+    </description>
+    <url>http://www.makemkv.com/</url>
+  </project>
+  <unraid>
+    <support_url>https://forums.lime-technology.com/topic/XXXXX-support-makemkv/</support_url>
+    <category>MediaApp:Video</category>
+    <extra_description>
+[span style='color: red;'][b]NOTE:[/b][/span] For the container to have
+access to your optical drive(s), you need to allow access to the proper
+device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
+[b][i]--device DEV[/i][/b] in the [i]Extra Parameters[/i] field (shown when
+[i]Advanced View[/i] is enabled). For example, if your optical drive is at
+[b][i]/dev/sr0[/i][/b], you need to add [b][i]--device /dev/sr0[/i][/b].
+    </extra_description>
+  </unraid>
+  <container>
+    <overview>A fully automated mode is also available: insert a DVD or Blu-ray disc into an optical drive and let MakeMKV rips it without any user interaction.</overview>
+    <rough_download_size>80MB</rough_download_size>
+    <storage_permissions>ro</storage_permissions>
+    <!-- Environment variables -->
+    <environment_variable>
+      <name>MAKEMKV_KEY</name>
+      <description>MakeMKV registration key to use.  The key is writtent to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file.</description>
+      <default>BETA</default>
+      <unraid_template>
+        <title>Licence Key</title>
+        <description>MakeMKV registration key to use.  The key is writtent to the configuration file during container startup.  When set to [b][i]BETA[/b][/i], the latest beta key is automatically used.  When set to [b][i]UNSET[/b][/i], no key is automatically written to the configuration file.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_ENABLED</name>
+      <description>When set to `1`, the automatic disc ripper is enabled.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Enabled</title>
+        <description>Set to 1 to enable automatic rippping of DVD/Blu-ray discs.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_EJECT</name>
+      <description>When set to `1`, disc is ejected from the drive when ripping is terminated.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Eject</title>
+        <description>Set to 1 to eject disc when ripping is terminated.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_MIN_TITLE_LENGTH</name>
+      <description>Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken.</description>
+      <default/>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Minimum Title Length</title>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_BD_MODE</name>
+      <description>Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced.</description>
+      <default>mkv</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Blu-ray Rip Mode</title>
+        <description>Rip mode of Blu-ray discs.  [b][i]mkv[/b][/i] is the default mode, where a set of MKV files are produced.  When set to [b][i]backup[/b][/i], a copy of the (decrypted) file system is created instead. [b]NOTE[/b]: This applies to Blu-ray discs only.  For DVD, MKV files are always produced.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <!-- Volumes -->
+    <volume>
+      <container_path>/output</container_path>
+      <host_path_example>$HOME/MakeMKV/output</host_path_example>
+      <description>This is where extracted videos are written.</description>
+      <permissions>rw</permissions>
+      <include_in_quick_start>true</include_in_quick_start>
+      <unraid_template>
+        <title>Output Directory</title>
+        <description>This is the default output folder for converted videos.  Also used by the automatic disc ripper.[br]Container path: /output</description>
+        <display>always-hide</display>
+        <required>true</required>
+        <mask>false</mask>
+      </unraid_template>
+    </volume>
+    <!-- Network ports -->
+    <port>
+      <number>51000</number>
+      <protocol>tcp</protocol>
+      <description>Port used by the streaming service.</description>
+      <mandatory>false</mandatory>
+      <unraid_template>
+        <title>Streaming Port</title>
+        <description>Port used by the streaming service.  This can be removed is the feature is not used.</description>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </port>
+    <!-- Devices -->
+    <device>
+      <path>/dev/sr0</path>
+      <description>This is the optical drive.</description>
+      <include_in_quick_start>true</include_in_quick_start>
+    </device>
+  </container>
+  <!-- Extra stuff to be added to the documentation. -->
+  <documentation>
+    <section>
+      <title level="2">Access to Optical Drive(s)</title>
+      <content>
+By default, a Docker container doesn't have access to host's devices.  However,
+access to one or more device can be granted with the `--device DEV` parameter.
+
+Optical drives usually have `/dev/srX` as device.  For example, the first drive
+is `/dev/sr0`, the second `/dev/sr1`, and so onxe.  To allow MakeMKV to access
+the first drive, this parameter is needed:
+```
+--device /dev/sr0
+```
+      </content>
+    </section>
+    <section>
+      <title level="2">Automatic Disc Ripper</title>
+      <content>
+This container has an automatic disc ripper built-in.  When enabled, any DVD or
+Blu-ray video disc inserted into an optical drive is automatically ripped.  In
+other words, MakeMKV decrypts and extracts all titles (such as the main movie,
+bonus features, etc) from the disc to MKV files.
+
+To enable the automatic disc ripper, set the environment variable
+`AUTO_DISC_RIPPER_ENABLED` to `1`.
+
+To eject the disc from the drive when ripping is terminated, set the environment
+variable `AUTO_DISC_RIPPER_EJECT` to `1`.
+
+See the [Environment Variables](#environment-variables) section for details
+about setting environment variables.
+
+**NOTE**: All titles, audio tracks, chapters, subtitles, etc are
+        extracted/preserved.
+
+**NOTE**: Titles and audio tracks are kept in their original format.  They are
+        not transcoded or converted to other formats or into smaller sizes.
+
+**MOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+
+**NOTE**: MKV Files are written to the `/output` folder of the container.
+
+**NOTE**: The automatic disc ripper processes all available optical drives.
+      </content>
+    </section>
+    <section>
+      <title level="2">Troubleshooting</title>
+      <content/>
+    </section>
+    <section>
+      <title level="3">Expired Beta Key</title>
+      <content>
+If the beta key is expired, just restart the container to automatically fetch
+and install the latest one.
+
+**NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
+be set to `BETA`.  See the [Environment Variables](#environment-variables)
+section for more details.
+      </content>
+    </section>
+  </documentation>
+  <!-- Changelog of the application. -->
+  <history>
+    <release>
+      <version>1.0.0</version>
+      <date>2017-06-26</date>
+      <change>Initial release.</change>
+    </release>
+  </history>
+</app>
