@@ -120,6 +120,9 @@ cd makemkv-bin-${MAKEMKV_VERSION}
 patch -p0 < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
 DESTDIR="$INSTALL_DIR" make install
 
+echo "Compiling umask wrapper..."
+gcc -o $BUILD_DIR/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
+
 echo "Patching ELF of binaries..."
 find "$INSTALL_DIR/bin" -type f -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$ROOT_EXEC_DIR/lib/ld-linux-x86-64.so.2" {} \;
 find "$INSTALL_DIR/bin" -type f -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} \;
@@ -129,6 +132,7 @@ EXTRA_LIBS="/lib/x86_64-linux-gnu/libnss_compat.so.2 \
             /lib/x86_64-linux-gnu/libnsl.so.1 \
             /lib/x86_64-linux-gnu/libnss_nis.so.2 \
             /lib/x86_64-linux-gnu/libnss_files.so.2 \
+            $BUILD_DIR/umask_wrapper.so \
 "
 
 # Package library dependencies
