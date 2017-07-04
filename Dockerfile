@@ -25,6 +25,7 @@ RUN \
         wget \
         sed \
         findutils \
+        util-linux \
         openjdk8-jre-base
 
 # Generate and install favicons.
