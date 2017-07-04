@@ -195,6 +195,17 @@ section for more details.
   </documentation>
   <!-- Changelog of the application. -->
   <history>
+      <release>
+        <version>1.1.0</version>
+        <date>2017-07-04</date>
+        <change>Make sure the respect the umask when creating MKV files.</change>
+        <change>Fixed disc ejection after rip.</change>
+        <change>Now using baseimage v1.5.0, which brings the following changes:</change>
+        <change level="2">Added the UMASK environment variable to control how file permissions are set for newly created files.</change>
+        <change level="2">Added the X11VNC_EXTRA_OPTS environment variable used to pass additional arguments to the x11vnc server.</change>
+        <change level="2">By default, activate auto-scaling of application's window.</change>
+        <change level="2">Applied latest Alpine Linux security updates.</change>
+      </release>
     <release>
       <version>1.0.0</version>
       <date>2017-06-26</date>
