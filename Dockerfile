@@ -13,11 +13,11 @@ WORKDIR /tmp
 # Install MakeMKV.
 ADD makemkv-builder/makemkv.tar.gz /
 
-# # Create link for config files.
+# Create link for config files.
 RUN \
     ln -s /config $HOME/.MakeMKV && \
     mkdir -p $HOME/.config && \
-    ln -s /config/QtProject.conf /home/guiapp/.config/QtProject.conf
+    ln -s /config/QtProject.conf $HOME/.config/QtProject.conf
 
 # Install dependencies.
 RUN \
