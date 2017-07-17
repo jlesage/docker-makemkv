@@ -7,9 +7,14 @@ set -u # Treat unset variables as an error.
 echo "Generating machine-id..."
 cat /proc/sys/kernel/random/uuid | tr -d '-' > /etc/machine-id
 
+mkdir -p "$XDG_CONFIG_HOME"
+
+# Upgrade previous installations.
+[ ! -f /config/QtProject.conf ] || mv -v /config/QtProject.conf "$XDG_CONFIG_HOME/"
+
 # If config folder empty, copy all XML profiles so they can be easily
 # copied and edited.
-if ! find /config -mindepth 1 -print -quit | grep -q .; then
+if [ ! -d /config/data ]; then
     mkdir /config/data
     find /opt/makemkv/share/MakeMKV/ \
         -name "*.xml" \
@@ -17,12 +22,15 @@ if ! find /config -mindepth 1 -print -quit | grep -q .; then
 fi
 
 # Copy default config if needed.
-for FILE in settings.conf QtProject.conf
-do
-  if [ ! -f /config/$FILE ]; then
-    cp /defaults/$FILE /config/
-  fi
-done
+[ -f /config/settings.conf ] || cp -v /defaults/settings.conf /config/
+[ -f "$XDG_CONFIG_HOME/QtProject.conf" ] || cp -v /defaults/QtProject.conf "$XDG_CONFIG_HOME/"
+
+# Create link for MakeMKV config directory.
+# The only configuration location MakeMKV looks for seems to be
+# "$HOME/.MakeMKV".
+if [ ! -e /config/.MakeMKV ]; then
+    ln -s /config /config/.MakeMKV
+fi
 
 # Make sure the data directory exists.
 mkdir -p /config/data

@@ -5,7 +5,7 @@ set -o pipefail
 
 # Make sure we appear with a proper name under `ps`.
 if [ ! -L "$0" ]; then
-    ln -s run "$(dirname "$0")/autodiscripper"
+    ln -sf run "$(dirname "$0")/autodiscripper"
     exec "$(dirname "$0")/autodiscripper" "$@"
 fi
 
@@ -113,9 +113,9 @@ if [ "${MAKEMKV_OPTICAL_DRIVE_PRESENT:-0}" -eq 0 ]; then
 fi
 
 if [ "${SUP_GROUP_IDS:-UNSET}" = "UNSET" ]; then
-    MAKEMKV_CLI="env LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID /opt/makemkv/bin/makemkvcon"
+    MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID /opt/makemkv/bin/makemkvcon"
 else
-    MAKEMKV_CLI="env LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G $SUP_GROUP_IDS /opt/makemkv/bin/makemkvcon"
+    MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G $SUP_GROUP_IDS /opt/makemkv/bin/makemkvcon"
 fi
 STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1

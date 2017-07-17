@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.6-v1.5.0
+FROM jlesage/baseimage-gui:alpine-3.6-v2.0.0
 
 # Define working directory.
 WORKDIR /tmp
@@ -13,15 +13,9 @@ WORKDIR /tmp
 # Install MakeMKV.
 ADD makemkv-builder/makemkv.tar.gz /
 
-# Create link for config files.
-RUN \
-    ln -s /config $HOME/.MakeMKV && \
-    mkdir -p $HOME/.config && \
-    ln -s /config/QtProject.conf $HOME/.config/QtProject.conf
-
 # Install dependencies.
 RUN \
-    apk --no-cache add \
+    add-pkg \
         wget \
         sed \
         findutils \
@@ -31,7 +25,7 @@ RUN \
 # Generate and install favicons.
 RUN \
     APP_ICON_URL=https://raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png && \
-    /opt/install_app_icon.sh "$APP_ICON_URL"
+    install_app_icon.sh "$APP_ICON_URL"
 
 # Add files.
 COPY rootfs/ /
