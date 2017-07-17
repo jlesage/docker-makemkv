@@ -4,10 +4,12 @@ Definitions for MakeMKV docker container.
 This file is used as data source to generate README.md and unRAID template files
 from Jinja2 templates.
 -->
+<defs>
 <app>
   <id>6</id>
+  <gui>True</gui>
   <friendly_name>MakeMKV</friendly_name>
-  <name>{{ app.friendly_name|lower|replace(' ', '-') }}</name>
+  <name>{{ defs.app.friendly_name|lower|replace(' ', '-') }}</name>
   <project>
     <description>
 MakeMKV is your one-click solution to convert video that you own into free and
@@ -35,101 +37,6 @@ device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
     <overview>A fully automated mode is also available: insert a DVD or Blu-ray disc into an optical drive and let MakeMKV rips it without any user interaction.</overview>
     <rough_download_size>150MB</rough_download_size>
     <storage_permissions>ro</storage_permissions>
-    <!-- Environment variables -->
-    <environment_variable>
-      <name>MAKEMKV_KEY</name>
-      <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file.</description>
-      <default>BETA</default>
-      <unraid_template>
-        <title>Licence Key</title>
-        <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to [b][i]BETA[/b][/i], the latest beta key is automatically used.  When set to [b][i]UNSET[/b][/i], no key is automatically written to the configuration file.</description>
-        <display>always</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </environment_variable>
-    <environment_variable>
-      <name>AUTO_DISC_RIPPER</name>
-      <description>When set to `1`, the automatic disc ripper is enabled.</description>
-      <default>0</default>
-      <unraid_template>
-        <title>Automatic Disc Ripper: Enabled</title>
-        <description>Set to 1 to enable automatic rippping of DVD/Blu-ray discs.</description>
-        <display>always</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </environment_variable>
-    <environment_variable>
-      <name>AUTO_DISC_RIPPER_EJECT</name>
-      <description>When set to `1`, disc is ejected from the drive when ripping is terminated.</description>
-      <default>0</default>
-      <unraid_template>
-        <title>Automatic Disc Ripper: Eject</title>
-        <description>Set to 1 to eject disc when ripping is terminated.</description>
-        <display>always</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </environment_variable>
-    <environment_variable>
-      <name>AUTO_DISC_RIPPER_MIN_TITLE_LENGTH</name>
-      <description>Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken.</description>
-      <default/>
-      <unraid_template>
-        <title>Automatic Disc Ripper: Minimum Title Length</title>
-        <display>advanced</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </environment_variable>
-    <environment_variable>
-      <name>AUTO_DISC_RIPPER_BD_MODE</name>
-      <description>Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced.</description>
-      <default>mkv</default>
-      <unraid_template>
-        <title>Automatic Disc Ripper: Blu-ray Rip Mode</title>
-        <description>Rip mode of Blu-ray discs.  [b][i]mkv[/b][/i] is the default mode, where a set of MKV files are produced.  When set to [b][i]backup[/b][/i], a copy of the (decrypted) file system is created instead. [b]NOTE[/b]: This applies to Blu-ray discs only.  For DVD, MKV files are always produced.</description>
-        <display>always</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </environment_variable>
-    <!-- Volumes -->
-    <volume>
-      <container_path>/output</container_path>
-      <host_path_example>$HOME/MakeMKV/output</host_path_example>
-      <description>This is where extracted videos are written.</description>
-      <permissions>rw</permissions>
-      <include_in_quick_start>true</include_in_quick_start>
-      <unraid_template>
-        <title>Output Directory</title>
-        <description>This is the default output folder for converted videos.  Also used by the automatic disc ripper.[br]Container path: /output</description>
-        <display>always-hide</display>
-        <required>true</required>
-        <mask>false</mask>
-      </unraid_template>
-    </volume>
-    <!-- Network ports -->
-    <port>
-      <number>51000</number>
-      <protocol>tcp</protocol>
-      <description>Port used by the streaming service.</description>
-      <mandatory>false</mandatory>
-      <unraid_template>
-        <title>Streaming Port</title>
-        <description>Port used by the streaming service.  This can be removed is the feature is not used.</description>
-        <display>advanced</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </port>
-    <!-- Devices -->
-    <device>
-      <path>/dev/sr0</path>
-      <description>This is the optical drive.</description>
-      <include_in_quick_start>true</include_in_quick_start>
-    </device>
   </container>
   <!-- Extra stuff to be added to the documentation. -->
   <documentation>
@@ -213,3 +120,109 @@ section for more details.
     </release>
   </history>
 </app>
+  <container>
+    <!-- Environment variables -->
+    <environment_variables>
+    <environment_variable>
+      <name>MAKEMKV_KEY</name>
+      <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file.</description>
+      <default>BETA</default>
+      <unraid_template>
+        <title>Licence Key</title>
+        <description>MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to [b][i]BETA[/b][/i], the latest beta key is automatically used.  When set to [b][i]UNSET[/b][/i], no key is automatically written to the configuration file.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER</name>
+      <description>When set to `1`, the automatic disc ripper is enabled.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Enabled</title>
+        <description>Set to 1 to enable automatic rippping of DVD/Blu-ray discs.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_EJECT</name>
+      <description>When set to `1`, disc is ejected from the drive when ripping is terminated.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Eject</title>
+        <description>Set to 1 to eject disc when ripping is terminated.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_MIN_TITLE_LENGTH</name>
+      <description>Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken.</description>
+      <default/>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Minimum Title Length</title>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_BD_MODE</name>
+      <description>Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced.</description>
+      <default>mkv</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Blu-ray Rip Mode</title>
+        <description>Rip mode of Blu-ray discs.  [b][i]mkv[/b][/i] is the default mode, where a set of MKV files are produced.  When set to [b][i]backup[/b][/i], a copy of the (decrypted) file system is created instead. [b]NOTE[/b]: This applies to Blu-ray discs only.  For DVD, MKV files are always produced.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    </environment_variables>
+    <!-- Volumes -->
+    <volumes>
+    <volume>
+      <container_path>/output</container_path>
+      <host_path_example>$HOME/MakeMKV/output</host_path_example>
+      <description>This is where extracted videos are written.</description>
+      <permissions>rw</permissions>
+      <include_in_quick_start>true</include_in_quick_start>
+      <unraid_template>
+        <title>Output Directory</title>
+        <description>This is the default output folder for converted videos.  Also used by the automatic disc ripper.[br]Container path: /output</description>
+        <display>always-hide</display>
+        <required>true</required>
+        <mask>false</mask>
+      </unraid_template>
+    </volume>
+    </volumes>
+    <!-- Network ports -->
+    <ports>
+    <port>
+      <number>51000</number>
+      <protocol>tcp</protocol>
+      <description>Port used by the streaming service.</description>
+      <mandatory>false</mandatory>
+      <unraid_template>
+        <title>Streaming Port</title>
+        <description>Port used by the streaming service.  This can be removed is the feature is not used.</description>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </port>
+    </ports>
+    <!-- Devices -->
+    <devices>
+    <device>
+      <path>/dev/sr0</path>
+      <description>This is the optical drive.</description>
+      <include_in_quick_start>true</include_in_quick_start>
+    </device>
+    </devices>
+  </container>
+</defs>
