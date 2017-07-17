@@ -103,6 +103,13 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.2.0</version>
+        <date>2017-07-17</date>
+        <change>Now using baseimage v2.0.0, which brings the following changes:</change>
+        <change level="2">Various internal enhancements.</change>
+        <change level="2">Fixed the way a service waits for another one.</change>
+      </release>
+      <release>
         <version>1.1.0</version>
         <date>2017-07-04</date>
         <change>Make sure the respect the umask when creating MKV files.</change>
