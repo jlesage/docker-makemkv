@@ -1,5 +1,5 @@
 # Docker container for MakeMKV
-[![Docker Automated build](https://img.shields.io/docker/automated/jlesage/makemkv.svg)](https://hub.docker.com/r/jlesage/makemkv/) [![](https://images.microbadger.com/badges/image/jlesage/makemkv.svg)](http://microbadger.com/#/images/jlesage/makemkv "Get your own image badge on microbadger.com") [![Build Status](https://travis-ci.org/jlesage/docker-makemkv.svg?branch=master)](https://travis-ci.org/jlesage/docker-makemkv)
+[![Docker Automated build](https://img.shields.io/docker/automated/jlesage/makemkv.svg)](https://hub.docker.com/r/jlesage/makemkv/) [![](https://images.microbadger.com/badges/image/jlesage/makemkv.svg)](http://microbadger.com/#/images/jlesage/makemkv "Get your own image badge on microbadger.com") [![Build Status](https://travis-ci.org/jlesage/docker-makemkv.svg?branch=master)](https://travis-ci.org/jlesage/docker-makemkv) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage)
 
 This is a Docker container for MakeMKV.
 
