@@ -47,7 +47,7 @@ By default, a Docker container doesn't have access to host's devices.  However,
 access to one or more device can be granted with the `--device DEV` parameter.
 
 Optical drives usually have `/dev/srX` as device.  For example, the first drive
-is `/dev/sr0`, the second `/dev/sr1`, and so onxe.  To allow MakeMKV to access
+is `/dev/sr0`, the second `/dev/sr1`, and so on.  To allow MakeMKV to access
 the first drive, this parameter is needed:
 ```
 --device /dev/sr0
