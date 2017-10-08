@@ -5,8 +5,9 @@ set -o pipefail
 
 # Make sure we appear with a proper name under `ps`.
 if [ ! -L "$0" ]; then
-    ln -sf run "$(dirname "$0")/autodiscripper"
-    exec "$(dirname "$0")/autodiscripper" "$@"
+    SV_NAME="$(basename "$(pwd)")"
+    ln -sf run "$SV_NAME"
+    exec ./"$SV_NAME" "$@"
 fi
 
 # Set umask.
@@ -15,7 +16,7 @@ if [ "${UMASK:-UNSET}" != "UNSET" ]; then
 fi
 
 log() {
-    echo "[autoDiscRipper] $*"
+    echo "[$(basename "$0")] $*"
 }
 
 log_makemkvcon() {
@@ -29,7 +30,7 @@ kill_makemkvcon() {
     PID="$(ps -o pid,args | grep "/opt/makemkv/bin/makemkvcon" | grep -vw grep | grep -vw guiserver | grep " mkv " | tr -s ' ' | cut -d' ' -f2)"
     if [ "${PID:-UNSET}" != "UNSET" ]; then
         kill -sigkill $PID
-        wait $PID &>/dev/null
+        wait $PID >/dev/null 2>&1
     fi
 }
 
@@ -103,7 +104,7 @@ if [ "${AUTO_DISC_RIPPER:-0}" -eq 0 ]; then
     exit 0
 fi
 
-echo "[services.d] automatic disc ripper: starting..."
+log "starting..."
 
 if [ "${MAKEMKV_OPTICAL_DRIVE_PRESENT:-0}" -eq 0 ]; then
     log "No usable optical drive available."
@@ -162,7 +163,7 @@ while true; do
                 fi
                 if [ "${AUTO_DISC_RIPPER_EJECT:-0}" -eq 1 ]; then
                     log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
-                    eject "$DRV_DEV" &> /dev/null || eject -s "$DRV_DEV" &> /dev/null
+                    eject "$DRV_DEV" > /dev/null 2>&1 || eject -s "$DRV_DEV" > /dev/null 2>&1
                     if [ "$?" -eq 0 ]; then
                         log "Disc ejected."
                     else
