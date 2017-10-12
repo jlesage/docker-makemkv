@@ -47,9 +47,6 @@ mkdir -p "$TARBALL_DIR"
 mkdir -p "$BUILD_DIR"
 mkdir -p "$INSTALL_DIR"
 
-# Temporary workaround for www.makemkv.com not being reachable.
-echo "95.213.137.146 www.makemkv.com" >> /etc/hosts
-
 echo "Updating APT cache..."
 apt-get update
 

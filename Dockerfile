@@ -31,10 +31,7 @@ RUN \
 COPY rootfs/ /
 
 # Update the default configuration file with the latest beta key.
-RUN \
-    # Temporary workaround for www.makemkv.com not being reachable.
-    echo "95.213.137.146 www.makemkv.com" >> /etc/hosts && \
-    /opt/makemkv/bin/makemkv-update-beta-key /defaults/settings.conf
+RUN /opt/makemkv/bin/makemkv-update-beta-key /defaults/settings.conf
 
 # Set environment variables.
 ENV APP_NAME="MakeMKV" \
