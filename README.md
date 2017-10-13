@@ -256,3 +256,10 @@ be set to `BETA`.  See the [Environment Variables](#environment-variables)
 section for more details.
 
 [TimeZone]: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+## Support or Contact
+
+Having troubles with the container or have questions?  Please
+[create a new issue].
+
+[open an issue]: https://github.com/jlesage/docker-makemkv/issues
