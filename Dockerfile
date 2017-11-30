@@ -41,7 +41,6 @@ ENV APP_NAME="MakeMKV" \
 VOLUME ["/config"]
 VOLUME ["/storage"]
 VOLUME ["/output"]
-VOLUME ["/watch"]
 
 # Metadata.
 LABEL \
