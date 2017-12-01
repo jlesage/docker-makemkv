@@ -177,7 +177,7 @@ while true; do
     rm "$DRIVES_INFO"
     [ "$FIRST_RUN" -eq 0 ] || log "Ready."
     FIRST_RUN=0
-    sleep 5
+    sleep $AUTO_DISC_RIPPER_INTERVAL
 done
 
 rm -r "$STATE_DIR"
