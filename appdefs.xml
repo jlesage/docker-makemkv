@@ -103,6 +103,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.4.1</version>
+        <date>2017-11-30</date>
+        <change>Removed unused volume.</change>
+      </release>
+      <release>
         <version>1.4.0</version>
         <date>2017-11-20</date>
         <change>Now using baseimage v3.1.3, which brings the following changes (from last used version):</change>
