@@ -121,6 +121,10 @@ fi
 STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1
 
+if [ "${AUTO_DISC_RIPPER_INTERVAL:-UNSET" = "UNSET" ]; then
+    AUTO_DISC_RIPPER_INTERVAL="5"
+fi
+    
 while true; do
     # Fetch information about optical drives.
     DRIVES_INFO="$(mktemp)"
