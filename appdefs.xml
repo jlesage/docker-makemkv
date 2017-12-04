@@ -238,6 +238,17 @@ section for more details.
       </unraid_template>
     </environment_variable>
     <environment_variable>
+      <name>AUTO_DISC_RIPPER_INTERVAL</name>
+      <description>Interval, in seconds, the automatic disc ripper checks for the presence of a DVD/Blu-ray discs.</description>
+      <default>5</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Interval</title>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
       <name>AUTO_DISC_RIPPER_MIN_TITLE_LENGTH</name>
       <description>Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken.</description>
       <default/>
