@@ -103,6 +103,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.5.0</version>
+        <date>2017-12-04</date>
+        <change>Added `AUTO_DISC_RIPPER_INTERVAL` environment variable, used to set the interval the automatic disc ripper checks for the presence of a DVD/Blu-ray discs.</change>
+      </release>
+      <release>
         <version>1.4.1</version>
         <date>2017-11-30</date>
         <change>Removed unused volume.</change>
