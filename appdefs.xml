@@ -106,7 +106,7 @@ section for more details.
         <version>1.5.1</version>
         <date>2017-12-12</date>
         <change>Now using baseimage v3.1.4, which brings the following changes:</change>
-        <change>Set 2 worker processes for nginx.</change>
+        <change level="2">Set 2 worker processes for nginx.</change>
       </release>
       <release>
         <version>1.5.0</version>
