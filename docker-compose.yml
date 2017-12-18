@@ -1,0 +1,13 @@
+version: '2'
+services:
+  makemkv:
+    build: .
+    volumes:
+      - /docker/appdata/makemkv:/config:rw
+      - $HOME:/storage:ro
+      - $HOME/MakeMKV/output:/output:rw
+    devices:
+      - "/dev/sr0:/dev/sr0"
+    ports:
+      - 5800:5800
+      - 5900:5900
