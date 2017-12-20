@@ -114,6 +114,26 @@ container cannot be changed, but you are free to use any port on the host side.
 | 5900 | Optional | Port used to access the application's GUI via the VNC protocol.  Optional if no VNC client is used. |
 | 51000 | Optional | Port used by the streaming service. |
 
+## Docker Compose File
+Here is an example of a `docker-compose.yml` file that can be used with
+[Docker Compose](https://docs.docker.com/compose/overview/):
+```yaml
+version: '3'
+services:
+  makemkv:
+    build: .
+    ports:
+      - "5800:5800"
+      - "5900:5900"
+      - "51000:51000"
+    volumes:
+      - "/docker/appdata/makemkv:/config:rw"
+      - "$HOME:/storage:ro"
+      - "$HOME/MakeMKV/output:/output:rw"
+    devices:
+      - "/dev/sr0:/dev/sr0"
+```
+
 ## Docker Image Update
 
 If the system on which the container runs doesn't provide a way to easily update
