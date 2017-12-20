@@ -114,6 +114,25 @@ container cannot be changed, but you are free to use any port on the host side.
 | 5900 | Optional | Port used to access the application's GUI via the VNC protocol.  Optional if no VNC client is used. |
 | 51000 | Optional | Port used by the streaming service. |
 
+## Docker Image Update
+
+If the system on which the container runs doesn't provide a way to easily update
+the Docker image, the following steps can be followed:
+
+  1. Fetch the latest image:
+```
+docker pull jlesage/makemkv
+```
+  2. Stop the container:
+```
+docker stop makemkv
+```
+  3. Remove the container:
+```
+docker stop makemkv
+```
+  4. Start the container using the `docker run` command.
+
 ## User/Group IDs
 
 When using data volumes (`-v` flags), permissions issues can occur between the
