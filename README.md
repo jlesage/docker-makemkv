@@ -150,7 +150,7 @@ docker stop makemkv
 ```
   3. Remove the container:
 ```
-docker stop makemkv
+docker rm makemkv
 ```
   4. Start the container using the `docker run` command.
 
