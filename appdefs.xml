@@ -103,6 +103,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.5.3</version>
+        <date>2018-01-19</date>
+        <change>Upgraded MakeMKV to version 1.10.10.</change>
+      </release>
+      <release>
         <version>1.5.2</version>
         <date>2018-01-11</date>
         <change>Now using baseimage v3.2.2, which brings the following changes (since last used version):</change>
