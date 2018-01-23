@@ -22,6 +22,9 @@ multiple video/audio tracks with all meta-information and preserve chapters.
 
 ## Quick Start
 
+**NOTE**: The Docker command provided in this quick start is given as an example
+and parameters should be adjusted to your need.
+
 Launch the MakeMKV docker container with the following command:
 ```
 docker run -d \
