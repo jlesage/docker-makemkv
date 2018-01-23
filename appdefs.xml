@@ -37,7 +37,7 @@ of them.  So if your optical drive is represented by [b][i]/dev/sr0[/i][/b] and
 [b][i]--device /dev/sr0 --device /dev/sg2[/i][/b] to the [i]Extra Parameters[/i]
 field.[br]
 To determine the right devices to use, start the container and looks at its
-log.  Look at the documentation for more details.
+log.
     </extra_description>
   </unraid>
   <container>
