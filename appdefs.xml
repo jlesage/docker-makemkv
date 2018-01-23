@@ -134,6 +134,12 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.6.1</version>
+        <date>2018-01-22</date>
+        <change>Updated the way optical drives are detected.</change>
+        <change>Display, in the container's log, devices associated to an optical drive that need to be exposed.</change>
+      </release>
+      <release>
         <version>1.6.0</version>
         <date>2018-01-22</date>
         <change>Now using baseimage v3.3.0, which brings the following changes (since last used version):</change>
