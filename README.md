@@ -31,6 +31,7 @@ docker run -d \
     -v $HOME:/storage:ro \
     -v $HOME/MakeMKV/output:/output:rw \
     --device /dev/sr0 \
+    --device /dev/sg2 \
     jlesage/makemkv
 ```
 
@@ -38,7 +39,8 @@ Where:
   - `/docker/appdata/makemkv`: This is where the application stores its configuration, log and any files needing persistency.
   - `$HOME`: This location contains files from your host that need to be accessible by the application.
   - `$HOME/MakeMKV/output`: This is where extracted videos are written.
-  - `/dev/sr0`: This is the optical drive.
+  - `/dev/sr0`: This is the first Linux device file representing the optical drive.
+  - `/dev/sg2`: This is the second Linux device file representing the optical drive.
 
 Browse to `http://your-host-ip:5800` to access the MakeMKV GUI.  Files from
 the host appear under the `/storage` folder in the container.
@@ -134,6 +136,7 @@ services:
       - "$HOME/MakeMKV/output:/output:rw"
     devices:
       - "/dev/sr0:/dev/sr0"
+      - "/dev/sg2:/dev/sg2"
 ```
 
 ## Docker Image Update
@@ -253,14 +256,38 @@ characters beyhond the limit are ignored.
 ## Access to Optical Drive(s)
 
 By default, a Docker container doesn't have access to host's devices.  However,
-access to one or more device can be granted with the `--device DEV` parameter.
+access to one or more devices can be granted with the `--device DEV` parameter.
 
-Optical drives usually have `/dev/srX` as device.  For example, the first drive
-is `/dev/sr0`, the second `/dev/sr1`, and so on.  To allow MakeMKV to access
-the first drive, this parameter is needed:
+In the Linux world, an optical drive is represented by two different device
+files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
+
+For best performance, it is recommended to expose both these devices to the
+container.  For example, for an optical drive represented by `/dev/sr0` and
+`/dev/sg1`, the following parameters would be added to the `docker run`
+command:
 ```
---device /dev/sr0
+--device /dev/sr0 --device /dev/sg1
 ```
+
+**NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
+expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
+could be affected.
+
+The easiest way to determine the right Linux devices to expose is to run the
+container (without `--device` parameter) and look at its log: during the
+startup, messages similar to these ones are outputed:
+```
+[cont-init.d] 95-check-optical-drive.sh: executing...
+[cont-init.d] 95-check-optical-drive.sh: looking for usable optical drives...
+[cont-init.d] 95-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh: no usable optical drive found.
+[cont-init.d] 95-check-optical-drive.sh: exited 0.
+```
+
+In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+exposed to the container.
 
 ## Automatic Disc Ripper
 

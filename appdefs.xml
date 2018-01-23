@@ -27,10 +27,17 @@ multiple video/audio tracks with all meta-information and preserve chapters.
     <extra_description>
 [span style='color: red;'][b]NOTE:[/b][/span] For the container to have
 access to your optical drive(s), you need to allow access to the proper
-device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
+Linux devices by adding (one for each of them) the parameter
 [b][i]--device DEV[/i][/b] in the [i]Extra Parameters[/i] field (shown when
-[i]Advanced View[/i] is enabled). For example, if your optical drive is at
-[b][i]/dev/sr0[/i][/b], you need to add [b][i]--device /dev/sr0[/i][/b].
+[i]Advanced View[/i] is enabled).[br]
+An optical drive is represented by two Linux device files: [b][i]/dev/srX[/i][/b]
+and [b][i]/dev/sgY[/i][/b].  For optimal performance, the container needs both
+of them.  So if your optical drive is represented by [b][i]/dev/sr0[/i][/b] and
+[b][i]/dev/sg2[/i][/b], you need to add
+[b][i]--device /dev/sr0 --device /dev/sg2[/i][/b] to the [i]Extra Parameters[/i]
+field.[br]
+To determine the right devices to use, start the container and looks at its
+log.  Look at the documentation for more details.
     </extra_description>
   </unraid>
   <container>
@@ -44,14 +51,38 @@ device (usually [b][i]/dev/sr0[/i][/b]) by adding the parameter
       <title level="2">Access to Optical Drive(s)</title>
       <content>
 By default, a Docker container doesn't have access to host's devices.  However,
-access to one or more device can be granted with the `--device DEV` parameter.
+access to one or more devices can be granted with the `--device DEV` parameter.
 
-Optical drives usually have `/dev/srX` as device.  For example, the first drive
-is `/dev/sr0`, the second `/dev/sr1`, and so on.  To allow MakeMKV to access
-the first drive, this parameter is needed:
+In the Linux world, an optical drive is represented by two different device
+files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
+
+For best performance, it is recommended to expose both these devices to the
+container.  For example, for an optical drive represented by `/dev/sr0` and
+`/dev/sg1`, the following parameters would be added to the `docker run`
+command:
 ```
---device /dev/sr0
+--device /dev/sr0 --device /dev/sg1
 ```
+
+**NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
+expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
+could be affected.
+
+The easiest way to determine the right Linux devices to expose is to run the
+container (without `--device` parameter) and look at its log: during the
+startup, messages similar to these ones are outputed:
+```
+[cont-init.d] 95-check-optical-drive.sh: executing...
+[cont-init.d] 95-check-optical-drive.sh: looking for usable optical drives...
+[cont-init.d] 95-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh: no usable optical drive found.
+[cont-init.d] 95-check-optical-drive.sh: exited 0.
+```
+
+In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+exposed to the container.
       </content>
     </section>
     <section>
@@ -343,7 +374,12 @@ section for more details.
     <devices>
     <device>
       <path>/dev/sr0</path>
-      <description>This is the optical drive.</description>
+      <description>This is the first Linux device file representing the optical drive.</description>
+      <include_in_quick_start>true</include_in_quick_start>
+    </device>
+    <device>
+      <path>/dev/sg2</path>
+      <description>This is the second Linux device file representing the optical drive.</description>
       <include_in_quick_start>true</include_in_quick_start>
     </device>
     </devices>
