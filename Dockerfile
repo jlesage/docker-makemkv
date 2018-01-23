@@ -20,7 +20,8 @@ RUN \
         sed \
         findutils \
         util-linux \
-        openjdk8-jre-base
+        openjdk8-jre-base \
+        lsscsi
 
 # Generate and install favicons.
 RUN \
