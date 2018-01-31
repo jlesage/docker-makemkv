@@ -134,6 +134,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.6.2</version>
+        <date>2018-01-30</date>
+        <change>Adjusted the way some ressources are accessed to better support reverse proxy to the container.</change>
+      </release>
+      <release>
         <version>1.6.1</version>
         <date>2018-01-22</date>
         <change>Updated the way optical drives are detected.</change>
