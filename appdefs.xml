@@ -134,6 +134,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.6.3</version>
+        <date>2018-02-02</date>
+        <change>Updated the beta key in the default configuration file.</change>
+      </release>
+      <release>
         <version>1.6.2</version>
         <date>2018-01-30</date>
         <change>Adjusted the way some ressources are accessed to better support reverse proxy to the container.</change>
