@@ -412,5 +412,7 @@ section for more details.
       <include_in_quick_start>true</include_in_quick_start>
     </device>
     </devices>
+    <!-- Extra parameters -->
+    <extra_params/>
   </container>
 </defs>
