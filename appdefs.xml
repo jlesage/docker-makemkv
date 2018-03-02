@@ -134,6 +134,14 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.7.1</version>
+        <date>2018-03-02</date>
+        <change>Now using baseimage v3.3.4, which brings the following changes (since last used version):</change>
+        <change level="2">Make sure the log monitor is started after the X server.</change>
+        <change level="2">Fixed an issue where the log monitor `yad` target would use XDG folders of the application.</change>
+        <change level="2">Fixed issue where log monitor states were not cleared during container startup.</change>
+      </release>
+      <release>
         <version>1.7.0</version>
         <date>2018-02-04</date>
         <change>Upgraded MakeMKV to version 1.12.0.</change>
