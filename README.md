@@ -37,13 +37,13 @@ multiple video/audio tracks with all meta-information and preserve chapters.
       * [Security](#security)
          * [Certificates](#certificates)
          * [VNC Password](#vnc-password)
+      * [Reverse Proxy](#reverse-proxy)
+         * [Routing Based on Hostname](#routing-based-on-hostname)
+         * [Routing Based on URL Path](#routing-based-on-url-path)
       * [Access to Optical Drive(s)](#access-to-optical-drives)
       * [Automatic Disc Ripper](#automatic-disc-ripper)
       * [Troubleshooting](#troubleshooting)
          * [Expired Beta Key](#expired-beta-key)
-      * [Reverse Proxy](#reverse-proxy)
-         * [Routing Based on Hostname](#routing-based-on-hostname)
-         * [Routing Based on URL Path](#routing-based-on-url-path)
       * [Support or Contact](#support-or-contact)
 
 ## Quick Start
@@ -308,83 +308,6 @@ the Remote Framebuffer Protocol [RFC](https://tools.ietf.org/html/rfc6143) (see
 section [7.2.2](https://tools.ietf.org/html/rfc6143#section-7.2.2)).  Any
 characters beyhond the limit are ignored.
 
-## Access to Optical Drive(s)
-
-By default, a Docker container doesn't have access to host's devices.  However,
-access to one or more devices can be granted with the `--device DEV` parameter.
-
-In the Linux world, an optical drive is represented by two different device
-files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
-
-For best performance, it is recommended to expose both these devices to the
-container.  For example, for an optical drive represented by `/dev/sr0` and
-`/dev/sg1`, the following parameters would be added to the `docker run`
-command:
-```
---device /dev/sr0 --device /dev/sg1
-```
-
-**NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
-expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
-could be affected.
-
-The easiest way to determine the right Linux devices to expose is to run the
-container (without `--device` parameter) and look at its log: during the
-startup, messages similar to these ones are outputed:
-```
-[cont-init.d] 95-check-optical-drive.sh: executing...
-[cont-init.d] 95-check-optical-drive.sh: looking for usable optical drives...
-[cont-init.d] 95-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
-[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
-[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
-[cont-init.d] 95-check-optical-drive.sh: no usable optical drive found.
-[cont-init.d] 95-check-optical-drive.sh: exited 0.
-```
-
-In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
-exposed to the container.
-
-## Automatic Disc Ripper
-
-This container has an automatic disc ripper built-in.  When enabled, any DVD or
-Blu-ray video disc inserted into an optical drive is automatically ripped.  In
-other words, MakeMKV decrypts and extracts all titles (such as the main movie,
-bonus features, etc) from the disc to MKV files.
-
-To enable the automatic disc ripper, set the environment variable
-`AUTO_DISC_RIPPER` to `1`.
-
-To eject the disc from the drive when ripping is terminated, set the environment
-variable `AUTO_DISC_RIPPER_EJECT` to `1`.
-
-See the [Environment Variables](#environment-variables) section for details
-about setting environment variables.
-
-**NOTE**: All titles, audio tracks, chapters, subtitles, etc are
-        extracted/preserved.
-
-**NOTE**: Titles and audio tracks are kept in their original format.  They are
-        not transcoded or converted to other formats or into smaller sizes.
-
-**MOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
-
-**NOTE**: MKV Files are written to the `/output` folder of the container.
-
-**NOTE**: The automatic disc ripper processes all available optical drives.
-
-## Troubleshooting
-
-### Expired Beta Key
-
-If the beta key is expired, just restart the container to automatically fetch
-and install the latest one.
-
-**NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
-be set to `BETA`.  See the [Environment Variables](#environment-variables)
-section for more details.
-
-[TimeZone]: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
 ## Reverse Proxy
 
 The following sections contains NGINX configuration that need to be added in
@@ -481,6 +404,83 @@ server {
 }
 
 ```
+
+## Access to Optical Drive(s)
+
+By default, a Docker container doesn't have access to host's devices.  However,
+access to one or more devices can be granted with the `--device DEV` parameter.
+
+In the Linux world, an optical drive is represented by two different device
+files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
+
+For best performance, it is recommended to expose both these devices to the
+container.  For example, for an optical drive represented by `/dev/sr0` and
+`/dev/sg1`, the following parameters would be added to the `docker run`
+command:
+```
+--device /dev/sr0 --device /dev/sg1
+```
+
+**NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
+expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
+could be affected.
+
+The easiest way to determine the right Linux devices to expose is to run the
+container (without `--device` parameter) and look at its log: during the
+startup, messages similar to these ones are outputed:
+```
+[cont-init.d] 95-check-optical-drive.sh: executing...
+[cont-init.d] 95-check-optical-drive.sh: looking for usable optical drives...
+[cont-init.d] 95-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
+[cont-init.d] 95-check-optical-drive.sh: no usable optical drive found.
+[cont-init.d] 95-check-optical-drive.sh: exited 0.
+```
+
+In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+exposed to the container.
+
+## Automatic Disc Ripper
+
+This container has an automatic disc ripper built-in.  When enabled, any DVD or
+Blu-ray video disc inserted into an optical drive is automatically ripped.  In
+other words, MakeMKV decrypts and extracts all titles (such as the main movie,
+bonus features, etc) from the disc to MKV files.
+
+To enable the automatic disc ripper, set the environment variable
+`AUTO_DISC_RIPPER` to `1`.
+
+To eject the disc from the drive when ripping is terminated, set the environment
+variable `AUTO_DISC_RIPPER_EJECT` to `1`.
+
+See the [Environment Variables](#environment-variables) section for details
+about setting environment variables.
+
+**NOTE**: All titles, audio tracks, chapters, subtitles, etc are
+        extracted/preserved.
+
+**NOTE**: Titles and audio tracks are kept in their original format.  They are
+        not transcoded or converted to other formats or into smaller sizes.
+
+**MOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+
+**NOTE**: MKV Files are written to the `/output` folder of the container.
+
+**NOTE**: The automatic disc ripper processes all available optical drives.
+
+## Troubleshooting
+
+### Expired Beta Key
+
+If the beta key is expired, just restart the container to automatically fetch
+and install the latest one.
+
+**NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
+be set to `BETA`.  See the [Environment Variables](#environment-variables)
+section for more details.
+
+[TimeZone]: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 ## Support or Contact
 
