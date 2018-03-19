@@ -503,7 +503,7 @@ about setting environment variables.
 **NOTE**: Titles and audio tracks are kept in their original format.  They are
         not transcoded or converted to other formats or into smaller sizes.
 
-**MOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+**NOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
 
 **NOTE**: MKV Files are written to the `/output` folder of the container.
 
