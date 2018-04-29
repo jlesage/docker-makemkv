@@ -134,6 +134,14 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.8.0</version>
+        <date>2018-04-28</date>
+        <change>Upgraded MakeMKV to version 1.12.2.</change>
+        <change>Upgraded FDK AAC to version 0.1.6.</change>
+        <change>Upgraded FFmpeg to version 2.8.14.</change>
+        <change>Switched to a baseimage based on Alpine Linux 3.7.</change>
+      </release>
+      <release>
         <version>1.7.1</version>
         <date>2018-03-02</date>
         <change>Now using baseimage v3.3.4, which brings the following changes (since last used version):</change>
