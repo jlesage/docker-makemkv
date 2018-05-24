@@ -134,11 +134,6 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
-        <version>1.9.0</version>
-        <date>2018-05-23</date>
-        <change>Upgraded FFmpeg to version 3.4.2.</change>
-      </release>
-      <release>
         <version>1.8.0</version>
         <date>2018-04-28</date>
         <change>Upgraded MakeMKV to version 1.12.2.</change>
