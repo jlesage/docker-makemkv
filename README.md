@@ -529,4 +529,6 @@ section for more details.
 Having troubles with the container or have questions?  Please
 [create a new issue].
 
+For other great Dockerized applications, see https://jlesage.github.io/docker-apps.
+
 [create a new issue]: https://github.com/jlesage/docker-makemkv/issues
