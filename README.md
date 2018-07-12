@@ -74,8 +74,8 @@ Where:
   - `/dev/sr0`: This is the first Linux device file representing the optical drive.
   - `/dev/sg2`: This is the second Linux device file representing the optical drive.
 
-Browse to `http://your-host-ip:5800` to access the MakeMKV GUI.  Files from
-the host appear under the `/storage` folder in the container.
+Browse to `http://your-host-ip:5800` to access the MakeMKV GUI.
+Files from the host appear under the `/storage` folder in the container.
 
 ## Usage
 
