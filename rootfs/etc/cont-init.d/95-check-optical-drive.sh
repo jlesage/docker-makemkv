@@ -25,7 +25,7 @@ while read -r DRV; do
         # Save the associated group.
         DRV_GRP="$(stat -c "%g" "$SG_DEV")"
         log "found optical drive [$SR_DEV, $SG_DEV], group $DRV_GRP."
-        log "WARNING: for best perfomance, the host device $SR_DEV needs to be exposed to the container."
+        log "WARNING: for best performance, the host device $SR_DEV needs to be exposed to the container."
         GRPS="${GRPS:- } $DRV_GRP"
     else
         log "found optical drive [$SR_DEV, $SG_DEV], but it is not usable because:"
