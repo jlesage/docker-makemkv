@@ -10,6 +10,15 @@ if [ ! -L "$0" ]; then
     exec ./"$SV_NAME" "$@"
 fi
 
+# Name of the service.
+SV_NAME="$(basename "$0")"
+
+# Set the prefix of makemkvcon log messages.
+MAKEMKVCON_LOG_PREFIX="[makemkvcon]"
+if echo "$SV_NAME" | grep -q '^autodiscripper-[0-9]\+$'; then
+    MAKEMKVCON_LOG_PREFIX="[makemkvcon-$(echo "$SV_NAME" | cut -d'-' -f2)]"
+fi 
+
 # Set umask.
 if [ "${UMASK:-UNSET}" != "UNSET" ]; then
     umask "$UMASK"
@@ -21,7 +30,7 @@ log() {
 
 log_makemkvcon() {
     if [ "${LAST_MSG:-UNSET}" != "$*" ]; then
-        echo "[makemkvcon] $*"
+        echo "$MAKEMKVCON_LOG_PREFIX $*"
         LAST_MSG="$*"
     fi
 }
@@ -124,7 +133,15 @@ FIRST_RUN=1
 while true; do
     # Fetch information about optical drives.
     DRIVES_INFO="$(mktemp)"
-    $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:" > "$DRIVES_INFO" 2>&1
+
+    # Based on the service name, determine if we need to handle all drives or a  
+    # single one.
+    if echo "$SV_NAME" | grep -q '^autodiscripper-[0-9]\+$'; then
+        ID="$(echo "$SV_NAME" | cut -d'-' -f2)"
+        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:$ID," > "$DRIVES_INFO" 2>&1
+    else
+        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:" > "$DRIVES_INFO" 2>&1
+    fi
 
     # Loop through all drives.
     while read -r DRV; do
