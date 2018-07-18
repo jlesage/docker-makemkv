@@ -119,6 +119,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`MAKEMKV_KEY`| MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
 |`AUTO_DISC_RIPPER`| When set to `1`, the automatic disc ripper is enabled. | `0` |
 |`AUTO_DISC_RIPPER_EJECT`| When set to `1`, disc is ejected from the drive when ripping is terminated. | `0` |
+|`AUTO_DISC_RIPPER_PARALLEL_RIP`| When set to `1`, discs from all available optical drives are ripped in parallel.  Else, each disc from optical drives is ripped one at time. | `0` |
 |`AUTO_DISC_RIPPER_INTERVAL`| Interval, in seconds, the automatic disc ripper checks for the presence of a DVD/Blu-ray discs. | `5` |
 |`AUTO_DISC_RIPPER_MIN_TITLE_LENGTH`| Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken. | (unset) |
 |`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced. | `mkv` |
@@ -495,6 +496,9 @@ To enable the automatic disc ripper, set the environment variable
 
 To eject the disc from the drive when ripping is terminated, set the environment
 variable `AUTO_DISC_RIPPER_EJECT` to `1`.
+
+If multiple drives are available, discs can be ripped simultaneously by
+setting the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
 
 See the [Environment Variables](#environment-variables) section for details
 about setting environment variables.

@@ -99,6 +99,9 @@ To enable the automatic disc ripper, set the environment variable
 To eject the disc from the drive when ripping is terminated, set the environment
 variable `AUTO_DISC_RIPPER_EJECT` to `1`.
 
+If multiple drives are available, discs can be ripped simultaneously by
+setting the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
+
 See the [Environment Variables](#environment-variables) section for details
 about setting environment variables.
 
@@ -342,6 +345,17 @@ section for more details.
       <unraid_template>
         <title>Automatic Disc Ripper: Eject</title>
         <description>Set to 1 to eject disc when ripping is terminated.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_PARALLEL_RIP</name>
+      <description>When set to `1`, discs from all available optical drives are ripped in parallel.  Else, each disc from optical drives is ripped one at time.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Parallel</title>
         <display>always</display>
         <required>false</required>
         <mask>false</mask>
