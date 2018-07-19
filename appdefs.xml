@@ -137,6 +137,12 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.9.0</version>
+        <date>2018-07-18</date>
+        <change>Auto disc ripper: Added support for parallel discs ripping.</change>
+        <change>Now using baseimage v3.4.0, which is based on Alpine Linux 3.8.</change>
+      </release>
+      <release>
         <version>1.8.0</version>
         <date>2018-04-28</date>
         <change>Upgraded MakeMKV to version 1.12.2.</change>
