@@ -106,21 +106,7 @@ process_disc() {
     fi
 }
 
-# Disable service if not enabled.
-if [ "${AUTO_DISC_RIPPER:-0}" -eq 0 ]; then
-    echo "[services.d] automatic disc ripper: disabled."
-    s6-svc -d /var/run/s6/services/autodiscripper
-    exit 0
-fi
-
 log "starting..."
-
-if [ "${MAKEMKV_OPTICAL_DRIVE_PRESENT:-0}" -eq 0 ]; then
-    log "No usable optical drive available."
-    log "Disabling service..."
-    s6-svc -d /var/run/s6/services/autodiscripper
-    exit 0
-fi
 
 if [ "${SUP_GROUP_IDS:-UNSET}" = "UNSET" ]; then
     MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID /opt/makemkv/bin/makemkvcon"
