@@ -10,6 +10,9 @@ if [ ! -L "$0" ]; then
     exec ./"$SV_NAME" "$@"
 fi
 
+# Define the MakeMKV CLI command.
+MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G ${SUP_GROUP_IDS:-$GROUP_ID} /opt/makemkv/bin/makemkvcon"
+
 # Name of the service.
 SV_NAME="$(basename "$0")"
 
@@ -108,11 +111,6 @@ process_disc() {
 
 log "starting..."
 
-if [ "${SUP_GROUP_IDS:-UNSET}" = "UNSET" ]; then
-    MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID /opt/makemkv/bin/makemkvcon"
-else
-    MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G $SUP_GROUP_IDS /opt/makemkv/bin/makemkvcon"
-fi
 STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1
 
