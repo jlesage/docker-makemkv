@@ -362,6 +362,7 @@ section for more details.
       <default>0</default>
       <unraid_template>
         <title>Automatic Disc Ripper: Parallel</title>
+        <description>When set to 1, discs from all available optical drives are ripped in parallel.  Else, each disc from optical drives is ripped one at time.</description>
         <display>always</display>
         <required>false</required>
         <mask>false</mask>
