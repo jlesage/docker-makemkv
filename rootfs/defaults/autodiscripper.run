@@ -83,8 +83,8 @@ process_makemkvcon_output() {
 }
 
 process_disc() {
-    DRV_ID="$1"
-    LABEL="${2:-DISC$DRV_ID}"
+    SRC="$1"
+    LABEL="${2:-$(date +%Y-%m-%d-%H-%M-%S)}"
     IS_BD="${3:-0}"
 
     if [ -d "/output/$LABEL" ]; then
@@ -103,9 +103,9 @@ process_disc() {
 
     if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
         log "Backup mode enabled for Blu-ray disc."
-        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup disc:$DRV_ID "$OUTPUT_DIR" | process_makemkvcon_output
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output
     else
-        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv disc:$DRV_ID all "$OUTPUT_DIR" | process_makemkvcon_output
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output
     fi
 }
 
@@ -156,7 +156,7 @@ while true; do
             else
                 # Process disc.
                 log "Starting disc rip..."
-                process_disc "$DRV_ID" "$DRV_LABEL" "$(expr \( $DRV_FLAGS / 4 \) % 2)"
+                process_disc "disc:$DRV_ID" "$DRV_LABEL" "$(expr \( $DRV_FLAGS / 4 \) % 2)"
                 if [ "$?" -eq 0 ]; then
                     log "Disc rip terminated successfully."
                 else
