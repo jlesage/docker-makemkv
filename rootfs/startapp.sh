@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/with-contenv sh
 # NOTE: Change the workdir to /storage, as this is the default location when
 #       opening files.
 # NOTE: $HOME variable needs to be set because the only configuration file
