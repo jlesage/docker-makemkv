@@ -33,7 +33,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 # Extract the beta key.
-BETA_KEY="$(sed -n 's|.*<div class="codecontent">\(.*\)</div> .*|\1|gp' $TMPFILE)"
+BETA_KEY="$(sed -n 's|.*<code>\(.*\)</code>.*|\1|gp' $TMPFILE)"
 if [ -z "$BETA_KEY" ]; then
     echo "ERROR: Failed to extract the beta key."
     exit 1
