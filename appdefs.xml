@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.9.2</version>
+        <date>2018-08-20</date>
+        <change>Fixed an issue where fetching the beta key would fail.</change>
+      </release>
+      <release>
         <version>1.9.1</version>
         <date>2018-07-27</date>
         <change>Upgraded MakeMKV to version 1.12.3.</change>
