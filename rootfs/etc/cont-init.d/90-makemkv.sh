@@ -31,6 +31,9 @@ fi
 [ -f /config/settings.conf ] || cp -v /defaults/settings.conf /config/
 [ -f "$XDG_CONFIG_HOME/QtProject.conf" ] || cp -v /defaults/QtProject.conf "$XDG_CONFIG_HOME/"
 
+# Make sure the data directory is correctly set.
+sed -i 's|app_DataDir = .*|app_DataDir = "/config/data"|' /config/settings.conf
+
 # Create link for MakeMKV config directory.
 # The only configuration location MakeMKV looks for seems to be
 # "$HOME/.MakeMKV".
