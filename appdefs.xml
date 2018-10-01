@@ -420,6 +420,18 @@ section for more details.
         <mask>false</mask>
       </unraid_template>
     </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR</name>
+      <description>When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc.  If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters.  When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Force Unique Output Directory</title>
+        <description>When set to [b][i]0[/b][/i], files are written to [i]/output/DISC_LABEL/[/i], where [i]DISC_LABEL[/i] is the label/name of the disc.  If this directory exists, then files are written to [i]/output/DISC_LABEL-XXXXXX[/i], where [i]XXXXXX[/i] are random readable characters.  When set to [b][i]1[/b][/i], the [i]/output/DISC_LABEL-XXXXXX[/i] pattern is always used.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
     </environment_variables>
     <!-- Volumes -->
     <volumes>

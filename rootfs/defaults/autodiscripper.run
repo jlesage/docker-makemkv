@@ -87,7 +87,7 @@ process_disc() {
     LABEL="${2:-$(date +%Y-%m-%d-%H-%M-%S)}"
     IS_BD="${3:-0}"
 
-    if [ -d "/output/$LABEL" ]; then
+    if [ -d "/output/$LABEL" ] || [ "${AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR:-0}" -ne 0 ]; then
         OUTPUT_DIR="$(mktemp -d "/output/${LABEL}-XXXXXX")"
     else
         OUTPUT_DIR="/output/$LABEL"
