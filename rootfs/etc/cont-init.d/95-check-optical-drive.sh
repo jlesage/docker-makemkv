@@ -44,4 +44,4 @@ else
     echo "1" > /var/run/s6/container_environment/MAKEMKV_OPTICAL_DRIVE_PRESENT
 fi
 
-# vim: set ft=sh :
+# vim:ft=sh:ts=4:sw=4:et:sts=4

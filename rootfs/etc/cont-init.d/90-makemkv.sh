@@ -76,4 +76,4 @@ if ! chown $USER_ID:$GROUP_ID /output; then
     fi
 fi
 
-# vim: set ft=sh :
+# vim:ft=sh:ts=4:sw=4:et:sts=4
