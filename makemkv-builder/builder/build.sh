@@ -106,6 +106,7 @@ echo "Downloading MakeMKV OSS..."
 curl -# -L ${MAKEMKV_OSS_URL} | tar -xz
 echo "Compiling MakeMKV OSS..."
 cd makemkv-oss-${MAKEMKV_VERSION}
+patch -p0 < "$SCRIPT_DIR/launch-url.patch"
 DESTDIR="$INSTALL_DIR" PKG_CONFIG_PATH="$BUILD_DIR/ffmpeg/lib/pkgconfig" ./configure --prefix=
 make install
 
