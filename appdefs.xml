@@ -137,6 +137,14 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.9.4</version>
+        <date>2018-10-02</date>
+        <change>Fixed issue where files and folders created for the backup of a Blu-Ray disc would not follow the configured umask.</change>
+        <change>The auto disc ripper now drops root privileges at start.</change>
+        <change>Added the `AUTO_DISC_RIPPER_FORCE_UNIQUE_DIR` environment variable to better support workflows involving video discs with the same label.</change>
+        <change>Instead of silently failing to open an URL, a pop-up window is now displayed when certain menu items are selected.</change>
+      </release>
+      <release>
         <version>1.9.3</version>
         <date>2018-09-18</date>
         <change>Now using baseimage v3.5.1, which brings the following changes:</change>
