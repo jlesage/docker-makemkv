@@ -10,8 +10,18 @@ if [ ! -L "$0" ]; then
     exec ./"$SV_NAME" "$@"
 fi
 
+# Make sure we don't run as root.
+if [ "$(id -u)" -eq 0 ]; then
+    exec $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G ${SUP_GROUP_IDS:-$GROUP_ID} "$0" "$@"
+fi
+
+# Set umask.
+if [ "${UMASK:-UNSET}" != "UNSET" ]; then
+    umask "$UMASK"
+fi
+
 # Define the MakeMKV CLI command.
-MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so $APP_NICE_CMD s6-applyuidgid -u $USER_ID -g $GROUP_ID -G ${SUP_GROUP_IDS:-$GROUP_ID} /opt/makemkv/bin/makemkvcon"
+MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so /opt/makemkv/bin/makemkvcon"
 
 # Name of the service.
 SV_NAME="$(basename "$0")"
@@ -21,11 +31,6 @@ MAKEMKVCON_LOG_PREFIX="[makemkvcon]"
 if echo "$SV_NAME" | grep -q '^autodiscripper-[0-9]\+$'; then
     MAKEMKVCON_LOG_PREFIX="[makemkvcon-$(echo "$SV_NAME" | cut -d'-' -f2)]"
 fi 
-
-# Set umask.
-if [ "${UMASK:-UNSET}" != "UNSET" ]; then
-    umask "$UMASK"
-fi
 
 log() {
     echo "[$(basename "$0")] $*"
@@ -88,13 +93,12 @@ process_disc() {
     IS_BD="${3:-0}"
 
     if [ -d "/output/$LABEL" ] || [ "${AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR:-0}" -ne 0 ]; then
-        OUTPUT_DIR="$(mktemp -d "/output/${LABEL}-XXXXXX")"
+        OUTPUT_DIR="$(mktemp -du "/output/${LABEL}-XXXXXX")"
     else
         OUTPUT_DIR="/output/$LABEL"
-        mkdir "$OUTPUT_DIR"
     fi
 
-    chown "$USER_ID:$GROUP_ID" "$OUTPUT_DIR"
+    mkdir "$OUTPUT_DIR"
 
     MAKEMKV_COMMON_OPTS="-r --progress=-same"
     if [ "${AUTO_DISC_RIPPER_MIN_TITLE_LENGTH:-UNSET}" != "UNSET" ]; then
@@ -113,6 +117,15 @@ log "starting..."
 
 STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1
+
+# If the created state directory doesn't have the execute permission, we won't
+# be able to access/read/write files under it.  This may happen with a bad UMASK
+# value.
+if [ ! -x "$STATE_DIR" ]; then
+    log "ERROR: Cannot access state directory.  Verify UMASK value."
+    rm -r "$STATE_DIR"
+    exit 1
+fi
 
 while true; do
     # Fetch information about optical drives.
