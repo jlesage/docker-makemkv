@@ -447,7 +447,7 @@ section for more details.
       <mandatory>false</mandatory>
       <unraid_template>
         <title>Streaming Port</title>
-        <description>Port used by the streaming service.  This can be removed is the feature is not used.</description>
+        <description>Port used by the streaming service.  This can be removed if the feature is not used.</description>
         <display>advanced</display>
         <required>false</required>
         <mask>false</mask>
