@@ -82,6 +82,11 @@ process_makemkvcon_output() {
                     kill_makemkvcon
                     exit 1
                     ;;
+                2003)
+                    # MSG:2003,0,3,"Error 'Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN' occurred while reading '/BDMV/STREAM/00007.m2ts' at offset '3729653760'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN","/BDMV/STREAM/00007.m2ts","3729653760"
+                    kill_makemkvcon
+                    exit 1
+                    ;;
             esac
         fi
     done
