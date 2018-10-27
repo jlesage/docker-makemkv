@@ -23,6 +23,8 @@ ADD makemkv-builder/makemkv.tar.gz /
 RUN \
     add-pkg --virtual build-dependencies \
         curl \
+        binutils \
+        findutils \
         && \
     mkdir /usr/lib/jvm/ && \
     # Download and extract.
@@ -36,6 +38,8 @@ RUN \
         /usr/lib/jvm/jdk-${OPENJDK_VERSION}/lib/modules \
         /usr/lib/jvm/jdk-${OPENJDK_VERSION}/lib/src.zip \
         && \
+    # Strip.
+    find /usr/lib/jvm/jdk-${OPENJDK_VERSION} -type f -executable -or -name *.so -exec strip {} ';' && \
     # Cleanup.
     del-pkg build-dependencies && \
     rm -rf /tmp/* /tmp/.[!.]*
