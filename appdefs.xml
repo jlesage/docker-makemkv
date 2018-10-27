@@ -137,6 +137,12 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.9.5</version>
+        <date>2018-10-26</date>
+        <change>Updated OpenJDK to version 11.0.1.  This fixes an issue where MakeMKV would crash with certain BluRay discs.</change>
+        <change>Auto disc ripper: Make sure to abort if tray is opened.</change>
+      </release>
+      <release>
         <version>1.9.4</version>
         <date>2018-10-02</date>
         <change>Fixed issue where files and folders created for the backup of a Blu-Ray disc would not follow the configured umask.</change>
