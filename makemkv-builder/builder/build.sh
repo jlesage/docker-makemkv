@@ -7,8 +7,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
-MAKEMKV_VERSION=1.12.3
-FFMPEG_VERSION=2.8.14
+MAKEMKV_VERSION=1.14.0
+FFMPEG_VERSION=4.1
 FDK_AAC_VERSION=0.1.6
 
 MAKEMKV_OSS_URL=http://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
