@@ -43,6 +43,7 @@ BUILD_DIR=/tmp/makemkv-build
 INSTALL_BASEDIR=/tmp/makemkv-install
 INSTALL_DIR=$INSTALL_BASEDIR$ROOT_EXEC_DIR
 
+rm -rf "$INSTALL_DIR"
 mkdir -p "$TARBALL_DIR"
 mkdir -p "$BUILD_DIR"
 mkdir -p "$INSTALL_DIR"
@@ -77,7 +78,7 @@ cd fdk-aac-${FDK_AAC_VERSION}
             --enable-static \
             --disable-shared \
             --with-pic
-make install
+make -j$(nproc) install
 
 #
 # ffmpeg
@@ -96,7 +97,7 @@ PKG_CONFIG_PATH="$BUILD_DIR/fdk-aac/lib/pkgconfig" ./configure \
         --disable-yasm \
         --disable-doc \
         --disable-programs
-make install
+make -j$(nproc) install
 
 #
 # MakeMKV OSS
@@ -108,7 +109,7 @@ echo "Compiling MakeMKV OSS..."
 cd makemkv-oss-${MAKEMKV_VERSION}
 patch -p0 < "$SCRIPT_DIR/launch-url.patch"
 DESTDIR="$INSTALL_DIR" PKG_CONFIG_PATH="$BUILD_DIR/ffmpeg/lib/pkgconfig" ./configure --prefix=
-make install
+make -j$(nproc) install
 
 #
 # MakeMKV bin
@@ -121,26 +122,54 @@ cd makemkv-bin-${MAKEMKV_VERSION}
 patch -p0 < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
 DESTDIR="$INSTALL_DIR" make install
 
+#
+# Umask Wrapper
+#
 echo "Compiling umask wrapper..."
-gcc -o $BUILD_DIR/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
+gcc -o "$BUILD_DIR"/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
+echo "Installing umask wrapper..."
+cp -v "$BUILD_DIR"/umask_wrapper.so "$INSTALL_DIR/lib/"
+
+#
+# QT Plugins
+#
+echo "Adding QT platform plugins..."
+QT_PLUGINS="/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so"
+mkdir "$INSTALL_DIR/lib/platforms"
+for lib in $QT_PLUGINS
+do
+    base_lib="$(basename $lib)"
+    echo "  -> QT Plugin: $lib"
+    cp "$lib" "$INSTALL_DIR/lib/"
+    ln -s ../$base_lib "$INSTALL_DIR/lib/platforms/$base_lib"
+done
 
 echo "Patching ELF of binaries..."
-find "$INSTALL_DIR/bin" -type f -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$ROOT_EXEC_DIR/lib/ld-linux-x86-64.so.2" {} \;
-find "$INSTALL_DIR/bin" -type f -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} \;
+find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$ROOT_EXEC_DIR/lib/ld-linux-x86-64.so.2" {} \;
+find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} \;
 
-QT_PLUGINS="/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so"
 EXTRA_LIBS="/lib/x86_64-linux-gnu/libnss_compat.so.2 \
             /lib/x86_64-linux-gnu/libnsl.so.1 \
             /lib/x86_64-linux-gnu/libnss_nis.so.2 \
             /lib/x86_64-linux-gnu/libnss_files.so.2 \
-            $BUILD_DIR/umask_wrapper.so \
 "
 
 # Package library dependencies
 echo "Extracting shared library dependencies..."
-for BIN in "$INSTALL_DIR/bin/makemkvcon" "$INSTALL_DIR/bin/makemkv" $QT_PLUGINS
+find "$INSTALL_DIR" -type f -executable -or -name 'lib*.so*' | while read BIN
 do
-    DEPS="$(LD_LIBRARY_PATH="$INSTALL_DIR/lib" ldd "$BIN" | grep " => " | cut -d'>' -f2 | sed 's/^[[:space:]]*//' | cut -d'(' -f1 | grep '^/usr\|^/lib')"
+    RAW_DEPS="$(LD_LIBRARY_PATH="$INSTALL_DIR/lib:$BUILD_DIR/jdk/lib:$BUILD_DIR/jdk/lib/jli" ldd "$BIN")"
+    echo "Dependencies for $BIN:"
+    echo "================================"
+    echo "$RAW_DEPS"
+    echo "================================"
+
+    if echo "$RAW_DEPS" | grep -q " not found"; then
+        echo "ERROR: Some libraries are missing!"
+        exit 1
+    fi
+
+    DEPS="$(LD_LIBRARY_PATH="$INSTALL_DIR/lib" ldd "$BIN" | (grep " => " || true) | cut -d'>' -f2 | sed 's/^[[:space:]]*//' | cut -d'(' -f1)"
     for dep in $DEPS $EXTRA_LIBS
     do
         dep_real="$(realpath "$dep")"
@@ -159,18 +188,11 @@ do
     done
 done
 
-echo "Adding QT platform plugins..."
-mkdir "$INSTALL_DIR/lib/platforms"
-for lib in $QT_PLUGINS
-do
-    base_lib="$(basename $lib)"
-    echo "  -> QT Plugin: $lib"
-    cp "$lib" "$INSTALL_DIR/lib/"
-    ln -s ../$base_lib "$INSTALL_DIR/lib/platforms/$base_lib"
-done
-
 echo "Patching ELF of libraries..."
-find "$INSTALL_DIR/lib" -type f -name "lib*" -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN' {} \;
+find "$INSTALL_DIR" \
+    -type f \
+    -name "lib*" \
+    -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN' {} \;
 
 echo "Creating qt.conf..."
 echo "[Paths]"                 >  "$INSTALL_DIR/bin/qt.conf"
@@ -181,3 +203,5 @@ echo "Creating tarball..."
 tar -zcf "$TARBALL_DIR/makemkv.tar.gz" -C "$INSTALL_BASEDIR" "${ROOT_EXEC_DIR:1}" --owner=0 --group=0
 
 echo "$TARBALL_DIR/makemkv.tar.gz created successfully!"
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4
