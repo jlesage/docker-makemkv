@@ -137,6 +137,14 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.10.0</version>
+        <date>2018-11-08</date>
+        <change>Upgraded MakeMKV to version 1.14.0.</change>
+        <change>Upgraded FFmpeg to version 4.1.</change>
+        <change>Fixed Java invocation failure.</change>
+        <change>Small enhancements to the MakeMKV builder.</change>
+      </release>
+      <release>
         <version>1.9.5</version>
         <date>2018-10-26</date>
         <change>Updated OpenJDK to version 11.0.1.  This fixes an issue where MakeMKV would crash with certain BluRay discs.</change>
