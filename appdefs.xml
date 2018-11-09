@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.10.1</version>
+        <date>2018-11-09</date>
+        <change>Upgraded MakeMKV to version 1.14.1.</change>
+      </release>
+      <release>
         <version>1.10.0</version>
         <date>2018-11-08</date>
         <change>Upgraded MakeMKV to version 1.14.0.</change>
