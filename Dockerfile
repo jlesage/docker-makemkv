@@ -23,8 +23,6 @@ ADD makemkv-builder/makemkv.tar.gz /
 RUN \
     add-pkg --virtual build-dependencies \
         curl \
-        binutils \
-        findutils \
         && \
     mkdir /usr/lib/jvm/ && \
     # Download and extract.
