@@ -148,7 +148,6 @@ container cannot be changed, but you are free to use any port on the host side.
 |------|-----------------|-------------|
 | 5800 | Mandatory | Port used to access the application's GUI via the web interface. |
 | 5900 | Optional | Port used to access the application's GUI via the VNC protocol.  Optional if no VNC client is used. |
-| 51000 | Optional | Port used by the streaming service. |
 
 ### Changing Parameters of a Running Container
 

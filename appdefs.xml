@@ -478,21 +478,7 @@ section for more details.
     </volume>
     </volumes>
     <!-- Network ports -->
-    <ports>
-    <port>
-      <number>51000</number>
-      <protocol>tcp</protocol>
-      <description>Port used by the streaming service.</description>
-      <mandatory>false</mandatory>
-      <unraid_template>
-        <title>Streaming Port</title>
-        <description>Port used by the streaming service.  This can be removed if the feature is not used.</description>
-        <display>advanced</display>
-        <required>false</required>
-        <mask>false</mask>
-      </unraid_template>
-    </port>
-    </ports>
+    <ports/>
     <!-- Devices -->
     <devices>
     <device>
