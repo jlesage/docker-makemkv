@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.10.3</version>
+        <date>2018-11-13</date>
+        <change>Reduced the size of the Docker image.</change>
+      </release>
+      <release>
         <version>1.10.2</version>
         <date>2018-11-12</date>
         <change>Fixed an issue where the automatic disc ripper would fail to start when `USER_ID` is set to `0`.</change>
