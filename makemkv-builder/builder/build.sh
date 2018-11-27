@@ -11,9 +11,9 @@ MAKEMKV_VERSION=1.14.1
 FFMPEG_VERSION=4.1
 FDK_AAC_VERSION=0.1.6
 
-MAKEMKV_OSS_URL=http://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
-MAKEMKV_BIN_URL=http://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
-FFMPEG_URL=http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
+MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
+MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
+FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
 FDK_AAC_URL=https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.gz
 
 usage() {
