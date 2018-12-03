@@ -17,6 +17,11 @@ mkdir -p "$XDG_CONFIG_HOME"
 
 # Upgrade previous installations.
 [ ! -f /config/QtProject.conf ] || mv -v /config/QtProject.conf "$XDG_CONFIG_HOME/"
+if [ -f /config/settings.conf ]; then
+    if ! grep -w app_ccextractor /config/settings.conf; then
+        echo 'app_ccextractor = "/usr/bin/ccextractor"' >> /config/settings.conf
+    fi
+fi
 
 # If config folder empty, copy all XML profiles so they can be easily
 # copied and edited.

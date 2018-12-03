@@ -9,9 +9,11 @@ FROM jlesage/baseimage-gui:alpine-3.8-v3.5.1
 
 # Define software versions.
 ARG OPENJDK_VERSION=12-ea+18
+ARG CCEXTRACTOR_VERSION=0.87
 
 # Define software download URLs.
 ARG OPENJDK_URL=https://download.java.net/java/early_access/alpine/18/binaries/openjdk-${OPENJDK_VERSION}_linux-x64-musl_bin.tar.gz
+ARG CCEXTRACTOR_URL=https://github.com/CCExtractor/ccextractor/archive/v${CCEXTRACTOR_VERSION}.tar.gz
 
 # Define working directory.
 WORKDIR /tmp
@@ -40,6 +42,30 @@ RUN \
         /usr/lib/jvm/jdk/include \
         /usr/lib/jvm/jdk/legal \
         && \
+    # Cleanup.
+    del-pkg build-dependencies && \
+    rm -rf /tmp/* /tmp/.[!.]*
+
+# Compile and install ccextractor.
+RUN \
+    add-pkg --virtual build-dependencies \
+        build-base \
+        cmake \
+        zlib-dev \
+        curl \
+        && \
+    # Download and extract.
+    mkdir /tmp/ccextractor && \
+    curl -# -L "${CCEXTRACTOR_URL}" | tar xz --strip 1 -C /tmp/ccextractor && \
+    # Compile.
+    mkdir ccextractor/build && \
+    cd ccextractor/build && \
+    cmake ../src && \
+    make && \
+    cd ../../ && \
+    # Install.
+    cp ccextractor/build/ccextractor /usr/bin/ && \
+    strip /usr/bin/ccextractor && \
     # Cleanup.
     del-pkg build-dependencies && \
     rm -rf /tmp/* /tmp/.[!.]*
