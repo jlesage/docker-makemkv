@@ -137,6 +137,12 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.10.5</version>
+        <date>2019-03-13</date>
+        <change>Updated default configuration: allow MakeMKV to contact web server.</change>
+        <change>Updated OpenJDK to version 13.</change>
+      </release>
+      <release>
         <version>1.10.4</version>
         <date>2018-12-03</date>
         <change>Upgraded MakeMKV to version 1.14.2.</change>
