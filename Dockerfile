@@ -8,11 +8,11 @@
 FROM jlesage/baseimage-gui:alpine-3.8-v3.5.1
 
 # Define software versions.
-ARG OPENJDK_VERSION=12-ea+18
+ARG OPENJDK_VERSION=13-ea+9
 ARG CCEXTRACTOR_VERSION=0.87
 
 # Define software download URLs.
-ARG OPENJDK_URL=https://download.java.net/java/early_access/alpine/18/binaries/openjdk-${OPENJDK_VERSION}_linux-x64-musl_bin.tar.gz
+ARG OPENJDK_URL=https://download.java.net/java/early_access/alpine/9/binaries/openjdk-${OPENJDK_VERSION}_linux-x64-musl_bin.tar.gz
 ARG CCEXTRACTOR_URL=https://github.com/CCExtractor/ccextractor/archive/v${CCEXTRACTOR_VERSION}.tar.gz
 
 # Define working directory.
