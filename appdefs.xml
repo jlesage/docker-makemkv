@@ -137,6 +137,13 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.11.0</version>
+        <date>2019-03-18</date>
+        <change>Upgraded MakeMKV to version 1.14.3.</change>
+        <change>Upgraded FDK AAC to version 2.0.0.</change>
+        <change>Use baseimage based on Alpine Linux 3.9.</change>
+      </release>
+      <release>
         <version>1.10.5</version>
         <date>2019-03-13</date>
         <change>Updated default configuration: allow MakeMKV to contact web server.</change>
