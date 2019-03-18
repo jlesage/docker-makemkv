@@ -9,7 +9,7 @@ SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
 MAKEMKV_VERSION=1.14.3
 FFMPEG_VERSION=4.1
-FDK_AAC_VERSION=0.1.6
+FDK_AAC_VERSION=2.0.0
 
 MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
 MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
