@@ -1,6 +1,6 @@
 #!/bin/sh
 SCRIPT_DIR="$(readlink -f "$(dirname "$0")")"
-BUILDER_DOCKER_IMAGE="ubuntu:xenial"
+BUILDER_DOCKER_IMAGE="ubuntu:disco"
 
 exec docker run --rm \
     -v "$SCRIPT_DIR:/output" \

@@ -63,6 +63,7 @@ apt-get install -y --no-install-recommends \
     libc6-dev \
     libssl-dev \
     libexpat1-dev \
+    zlib1g-dev \
     qtbase5-dev
 
 #
