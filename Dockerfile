@@ -10,7 +10,7 @@ FROM jlesage/baseimage-gui:alpine-3.9-v3.5.2
 # Define software versions.
 ARG OPENJDK_VERSION=11.0.4
 ARG ZULU_OPENJDK_VERSION=11.33.15
-ARG CCEXTRACTOR_VERSION=0.87
+ARG CCEXTRACTOR_VERSION=0.88
 
 # Define software download URLs.
 ARG OPENJDK_URL=https://cdn.azul.com/zulu/bin/zulu${ZULU_OPENJDK_VERSION}-ca-jdk${OPENJDK_VERSION}-linux_musl_x64.tar.gz
