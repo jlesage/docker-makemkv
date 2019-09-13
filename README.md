@@ -187,6 +187,7 @@ ports are part of the example.
 version: '3'
 services:
   makemkv:
+    image: jlesage/makemkv
     build: .
     ports:
       - "5800:5800"
