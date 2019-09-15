@@ -4,6 +4,11 @@
 # https://github.com/jlesage/docker-makemkv
 #
 
+# Build MakeMKV.
+FROM ubuntu:disco
+COPY makemkv-builder /tmp/makemkv-builder
+RUN /tmp/makemkv-builder/builder/build.sh /tmp/
+
 # Pull base image.
 FROM jlesage/baseimage-gui:alpine-3.9-v3.5.2
 
@@ -20,7 +25,7 @@ ARG CCEXTRACTOR_URL=https://github.com/CCExtractor/ccextractor/archive/v${CCEXTR
 WORKDIR /tmp
 
 # Install MakeMKV.
-ADD makemkv-builder/makemkv.tar.gz /
+COPY --from=0 /tmp/makemkv-install /
 
 # Install Java.
 RUN \
