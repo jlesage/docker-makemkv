@@ -4,6 +4,8 @@
 # https://github.com/jlesage/docker-makemkv
 #
 
+ARG DOCKER_IMAGE_VERSION=unknown
+
 # Build MakeMKV.
 FROM ubuntu:disco
 COPY makemkv-builder /tmp/makemkv-builder
@@ -109,6 +111,6 @@ VOLUME ["/output"]
 LABEL \
       org.label-schema.name="makemkv" \
       org.label-schema.description="Docker container for MakeMKV" \
-      org.label-schema.version="unknown" \
+      org.label-schema.version="$DOCKER_IMAGE_VERSION" \
       org.label-schema.vcs-url="https://github.com/jlesage/docker-makemkv" \
       org.label-schema.schema-version="1.0"
