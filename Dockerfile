@@ -4,8 +4,6 @@
 # https://github.com/jlesage/docker-makemkv
 #
 
-ARG DOCKER_IMAGE_VERSION=unknown
-
 # Build MakeMKV.
 FROM ubuntu:disco
 COPY makemkv-builder /tmp/makemkv-builder
@@ -13,6 +11,9 @@ RUN /tmp/makemkv-builder/builder/build.sh /tmp/
 
 # Pull base image.
 FROM jlesage/baseimage-gui:alpine-3.9-v3.5.2
+
+# Docker image version is provided via build arg.
+ARG DOCKER_IMAGE_VERSION=unknown
 
 # Define software versions.
 ARG OPENJDK_VERSION=11.0.4
