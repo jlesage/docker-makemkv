@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.12.2</version>
+        <date>2019-09-27</date>
+        <change>Fixed issue where the container would not start with Docker version < 18.06.</change>
+      </release>
+      <release>
         <version>1.12.1</version>
         <date>2019-09-15</date>
         <change>Upgraded MakeMKV to version 1.14.5.</change>
