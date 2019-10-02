@@ -5,7 +5,7 @@
 #
 
 # Build MakeMKV.
-FROM ubuntu:cosmic
+FROM ubuntu:bionic
 COPY makemkv-builder /tmp/makemkv-builder
 RUN /tmp/makemkv-builder/builder/build.sh /tmp/
 
