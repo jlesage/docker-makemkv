@@ -139,7 +139,7 @@ section for more details.
       <release>
         <version>1.12.3</version>
         <date>2019-10-03</date>
-        <change>Really fixed issue where the container would not start with Docker version < 18.06 because of usage of `statx` system call.</change>
+        <change>Really fixed issue where the container would not start with Docker version less than 18.06 because of usage of `statx` system call.</change>
       </release>
       <release>
         <version>1.12.2</version>
