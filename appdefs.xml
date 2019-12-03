@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.13.0</version>
+        <date>2019-12-03</date>
+        <change>Upgraded MakeMKV to version 1.14.6.</change>
+      </release>
+      <release>
         <version>1.12.3</version>
         <date>2019-10-03</date>
         <change>Really fixed issue where the container would not start with Docker version less than 18.06 because of usage of `statx` system call.</change>
