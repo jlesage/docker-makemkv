@@ -137,6 +137,13 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.14.0</version>
+        <date>2020-03-08</date>
+        <change>Upgraded MakeMKV to version 1.15.0.</change>
+        <change>Upgraded FFmpeg to version 4.2.2.</change>
+        <change>Upgraded FDK AAC to version 2.0.1.</change>
+      </release>
+      <release>
         <version>1.13.1</version>
         <date>2019-12-05</date>
         <change>Updated MakeMKV to version 1.14.7.</change>
