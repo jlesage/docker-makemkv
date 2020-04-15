@@ -10,7 +10,7 @@ COPY makemkv-builder /tmp/makemkv-builder
 RUN /tmp/makemkv-builder/builder/build.sh /tmp/
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.9-v3.5.2
+FROM jlesage/baseimage-gui:alpine-3.9-v3.5.3
 
 # Docker image version is provided via build arg.
 ARG DOCKER_IMAGE_VERSION=unknown
