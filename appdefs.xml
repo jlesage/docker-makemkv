@@ -137,6 +137,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.15.1</version>
+        <date>2020-05-11</date>
+        <change>Fixed an issue where the automatic disc ripper would not use a drive under certain conditions.</change>
+      </release>
+      <release>
         <version>1.15.0</version>
         <date>2020-04-15</date>
         <change>Upgraded MakeMKV to version 1.15.1.</change>
