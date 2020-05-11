@@ -27,7 +27,7 @@ if [ "${AUTO_DISC_RIPPER_PARALLEL_RIP:-0}" -eq 0 ]; then
     mkdir /etc/services.d/autodiscripper
     cp /defaults/autodiscripper.run /etc/services.d/autodiscripper/run
 else
-    $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:[0-9]\+,[1|2]," | while read DRV_INFO
+    $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:[0-9]\+,[0|1|2]," | while read DRV_INFO
     do
         DRV_ID="$(echo "$DRV_INFO" | cut -d',' -f1 | cut -d':' -f2)"
         DRV_NAME="$(echo "$DRV_INFO" | cut -d',' -f5 | tr -d '"')"
