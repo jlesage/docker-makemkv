@@ -542,6 +542,10 @@ about setting environment variables.
 If the beta key is expired, just restart the container to automatically fetch
 and install the latest one.
 
+**NOTE**: Once beta key expires, it can take few days before a new key is made
+available by the author of MakeMKV.  During this time, the application is not
+functional.
+
 **NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
 be set to `BETA`.  See the [Environment Variables](#environment-variables)
 section for more details.
