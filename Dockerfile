@@ -82,6 +82,7 @@ RUN \
 # Install dependencies.
 RUN \
     add-pkg \
+	libcurl \
         wget \
         sed \
         findutils \
