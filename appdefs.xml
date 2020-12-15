@@ -141,6 +141,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.18.1</version>
+        <date>2020-12-15</date>
+        <change>Fixed issue where ripping of UHD discs would fail.</change>
+      </release>
+      <release>
         <version>1.18.0</version>
         <date>2020-12-14</date>
         <change>Updated MakeMKV to version 1.15.4.</change>
