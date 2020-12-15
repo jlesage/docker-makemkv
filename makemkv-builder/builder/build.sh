@@ -221,6 +221,12 @@ do
     ln -s ../$base_lib "$INSTALL_DIR/lib/platforms/$base_lib"
 done
 
+#
+# curl libraries
+#
+echo "Adding libcurl..."
+cp -av /usr/lib/x86_64-linux-gnu/libcurl.so.4* "$INSTALL_DIR/lib/"
+
 echo "Patching ELF of binaries..."
 find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$ROOT_EXEC_DIR/lib/ld-linux-x86-64.so.2" {} \;
 find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} \;
