@@ -12,8 +12,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 
-MAKEMKV_VERSION=1.15.3
-FFMPEG_VERSION=4.2.2
+MAKEMKV_VERSION=1.15.4
+FFMPEG_VERSION=4.3.1
 FDK_AAC_VERSION=2.0.1
 QT_VERSION=5.9.8
 
@@ -179,9 +179,10 @@ make -j$(nproc) install
 #
 cd "$BUILD_DIR"
 echo "Downloading MakeMKV OSS..."
-curl -# -L ${MAKEMKV_OSS_URL} | tar -xz
+mkdir makemkv-oss
+curl -# -L ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C makemkv-oss
 echo "Compiling MakeMKV OSS..."
-cd makemkv-oss-${MAKEMKV_VERSION}
+cd makemkv-oss
 patch -p0 < "$SCRIPT_DIR/launch-url.patch"
 DESTDIR="$INSTALL_DIR" PKG_CONFIG_PATH="$BUILD_DIR/ffmpeg/lib/pkgconfig:$BUILD_DIR/qt/lib/pkgconfig" ./configure --prefix=
 make -j$(nproc) install
@@ -191,9 +192,10 @@ make -j$(nproc) install
 #
 cd "$BUILD_DIR"
 echo "Downloading MakeMKV bin..."
-curl -# -L ${MAKEMKV_BIN_URL} | tar -xz
+mkdir makemkv-bin
+curl -# -L ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C makemkv-bin
 echo "Installing MakeMKV bin..."
-cd makemkv-bin-${MAKEMKV_VERSION}
+cd makemkv-bin
 patch -p0 < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
 DESTDIR="$INSTALL_DIR" make install
 
