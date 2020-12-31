@@ -16,12 +16,9 @@ FROM jlesage/baseimage-gui:alpine-3.9-v3.5.6
 ARG DOCKER_IMAGE_VERSION=unknown
 
 # Define software versions.
-ARG OPENJDK_VERSION=11.0.6
-ARG ZULU_OPENJDK_VERSION=11.37.17
 ARG CCEXTRACTOR_VERSION=0.88
 
 # Define software download URLs.
-ARG OPENJDK_URL=https://cdn.azul.com/zulu/bin/zulu${ZULU_OPENJDK_VERSION}-ca-jdk${OPENJDK_VERSION}-linux_musl_x64.tar.gz
 ARG CCEXTRACTOR_URL=https://github.com/CCExtractor/ccextractor/archive/v${CCEXTRACTOR_VERSION}.tar.gz
 
 # Define working directory.
@@ -30,29 +27,16 @@ WORKDIR /tmp
 # Install MakeMKV.
 COPY --from=0 /tmp/makemkv-install /
 
-# Install Java.
+# Install Java 8.
 RUN \
-    add-pkg --virtual build-dependencies \
-        curl \
-        && \
-    mkdir /tmp/jdk/ && \
-    # Download and extract.
-    curl -# -L "${OPENJDK_URL}" | tar xz --strip 1 -C /tmp/jdk && \
-    # Create a minimal Java install.
-    mkdir /usr/lib/jvm/ && \
-    /tmp/jdk/bin/jlink \
-        --compress=2 \
-        --module-path /tmp/jdk/jmods \
-        --add-modules "$(/tmp/jdk/bin/jdeps /opt/makemkv/share/MakeMKV/blues.jar | grep -v blues.jar | grep -v 'not found' | awk '{ print $4 }'| sort -u | tr '\n' ',')" \
-        --output /usr/lib/jvm/jdk \
-        && \
+    add-pkg openjdk8-jre-base && \
     # Removed uneeded stuff.
     rm -r \
-        /usr/lib/jvm/jdk/include \
-        /usr/lib/jvm/jdk/legal \
+        /usr/lib/jvm/java-1.8-openjdk/bin \
+        /usr/lib/jvm/java-1.8-openjdk/lib \
+        /usr/lib/jvm/java-1.8-openjdk/jre/lib/ext \
         && \
     # Cleanup.
-    del-pkg build-dependencies && \
     rm -rf /tmp/* /tmp/.[!.]*
 
 # Compile and install ccextractor.
