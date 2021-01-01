@@ -9,6 +9,31 @@ FROM ubuntu:bionic
 COPY makemkv-builder /tmp/makemkv-builder
 RUN /tmp/makemkv-builder/builder/build.sh /tmp/
 
+# Build YAD.  The one from the Alpine repo doesn't support the multi-progress
+# feature.
+FROM alpine:3.12
+ARG YAD_VERSION=0.40.0
+ARG YAD_URL=https://downloads.sourceforge.net/project/yad-dialog/yad-${YAD_VERSION}.tar.xz
+RUN apk --no-cache add \
+    build-base \
+    curl \
+    gtk+3.0-dev \
+    intltool
+RUN \
+    # Set same default compilation flags as abuild.
+    export CFLAGS="-Os -fomit-frame-pointer" && \
+    export CXXFLAGS="$CFLAGS" && \
+    export CPPFLAGS="$CFLAGS" && \
+    export LDFLAGS="-Wl,--as-needed" && \
+    # Download.
+    mkdir /tmp/yad && \
+    curl -# -L "${YAD_URL}" | tar xJ --strip 1 -C /tmp/yad && \
+    # Compile.
+    cd /tmp/yad && \
+    ./configure --with-gtk=gtk3 && \
+    make -j$(nproc) && \
+    strip src/yad
+
 # Pull base image.
 FROM jlesage/baseimage-gui:alpine-3.12-v3.5.6
 
@@ -63,6 +88,18 @@ RUN \
     del-pkg build-dependencies && \
     rm -rf /tmp/* /tmp/.[!.]*
 
+# Install YAD.
+COPY --from=1 /tmp/yad/src/yad /usr/bin/
+RUN \
+    add-pkg gtk+3.0 && \
+    # Remove unneeded binaries that take a lot of space.
+    rm \
+        /usr/bin/gtk3-demo \
+        /usr/bin/gtk3-demo-application \
+        /usr/bin/gtk3-widget-factory \
+        && \
+    true
+
 # Install dependencies.
 RUN \
     add-pkg \
@@ -71,6 +108,15 @@ RUN \
         findutils \
         util-linux \
         lsscsi
+
+# Adjust the openbox config.
+RUN \
+    # Maximize only the main window.
+    sed-patch 's/<application type="normal">/<application type="normal" title="MakeMKV BETA">/' \
+        /etc/xdg/openbox/rc.xml && \
+    # Make sure the main window is always in the background.
+    sed-patch '/<application type="normal" title="MakeMKV BETA">/a \    <layer>below</layer>' \
+        /etc/xdg/openbox/rc.xml
 
 # Generate and install favicons.
 RUN \

@@ -580,6 +580,18 @@ section for more details.
         <mask>false</mask>
       </unraid_template>
     </environment_variable>
+    <environment_variable>
+      <name>AUTO_DISC_RIPPER_NO_GUI_PROGRESS</name>
+      <description>When set to `1`, progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI.</description>
+      <default>0</default>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Disable Progress in GUI</title>
+        <description>When set to [b][i]1[/b][/i], progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI.</description>
+        <display>always</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
     </environment_variables>
     <!-- Volumes -->
     <volumes>

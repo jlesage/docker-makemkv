@@ -43,6 +43,42 @@ log_makemkvcon() {
     fi
 }
 
+log_yad() {
+    if [ -n "${YAD_LOGFILE:-}" ]; then
+        # Control the progress bar for current action.
+        echo "1:$4" >> "$YAD_LOGFILE"
+        # Control the progress bar for the current operation.
+        echo "2:$3" >> "$YAD_LOGFILE"
+        # Message to be displayed in the progress bar for the current action.
+        echo "1:#$2 - $4%" >> "$YAD_LOGFILE"
+        # Message to be displayed in the progress bar for the current operation.
+        echo "2:#$1 - $3%" >> "$YAD_LOGFILE"
+    fi
+}
+
+start_yad() {
+    tail -f "$3" 2>/dev/null | yad \
+        --fixed \
+        --width=384 \
+        --title "Automatic Disc Ripper" \
+        --window-icon /opt/novnc/images/icons/master_icon.png \
+        --borders 10 \
+        --text "Ripping disc ($2) from drive $1..." \
+        --no-buttons \
+        --multi-progress \
+        --bar="":NORM \
+        --bar="":NORM \
+        &
+    YAD_PID=$!
+}
+
+stop_yad() {
+    if [ -n "${YAD_PID:-}" ]; then
+        kill "${YAD_PID}" 2> /dev/null || true
+        YAD_PID=
+    fi
+}
+
 kill_makemkvcon() {
     PID="$(ps -o pid,args | grep "/opt/makemkv/bin/makemkvcon" | grep -vw grep | grep -vw guiserver | grep " mkv " | tr -s ' ' | cut -d' ' -f2)"
     if [ "${PID:-UNSET}" != "UNSET" ]; then
@@ -52,17 +88,24 @@ kill_makemkvcon() {
 }
 
 process_makemkvcon_output() {
+    CURRENT_OPERATION=
+    CURRENT_ACTION=
     while read OUTPUT; do
         OUTPUT_TYPE="$(echo "$OUTPUT" | cut -d':' -f1)"
         if [ "$OUTPUT_TYPE" = "PRGT" ]; then
-            log_makemkvcon "Current operation: $(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            CURRENT_OPERATION="$(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            log_makemkvcon "Current operation: $CURRENT_OPERATION"
         elif [ "$OUTPUT_TYPE" = "PRGC" ]; then
-            log_makemkvcon "Current action: $(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            CURRENT_ACTION="$(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            log_makemkvcon "Current action: $CURRENT_ACTION"
         elif [ "$OUTPUT_TYPE" = "PRGV" ]; then
-            CUR="$(echo "$OUTPUT" | cut -d',' -f1 | cut -d':' -f2)"
-            TOT="$(echo "$OUTPUT" | cut -d',' -f2)"
+            AC_VAL="$(echo "$OUTPUT" | cut -d',' -f1 | cut -d':' -f2)"
+            OP_VAL="$(echo "$OUTPUT" | cut -d',' -f2)"
             MAX="$(echo "$OUTPUT" | cut -d',' -f3)"
-            log_makemkvcon "Current progress - $(expr $CUR \* 100 / $MAX)%, Total process - $(expr $TOT \* 100 / $MAX)%"
+            AC_PERCENT="$(expr $AC_VAL \* 100 / $MAX)"
+            OP_PERCENT="$(expr $OP_VAL \* 100 / $MAX)"
+            log_makemkvcon "Current progress - $AC_PERCENT%, Total progress - $OP_PERCENT%"
+            log_yad "$CURRENT_OPERATION" "$CURRENT_ACTION" "$OP_PERCENT" "$AC_PERCENT"
         elif [ "$OUTPUT_TYPE" = "MSG" ]; then
             MSG_CODE="$(echo "$OUTPUT" | cut -d',' -f1 | cut -d':' -f2)"
             MSG_FLAGS="$(echo "$OUTPUT" | cut -d',' -f2)"
@@ -110,12 +153,27 @@ process_disc() {
         MAKEMKV_COMMON_OPTS="$MAKEMKV_COMMON_OPTS --minlength=$AUTO_DISC_RIPPER_MIN_TITLE_LENGTH"
     fi
 
+    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+        YAD_LOGFILE="$(mktemp)"
+        start_yad "$(echo $SRC | cut -d':' -f2)" "$LABEL" "$YAD_LOGFILE"
+    fi
+
+    MAKEMKV_CLI_RC=1
     if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
         log "Backup mode enabled for Blu-ray disc."
         $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output
+        MAKEMKV_CLI_RC=$?
     else
         $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output
+        MAKEMKV_CLI_RC=$?
     fi
+
+    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+        stop_yad
+        rm -f "$YAD_LOGFILE"
+    fi
+
+    return $MAKEMKV_CLI_RC
 }
 
 log "starting..."
