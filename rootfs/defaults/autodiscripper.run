@@ -80,7 +80,7 @@ stop_yad() {
 }
 
 kill_makemkvcon() {
-    PID="$(ps -o pid,args | grep "/opt/makemkv/bin/makemkvcon" | grep -vw grep | grep -vw guiserver | grep " mkv " | tr -s ' ' | cut -d' ' -f2)"
+    PID="$(ps -o pid,args | grep "/opt/makemkv/bin/makemkvcon" | grep -vw grep | grep -vw guiserver | grep " $1 " | tr -s ' ' | xargs | cut -d' ' -f1)"
     if [ "${PID:-UNSET}" != "UNSET" ]; then
         kill -sigkill $PID
         wait $PID >/dev/null 2>&1
@@ -122,12 +122,12 @@ process_makemkvcon_output() {
                 5038)
                     # MSG:5038,776,2,"The total size of all output files may reach as much as 2384 megabytes while there are only 10 megabytes free on the destination drive. Do you still want to continue?","The total size of all output files may reach as much as %1 megabytes while there are only %2 megabytes free on the destination drive. Do you still want to continue?","2384","10"
                     log "Terminating makemkvcon due to insufficient disk space..."
-                    kill_makemkvcon
+                    kill_makemkvcon "$1"
                     exit 1
                     ;;
                 2003)
                     # MSG:2003,0,3,"Error 'Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN' occurred while reading '/BDMV/STREAM/00007.m2ts' at offset '3729653760'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN","/BDMV/STREAM/00007.m2ts","3729653760"
-                    kill_makemkvcon
+                    kill_makemkvcon "$1"
                     exit 1
                     ;;
             esac
@@ -161,10 +161,10 @@ process_disc() {
     MAKEMKV_CLI_RC=1
     if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
         log "Backup mode enabled for Blu-ray disc."
-        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"
         MAKEMKV_CLI_RC=$?
     else
-        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"
         MAKEMKV_CLI_RC=$?
     fi
 
