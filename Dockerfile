@@ -17,7 +17,7 @@ ARG YAD_URL=https://downloads.sourceforge.net/project/yad-dialog/yad-${YAD_VERSI
 RUN apk --no-cache add \
     build-base \
     curl \
-    gtk+3.0-dev \
+    gtk+2.0-dev \
     intltool
 RUN \
     # Set same default compilation flags as abuild.
@@ -30,7 +30,7 @@ RUN \
     curl -# -L "${YAD_URL}" | tar xJ --strip 1 -C /tmp/yad && \
     # Compile.
     cd /tmp/yad && \
-    ./configure --with-gtk=gtk3 && \
+    ./configure && \
     make -j$(nproc) && \
     strip src/yad
 
@@ -95,15 +95,7 @@ RUN \
 
 # Install YAD.
 COPY --from=1 /tmp/yad/src/yad /usr/bin/
-RUN \
-    add-pkg gtk+3.0 && \
-    # Remove unneeded binaries that take a lot of space.
-    rm \
-        /usr/bin/gtk3-demo \
-        /usr/bin/gtk3-demo-application \
-        /usr/bin/gtk3-widget-factory \
-        && \
-    true
+RUN add-pkg gtk+2.0
 
 # Install dependencies.
 RUN \
