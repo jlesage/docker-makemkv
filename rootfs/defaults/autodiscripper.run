@@ -135,7 +135,7 @@ process_makemkvcon_output() {
                     #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38393
                     #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38449
                     # MSG:2003,0,3,"Error 'Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION' occurred while reading 'DVD+R-DL ATAPI DVD A  DH16AASH SA15' at offset '1048576'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION","DVD+R-DL ATAPI DVD A  DH16AASH SA15","1048576"
-                    if ! echo "$OUTPUT" | grep -q "READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION" then;
+                    if ! echo "$OUTPUT" | grep -q "READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION"; then
                         kill_makemkvcon "$1"
                         exit 1
                     fi
