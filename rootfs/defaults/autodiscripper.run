@@ -127,8 +127,18 @@ process_makemkvcon_output() {
                     ;;
                 2003)
                     # MSG:2003,0,3,"Error 'Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN' occurred while reading '/BDMV/STREAM/00007.m2ts' at offset '3729653760'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN","/BDMV/STREAM/00007.m2ts","3729653760"
-                    kill_makemkvcon "$1"
-                    exit 1
+                    #
+                    # NOTE: The message code 2003 is used for multiple kind of
+                    # SCSI errors.  We don't have to terminate with the
+                    # following message, since in some cases it is harmless.
+                    # See:
+                    #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38393
+                    #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38449
+                    # MSG:2003,0,3,"Error 'Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION' occurred while reading 'DVD+R-DL ATAPI DVD A  DH16AASH SA15' at offset '1048576'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION","DVD+R-DL ATAPI DVD A  DH16AASH SA15","1048576"
+                    if ! echo "$OUTPUT" | grep -q "READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION" then;
+                        kill_makemkvcon "$1"
+                        exit 1
+                    fi
                     ;;
             esac
         fi
