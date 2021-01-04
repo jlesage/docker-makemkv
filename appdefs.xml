@@ -141,6 +141,15 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.19.0</version>
+        <date>2021-01-04</date>
+        <change>The progress of a disc processed by the automatic disc ripper is now visible in the UI.</change>
+        <change>Fixed issue where titles were not identified for discs using playlist obfuscation.</change>
+        <change>Fixed issue where the automatic disc ripper would stop processing the disc on an 'READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION' error, even though this error can be harmless in some situations.</change>
+        <change>Fixed issue where the automatic disc ripper would fail to kill the right MakeMKV instance.</change>
+        <change>Now using baseimage based on Alpine 3.12.</change>
+      </release>
+      <release>
         <version>1.18.1</version>
         <date>2020-12-15</date>
         <change>Fixed issue where ripping of UHD discs would fail.</change>
