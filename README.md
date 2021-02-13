@@ -505,6 +505,15 @@ startup, messages similar to these ones are outputed:
 In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
 exposed to the container.
 
+**NOTE**: Some distros (e.g. Manjaro) do not load the SCSI generic driver by
+default, so you will not see any devices like:`/dev/sg*`. You have to load the
+module manually by doing:
+```
+sudo modprobe sg
+```
+To permanently start the module at bootup, you would have to edit
+`/etc/modules-load.d/modules.conf` and add `sg` at its end.
+
 ## Automatic Disc Ripper
 
 This container has an automatic disc ripper built-in.  When enabled, any DVD or
