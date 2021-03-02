@@ -5,24 +5,24 @@
  void MainWnd::SlotHelppage()
  {
 +#if 0
-     SlotLaunchUrl(QStringFromUtf16(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
+     SlotLaunchUrl(QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
 +#else
 +    QMessageBox::information(NULL,UI_QSTRING(APP_CAPTION_MSG),
 +        "To view online help, please visit "+
-+        QStringFromUtf16(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
 +#endif
  }
  
  void MainWnd::SlotPurchase()
  {
 +#if 0
-     SlotLaunchUrl(QStringFromUtf16(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
+     SlotLaunchUrl(QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
 +#else
 +    QMessageBox::information(NULL,UI_QSTRING(APP_CAPTION_MSG),
 +        "To purchase "+
-+        QStringFromUtf16(m_app->GetAppString(AP_vastr_Name))+
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_Name))+
 +        ", please visit "+
-+        QStringFromUtf16(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
 +#endif
  }
  
