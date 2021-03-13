@@ -1,5 +1,5 @@
 # Docker container for MakeMKV
-[![Docker Image Size](https://img.shields.io/microbadger/image-size/jlesage/makemkv)](http://microbadger.com/#/images/jlesage/makemkv) [![Build Status](https://drone.le-sage.com/api/badges/jlesage/docker-makemkv/status.svg)](https://drone.le-sage.com/jlesage/docker-makemkv) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-makemkv.svg)](https://github.com/jlesage/docker-makemkv/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage/0usd)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jlesage/makemkv/latest)](https://hub.docker.com/r/jlesage/makemkv/tags) [![Build Status](https://drone.le-sage.com/api/badges/jlesage/docker-makemkv/status.svg)](https://drone.le-sage.com/jlesage/docker-makemkv) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-makemkv.svg)](https://github.com/jlesage/docker-makemkv/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage/0usd)
 
 This is a Docker container for [MakeMKV](http://www.makemkv.com/).
 
