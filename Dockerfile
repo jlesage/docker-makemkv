@@ -40,12 +40,6 @@ FROM jlesage/baseimage-gui:alpine-3.12-v3.5.6
 # Docker image version is provided via build arg.
 ARG DOCKER_IMAGE_VERSION=unknown
 
-# Define software versions.
-ARG CCEXTRACTOR_VERSION=0.88
-
-# Define software download URLs.
-ARG CCEXTRACTOR_URL=https://github.com/CCExtractor/ccextractor/archive/v${CCEXTRACTOR_VERSION}.tar.gz
-
 # Define working directory.
 WORKDIR /tmp
 
@@ -62,35 +56,6 @@ RUN \
         /usr/lib/jvm/java-1.8-openjdk/jre/lib/ext \
         && \
     # Cleanup.
-    rm -rf /tmp/* /tmp/.[!.]*
-
-# Compile and install ccextractor.
-RUN \
-    add-pkg --virtual build-dependencies \
-        build-base \
-        cmake \
-        zlib-dev \
-        curl \
-        && \
-    # Set same default compilation flags as abuild.
-    export CFLAGS="-Os -fomit-frame-pointer" && \
-    export CXXFLAGS="$CFLAGS" && \
-    export CPPFLAGS="$CFLAGS" && \
-    export LDFLAGS="-Wl,--as-needed" && \
-    # Download and extract.
-    mkdir /tmp/ccextractor && \
-    curl -# -L "${CCEXTRACTOR_URL}" | tar xz --strip 1 -C /tmp/ccextractor && \
-    # Compile.
-    mkdir ccextractor/build && \
-    cd ccextractor/build && \
-    cmake ../src && \
-    make && \
-    cd ../../ && \
-    # Install.
-    cp ccextractor/build/ccextractor /usr/bin/ && \
-    strip /usr/bin/ccextractor && \
-    # Cleanup.
-    del-pkg build-dependencies && \
     rm -rf /tmp/* /tmp/.[!.]*
 
 # Install YAD.
