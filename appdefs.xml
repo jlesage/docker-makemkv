@@ -141,6 +141,12 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.20.3</version>
+        <date>2021-04-14</date>
+        <change>Now using baseimage version 3.5.7, which brings the following change:</change>
+        <change>Updated installed packages to get latest security fixes.</change>
+      </release>
+      <release>
         <version>1.20.2</version>
         <date>2021-03-21</date>
         <change>Updated MakeMKV to version 1.16.3.</change>
