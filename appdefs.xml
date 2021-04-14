@@ -144,7 +144,7 @@ section for more details.
         <version>1.20.3</version>
         <date>2021-04-14</date>
         <change>Now using baseimage version 3.5.7, which brings the following change:</change>
-        <change>Updated installed packages to get latest security fixes.</change>
+        <change level="2">Updated installed packages to get latest security fixes.</change>
       </release>
       <release>
         <version>1.20.2</version>
