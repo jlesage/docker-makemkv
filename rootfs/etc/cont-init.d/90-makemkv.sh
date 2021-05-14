@@ -71,13 +71,15 @@ esac
 find /config -mindepth 1 -exec chown $USER_ID:$GROUP_ID {} \;
 
 # Take ownership of the output directory.
-if ! chown $USER_ID:$GROUP_ID /output; then
-    # Failed to take ownership of /output.  This could happen when,
-    # for example, the folder is mapped to a network share.
-    # Continue if we have write permission, else fail.
-    if s6-setuidgid $USER_ID:$GROUP_ID [ ! -w /output ]; then
-        log "ERROR: Failed to take ownership and no write permission on /output."
-        exit 1
+if [ "${TAKE_OUTPUT_OWNERSHIP:-1}" -eq 1 ]; then
+    if ! chown $USER_ID:$GROUP_ID /output; then
+        # Failed to take ownership of /output.  This could happen when,
+        # for example, the folder is mapped to a network share.
+        # Continue if we have write permission, else fail.
+        if s6-setuidgid $USER_ID:$GROUP_ID [ ! -w /output ]; then
+            log "ERROR: Failed to take ownership and no write permission on /output."
+            exit 1
+        fi
     fi
 fi
 
