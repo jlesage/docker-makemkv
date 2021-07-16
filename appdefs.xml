@@ -25,19 +25,11 @@ multiple video/audio tracks with all meta-information and preserve chapters.
     <support_url>https://forums.unraid.net/topic/58352-support-makemkv/</support_url>
     <category>MediaApp:Video</category>
     <extra_description>
-[span style='color: red;'][b]NOTE:[/b][/span] For the container to have
-access to your optical drive(s), you need to allow access to the proper
-Linux devices by adding (one for each of them) the parameter
-[b][i]--device DEV[/i][/b] in the [i]Extra Parameters[/i] field (shown when
-[i]Advanced View[/i] is enabled).[br]
-An optical drive is represented by two Linux device files: [b][i]/dev/srX[/i][/b]
-and [b][i]/dev/sgY[/i][/b].  For optimal performance, the container needs both
-of them.  So if your optical drive is represented by [b][i]/dev/sr0[/i][/b] and
-[b][i]/dev/sg2[/i][/b], you need to add
-[b][i]--device /dev/sr0 --device /dev/sg2[/i][/b] to the [i]Extra Parameters[/i]
-field.[br]
-To determine the right devices to use, start the container and looks at its
-log.
+**NOTE**: For the container to have access to your optical drive(s), you need to
+add them to your container configuration.  This is done by adding a new
+*Device*.  An optical drive is represented by two Linux device files: */dev/srX*
+and */dev/sgY*.  For optimal performance, the container needs both of them.  To
+determine the right devices to use, start the container and look at its log.
     </extra_description>
   </unraid>
   <container>
