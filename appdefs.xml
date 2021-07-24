@@ -533,6 +533,18 @@ section for more details.
       </unraid_template>
     </environment_variable>
     <environment_variable>
+      <name>AUTO_DISC_RIPPER_MAKEMKV_PROFILE</name>
+      <description>Filename of the custom MakeMKV profile the automatic disc ripper should use.  The profile is expected to be found under the `/config` folder of the container, unless an absolute path is specified.</description>
+      <default/>
+      <unraid_template>
+        <title>Automatic Disc Ripper: Custom MakeMKV Profile</title>
+      <description>Filename of the custom MakeMKV profile the automatic disc ripper should use.  The profile is expected to be found under the /config folder of the container, unless an absolute path is specified.</description>
+        <display>advanced</display>
+        <required>false</required>
+        <mask>false</mask>
+      </unraid_template>
+    </environment_variable>
+    <environment_variable>
       <name>AUTO_DISC_RIPPER_EJECT</name>
       <description>When set to `1`, disc is ejected from the drive when ripping is terminated.</description>
       <default>0</default>

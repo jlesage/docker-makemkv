@@ -162,6 +162,18 @@ process_disc() {
     if [ "${AUTO_DISC_RIPPER_MIN_TITLE_LENGTH:-UNSET}" != "UNSET" ]; then
         MAKEMKV_COMMON_OPTS="$MAKEMKV_COMMON_OPTS --minlength=$AUTO_DISC_RIPPER_MIN_TITLE_LENGTH"
     fi
+    if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:-UNSET}" != "UNSET" ]; then
+        if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:0:1}" = "/" ]; then
+            MAKEMKV_PROFILE_PATH="$AUTO_DISC_RIPPER_MAKEMKV_PROFILE"
+        else
+            MAKEMKV_PROFILE_PATH="/config/$AUTO_DISC_RIPPER_MAKEMKV_PROFILE"
+        fi
+        if [ -f "$MAKEMKV_PROFILE_PATH" ]; then
+            MAKEMKV_COMMON_OPTS="--profile=$MAKEMKV_PROFILE_PATH $MAKEMKV_COMMON_OPTS"
+        else
+            log "ERROR: MakeMKV profile not found at $MAKEMKV_PROFILE_PATH."
+        fi
+    fi
 
     if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
         YAD_LOGFILE="$(mktemp)"
