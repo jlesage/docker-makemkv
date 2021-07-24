@@ -15,13 +15,13 @@ SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 MAKEMKV_VERSION=1.16.4
 FFMPEG_VERSION=4.3.1
 FDK_AAC_VERSION=2.0.1
-QT_VERSION=5.9.8
+QT_VERSION=5.9.9
 
 MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
 MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
 FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
 FDK_AAC_URL=https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.gz
-QT_URL=http://download.qt.io/official_releases/qt/5.9/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
+QT_URL=https://download.qt.io/archive/qt/5.9/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
 
 usage() {
     echo "usage: $(basename $0) OUTPUT_DIR [ROOT_EXEC_DIR]
