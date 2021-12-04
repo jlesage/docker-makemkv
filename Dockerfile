@@ -15,8 +15,8 @@ ARG MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSI
 FROM ubuntu:20.04 AS makemkv
 ARG MAKEMKV_OSS_URL
 ARG MAKEMKV_BIN_URL
-COPY makemkv-builder /tmp/makemkv-builder
-RUN /tmp/makemkv-builder/builder/build.sh /tmp/
+COPY src/makemkv /tmp/makemkv
+RUN /tmp/makemkv/build.sh "${MAKEMKV_OSS_URL}" "${MAKEMKV_BIN_URL}"
 
 # Build YAD.  The one from the Alpine repo doesn't support the multi-progress
 # feature.
