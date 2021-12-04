@@ -4,8 +4,17 @@
 # https://github.com/jlesage/docker-makemkv
 #
 
+# Define software versions.
+ARG MAKEMKV_VERSION=1.16.5
+
+# Define software download URLs.
+ARG MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
+ARG MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
+
 # Build MakeMKV.
-FROM ubuntu:bionic
+FROM ubuntu:20.04 AS makemkv
+ARG MAKEMKV_OSS_URL
+ARG MAKEMKV_BIN_URL
 COPY makemkv-builder /tmp/makemkv-builder
 RUN /tmp/makemkv-builder/builder/build.sh /tmp/
 
@@ -44,7 +53,7 @@ ARG DOCKER_IMAGE_VERSION=unknown
 WORKDIR /tmp
 
 # Install MakeMKV.
-COPY --from=0 /tmp/makemkv-install /
+COPY --from=makemkv /opt/makemkv /opt/makemkv
 
 # Install Java 8.
 RUN \

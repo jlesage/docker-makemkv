@@ -1,66 +1,53 @@
 #!/bin/bash
-#
-# NOTE: The latest Qt version from the 5.9 branch is used.  Recent Qt versions
-#       are using the `statx` system call, which is not whitelisted by default
-#       on Docker versions < 8.6.
-#
 
-set -e
+set -e # Exit immediately if a command exits with a non-zero status.
+set -u # Treat unset variables as an error.
 set -o pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
 SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 
-MAKEMKV_VERSION=1.16.5
-FFMPEG_VERSION=4.3.1
-FDK_AAC_VERSION=2.0.1
-QT_VERSION=5.9.9
+FFMPEG_VERSION=4.3.2
+FDK_AAC_VERSION=2.0.2
 
-MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
-MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
 FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
 FDK_AAC_URL=https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.gz
-QT_URL=https://download.qt.io/archive/qt/5.9/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
 
 usage() {
-    echo "usage: $(basename $0) OUTPUT_DIR [ROOT_EXEC_DIR]
+    echo "usage: $(basename $0) MAKEMKV_OSS_URL MAKEMKV_BIN_URL
 
   Arguments:
-    OUTPUT_DIR     Directory where the tarball will be copied to.
-    ROOT_EXEC_DIR  Root directory where MakeMKV will be located at execution
-                   time.  Default: '/opt/makemkv'.
+    MAKEMKV_OSS_URL URL where to download the MakeMKV OSS package.
+    MAKEMKV_BIN_URL URL where to download the MakeMKV binary package.
 "
+}
+
+function log {
+    echo ">>> $*"
 }
 
 # Validate script arguments.
 if [ -z "$1" ]; then
-    echo "ERROR: Output directory must be specified."
+    echo "ERROR: MakeMKV OSS URL must be specified."
     usage
     exit 1
-elif [ -n "$2" ] && [[ $2 != /* ]]; then
-    echo "ERROR: Invalid root execution directory."
+elif [ -z "$2" ]; then
+    echo "ERROR: MakeMKV binary URL must be specified."
     usage
     exit 1
 fi
 
-TARBALL_DIR="$1"
-ROOT_EXEC_DIR="${2:-/opt/makemkv}"
-BUILD_DIR=/tmp/makemkv-build
-INSTALL_BASEDIR=/tmp/makemkv-install
-INSTALL_DIR=$INSTALL_BASEDIR$ROOT_EXEC_DIR
+MAKEMKV_OSS_URL="$1"
+MAKEMKV_BIN_URL="$2"
 
-rm -rf "$INSTALL_DIR"
-mkdir -p "$TARBALL_DIR"
-mkdir -p "$BUILD_DIR"
-mkdir -p "$INSTALL_DIR"
+MAKEMKV_ROOT_DIR=/opt/makemkv
+mkdir -p "$MAKEMKV_ROOT_DIR"
 
-echo "Updating APT cache..."
+log "Updating APT cache..."
 apt-get update
 
-# NOTE: zlib is needed by Qt and MakeMKV.
-# NOTE: xkb-data is needed for Qt to detect the correct XKB config path.
-echo "Installing build prerequisites..."
+log "Installing build prerequisites..."
 apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
@@ -78,170 +65,106 @@ apt-get install -y --no-install-recommends \
     libxcb1-dev \
     libx11-dev \
     libx11-xcb-dev \
-    xkb-data
+    qtbase5-dev \
 
 #
 # fdk-aac
 #
-cd "$BUILD_DIR"
-echo "Downloading fdk-aac..."
-curl -# -L ${FDK_AAC_URL} | tar -xz
-echo "Compiling fdk-aac..."
-cd fdk-aac-${FDK_AAC_VERSION}
-./autogen.sh
-./configure --prefix="$BUILD_DIR/fdk-aac" \
-            --enable-static \
-            --disable-shared \
-            --with-pic
-make -j$(nproc) install
+mkdir /tmp/fdk-aac
+log "Downloading fdk-aac..."
+curl -# -L ${FDK_AAC_URL} | tar -xz --strip 1 -C /tmp/fdk-aac
+log "Configuring fdk-aac..."
+(
+    cd /tmp/fdk-aac && \
+    ./autogen.sh && \
+    ./configure \
+        --prefix=/usr \
+        --enable-static \
+        --disable-shared \
+        --with-pic \
+)
+log "Compiling fdk-aac..."
+make -C /tmp/fdk-aac -j$(nproc)
+log "Installing fdk-aac..."
+make -C /tmp/fdk-aac install
 
 #
 # ffmpeg
 #
-cd "$BUILD_DIR"
-echo "Downloading ffmpeg..."
-curl -# -L ${FFMPEG_URL} | tar -xJ
-echo "Compiling ffmpeg..."
-cd ffmpeg-${FFMPEG_VERSION}
-PKG_CONFIG_PATH="$BUILD_DIR/fdk-aac/lib/pkgconfig" ./configure \
-        --prefix="$BUILD_DIR/ffmpeg" \
+mkdir /tmp/ffmpeg
+log "Downloading ffmpeg..."
+curl -# -L ${FFMPEG_URL} | tar -xJ --strip 1 -C /tmp/ffmpeg
+log "Configuring ffmpeg..."
+(
+    cd /tmp/ffmpeg && ./configure \
+        --prefix=/usr \
         --enable-static \
         --disable-shared \
         --enable-pic \
         --enable-libfdk-aac \
-        --disable-yasm \
+        --disable-x86asm \
         --disable-doc \
-        --disable-programs
-make -j$(nproc) install
-
-#
-# Qt
-#
-# NOTE: fontconfig is disabled to avoid potential config files
-#       incompatibilities.  The version used by the builder may differ from the
-#       one used at runtime.
-#
-cd "$BUILD_DIR"
-echo "Downloading qt..."
-mkdir qt-src
-curl -# -L ${QT_URL} | tar -xJ --strip 1 -C qt-src
-echo "Compiling qt..."
-cd qt-src
-# Create the configure options file.
-echo "\
--opensource
--confirm-license
--prefix
-$BUILD_DIR/qt
--sysconfdir
-/etc/xdg
--release
--strip
--ltcg
--no-pch
--nomake
-tools
--nomake
-tests
--nomake
-examples
--sql-sqlite
--no-sql-odbc
--system-zlib
--qt-freetype
--qt-pcre
--qt-libpng
--qt-libjpeg
--qt-xcb
--qt-xkbcommon-x11
--qt-harfbuzz
--qt-sqlite
--no-fontconfig
--no-compile-examples
--no-cups
--no-iconv
--no-opengl
--no-qml-debug
--no-feature-xml
--no-feature-testlib
--no-openssl
-" > config.opt
-# Skip all modules (except qtbase).
-find . -maxdepth 1 -type d -printf "%f\n" | grep qt | grep -v qtbase | xargs -n1 printf "-skip\n%s\n" >> config.opt
-# Run configure with new options.
-./configure -redo
-# Compile.
-make -j$(nproc)
-make -j$(nproc) install
+        --disable-programs \
+)
+log "Compiling ffmpeg..."
+make -C /tmp/ffmpeg -j$(nproc)
+log "Installing ffmpeg..."
+make -C /tmp/ffmpeg install
 
 #
 # MakeMKV OSS
 #
-cd "$BUILD_DIR"
-echo "Downloading MakeMKV OSS..."
-mkdir makemkv-oss
-curl -# -L ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C makemkv-oss
-echo "Compiling MakeMKV OSS..."
-cd makemkv-oss
-patch -p0 < "$SCRIPT_DIR/launch-url.patch"
-DESTDIR="$INSTALL_DIR" PKG_CONFIG_PATH="$BUILD_DIR/ffmpeg/lib/pkgconfig:$BUILD_DIR/qt/lib/pkgconfig" ./configure --prefix=
-make -j$(nproc) install
+mkdir /tmp/makemkv-oss
+log "Downloading MakeMKV OSS..."
+curl -# -L ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C /tmp/makemkv-oss
+log "Configuring MakeMKV OSS..."
+(
+    cd /tmp/makemkv-oss && ./configure \
+        --prefix=/ \
+)
+log "Compiling MakeMKV OSS..."
+patch -p0 -d /tmp/makemkv-oss < "$SCRIPT_DIR/launch-url.patch"
+make -C /tmp/makemkv-oss -j$(nproc)
+log "Installing MakeMKV OSS..."
+make DESTDIR="$MAKEMKV_ROOT_DIR" -C /tmp/makemkv-oss install
+rm -r /opt/makemkv/share/applications
 
 #
 # MakeMKV bin
 #
-cd "$BUILD_DIR"
-echo "Downloading MakeMKV bin..."
-mkdir makemkv-bin
-curl -# -L ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C makemkv-bin
-echo "Installing MakeMKV bin..."
-cd makemkv-bin
-patch -p0 < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
-DESTDIR="$INSTALL_DIR" make install
+mkdir /tmp/makemkv-bin
+log "Downloading MakeMKV bin..."
+curl -# -L ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C /tmp/makemkv-bin
+log "Installing MakeMKV bin..."
+patch -p0 -d /tmp/makemkv-bin < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
+make DESTDIR="$MAKEMKV_ROOT_DIR" -C /tmp/makemkv-bin install
 
 #
 # Umask Wrapper
 #
-echo "Compiling umask wrapper..."
-gcc -o "$BUILD_DIR"/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
-echo "Installing umask wrapper..."
-cp -v "$BUILD_DIR"/umask_wrapper.so "$INSTALL_DIR/lib/"
+log "Compiling umask wrapper..."
+gcc -o /tmp/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
+log "Installing umask wrapper..."
+cp -v /tmp/umask_wrapper.so "$MAKEMKV_ROOT_DIR"/lib/
+strip "$MAKEMKV_ROOT_DIR"/lib/umask_wrapper.so
 
-#
-# QT Plugins
-#
-echo "Adding QT platform plugins..."
-QT_PLUGINS="$BUILD_DIR/qt/plugins/platforms/libqxcb.so"
-mkdir "$INSTALL_DIR/lib/platforms"
-for lib in $QT_PLUGINS
+# Add needed liraries that are not catched by tracking dependencies.  These are
+# loaded dynamically via dlopen.
+log "Adding extra libraries..."
+mkdir -p \
+    "$MAKEMKV_ROOT_DIR"/lib/qt5/plugins/platforms
+cp -av /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so "$MAKEMKV_ROOT_DIR"/lib/qt5/plugins/platforms/
+cp -av /usr/lib/x86_64-linux-gnu/libcurl.so.4* "$MAKEMKV_ROOT_DIR"/lib/
+cp -av /lib/x86_64-linux-gnu/libnss_compat* "$MAKEMKV_ROOT_DIR"/lib/
+cp -av /lib/x86_64-linux-gnu/libnsl*so* "$MAKEMKV_ROOT_DIR"/lib/
+cp -av /lib/x86_64-linux-gnu/libnss_nis[.-]* "$MAKEMKV_ROOT_DIR"/lib/
+cp -av /lib/x86_64-linux-gnu/libnss_files* "$MAKEMKV_ROOT_DIR"/lib/
+
+# Extract dependencies of all binaries and libraries.
+log "Extracting shared library dependencies..."
+find "$MAKEMKV_ROOT_DIR" -type f -executable -or -name 'lib*.so*' | while read BIN
 do
-    base_lib="$(basename $lib)"
-    echo "  -> QT Plugin: $lib"
-    cp "$lib" "$INSTALL_DIR/lib/"
-    ln -s ../$base_lib "$INSTALL_DIR/lib/platforms/$base_lib"
-done
-
-#
-# curl libraries
-#
-echo "Adding libcurl..."
-cp -av /usr/lib/x86_64-linux-gnu/libcurl.so.4* "$INSTALL_DIR/lib/"
-
-echo "Patching ELF of binaries..."
-find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$ROOT_EXEC_DIR/lib/ld-linux-x86-64.so.2" {} \;
-find "$INSTALL_DIR"/bin -type f -executable -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} \;
-
-EXTRA_LIBS="/lib/x86_64-linux-gnu/libnss_compat.so.2 \
-            /lib/x86_64-linux-gnu/libnsl.so.1 \
-            /lib/x86_64-linux-gnu/libnss_nis.so.2 \
-            /lib/x86_64-linux-gnu/libnss_files.so.2 \
-"
-
-# Package library dependencies
-echo "Extracting shared library dependencies..."
-find "$INSTALL_DIR" -type f -executable -or -name 'lib*.so*' | while read BIN
-do
-    RAW_DEPS="$(LD_LIBRARY_PATH="$INSTALL_DIR/lib:$BUILD_DIR/jdk/lib/jli:$BUILD_DIR/qt/lib" ldd "$BIN")"
+    RAW_DEPS="$(LD_LIBRARY_PATH="$MAKEMKV_ROOT_DIR/lib" ldd "$BIN")"
     echo "Dependencies for $BIN:"
     echo "================================"
     echo "$RAW_DEPS"
@@ -252,39 +175,41 @@ do
         exit 1
     fi
 
-    DEPS="$(LD_LIBRARY_PATH="$INSTALL_DIR/lib:$BUILD_DIR/qt/lib" ldd "$BIN" | (grep " => " || true) | cut -d'>' -f2 | sed 's/^[[:space:]]*//' | cut -d'(' -f1)"
-    for dep in $DEPS $EXTRA_LIBS
+    LD_LIBRARY_PATH="$MAKEMKV_ROOT_DIR/lib" ldd "$BIN" | (grep " => " || true) | cut -d'>' -f2 | sed 's/^[[:space:]]*//' | cut -d'(' -f1 | while read dep
     do
         dep_real="$(realpath "$dep")"
         dep_basename="$(basename "$dep_real")"
 
         # Skip already-processed libraries.
-        [ ! -f "$INSTALL_DIR/lib/$dep_basename" ] || continue
+        [ ! -f "$MAKEMKV_ROOT_DIR/lib/$dep_basename" ] || continue
 
         echo "  -> Found library: $dep"
-        cp "$dep_real" "$INSTALL_DIR/lib/"
+        cp "$dep_real" "$MAKEMKV_ROOT_DIR/lib/"
         while true; do
             [ -L "$dep" ] || break;
-            ln -sf "$dep_basename" "$INSTALL_DIR"/lib/$(basename $dep)
+            ln -sf "$dep_basename" "$MAKEMKV_ROOT_DIR"/lib/$(basename $dep)
             dep="$(readlink -f "$dep")"
         done
     done
 done
 
-echo "Patching ELF of libraries..."
-find "$INSTALL_DIR" \
-    -type f \
-    -name "lib*" \
-    -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN' {} \;
+log "Patching ELF of binaries..."
+find "$MAKEMKV_ROOT_DIR"/bin -type f -executable -exec echo "  -> Setting interpreter of {}..." \; -exec patchelf --set-interpreter "$MAKEMKV_ROOT_DIR/lib/ld-linux-x86-64.so.2" {} ';'
+find "$MAKEMKV_ROOT_DIR"/bin -type f -executable -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN/../lib' {} ';'
+
+log "Patching ELF of libraries..."
+find "$MAKEMKV_ROOT_DIR"/lib -maxdepth 1 -type f -name "lib*" -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath '$ORIGIN' {} ';'
+find "$MAKEMKV_ROOT_DIR"/lib/qt5 -type f -name "lib*" -exec echo "  -> Setting rpath of {}..." \; -exec patchelf --set-rpath "\$ORIGIN:$MAKEMKV_ROOT_DIR/lib" {} ';'
+
+echo "Copying interpreter..."
+cp -av /lib/x86_64-linux-gnu/ld-* "$MAKEMKV_ROOT_DIR"/lib/
 
 echo "Creating qt.conf..."
-echo "[Paths]"                 >  "$INSTALL_DIR/bin/qt.conf"
-echo "Prefix = $ROOT_EXEC_DIR" >> "$INSTALL_DIR/bin/qt.conf"
-echo "Plugins = lib"           >> "$INSTALL_DIR/bin/qt.conf"
+cat << EOF > "$MAKEMKV_ROOT_DIR"/bin/qt.conf
+[Paths]
+Prefix = $MAKEMKV_ROOT_DIR/lib/qt5
+EOF
 
-echo "Creating tarball..."
-tar -zcf "$TARBALL_DIR/makemkv.tar.gz" -C "$INSTALL_BASEDIR" "${ROOT_EXEC_DIR:1}" --owner=0 --group=0
-
-echo "$TARBALL_DIR/makemkv.tar.gz created successfully!"
+echo "MakeMKV built successfully."
 
 # vim:ft=sh:ts=4:sw=4:et:sts=4
