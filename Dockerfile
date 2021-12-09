@@ -18,30 +18,12 @@ ARG MAKEMKV_BIN_URL
 COPY src/makemkv /tmp/makemkv
 RUN /tmp/makemkv/build.sh "${MAKEMKV_OSS_URL}" "${MAKEMKV_BIN_URL}"
 
-# Build YAD.  The one from the Alpine repo doesn't support the multi-progress
-# feature.
-FROM alpine:3.12
-ARG YAD_VERSION=0.40.0
-ARG YAD_URL=https://downloads.sourceforge.net/project/yad-dialog/yad-${YAD_VERSION}.tar.xz
-RUN apk --no-cache add \
-    build-base \
-    curl \
-    gtk+2.0-dev \
-    intltool
-RUN \
-    # Set same default compilation flags as abuild.
-    export CFLAGS="-Os -fomit-frame-pointer" && \
-    export CXXFLAGS="$CFLAGS" && \
-    export CPPFLAGS="$CFLAGS" && \
-    export LDFLAGS="-Wl,--as-needed" && \
-    # Download.
-    mkdir /tmp/yad && \
-    curl -# -L "${YAD_URL}" | tar xJ --strip 1 -C /tmp/yad && \
-    # Compile.
-    cd /tmp/yad && \
-    ./configure && \
-    make -j$(nproc) && \
-    strip src/yad
+# Build YAD.
+# NOTE: We build a static version to reduce the number of dependencies to be
+#       added to the image.
+FROM alpine:3.14 AS yad
+COPY src/yad/build.sh /build-yad.sh
+RUN /build-yad.sh
 
 # Pull base image.
 FROM jlesage/baseimage-gui:alpine-3.12-v3.5.7
@@ -68,8 +50,7 @@ RUN \
     rm -rf /tmp/* /tmp/.[!.]*
 
 # Install YAD.
-COPY --from=1 /tmp/yad/src/yad /usr/bin/
-RUN add-pkg gtk+2.0
+COPY --from=yad /tmp/yad-install/usr/bin/yad /usr/bin/
 
 # Install dependencies.
 RUN \
