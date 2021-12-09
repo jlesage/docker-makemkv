@@ -10,9 +10,11 @@ SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 
 FFMPEG_VERSION=4.3.2
 FDK_AAC_VERSION=2.0.2
+QT_VERSION=5.9.9
 
 FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
 FDK_AAC_URL=https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.gz
+QT_URL=https://download.qt.io/archive/qt/${QT_VERSION%.*}/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
 
 usage() {
     echo "usage: $(basename $0) MAKEMKV_OSS_URL MAKEMKV_BIN_URL
@@ -65,7 +67,7 @@ apt-get install -y --no-install-recommends \
     libxcb1-dev \
     libx11-dev \
     libx11-xcb-dev \
-    qtbase5-dev \
+    xkb-data \
 
 #
 # fdk-aac
@@ -112,6 +114,69 @@ log "Installing ffmpeg..."
 make -C /tmp/ffmpeg install
 
 #
+# Qt
+#
+# NOTE: fontconfig is disabled to avoid potential config files
+#       incompatibilities.  The version used by the builder may differ from the
+#       one used at runtime.
+# NOTE: The latest Qt version from the 5.9 branch is used.  Recent Qt versions
+#       are using the `statx` system call, which is not whitelisted by default
+#       with Docker versions < 8.6.
+#
+mkdir /tmp/qt5
+log "Downloading Qt..."
+curl -# -L ${QT_URL} | tar -xJ --strip 1 -C /tmp/qt5
+log "Configuring Qt..."
+# Create the configure options file.
+echo "\
+-opensource
+-confirm-license
+-prefix
+/usr
+-sysconfdir
+/etc/xdg
+-release
+-strip
+-ltcg
+-no-pch
+-nomake
+tools
+-nomake
+tests
+-nomake
+examples
+-sql-sqlite
+-no-sql-odbc
+-system-zlib
+-qt-freetype
+-qt-pcre
+-qt-libpng
+-qt-libjpeg
+-qt-xcb
+-qt-xkbcommon-x11
+-qt-harfbuzz
+-qt-sqlite
+-no-fontconfig
+-no-compile-examples
+-no-cups
+-no-iconv
+-no-opengl
+-no-qml-debug
+-no-feature-xml
+-no-feature-testlib
+-no-openssl
+" > /tmp/qt5/config.opt
+# Skip all modules (except qtbase).
+find /tmp/qt5 -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | grep qt | grep -v qtbase | xargs -n1 printf "-skip\n%s\n" >> /tmp/qt5/config.opt
+(
+    cd /tmp/qt5 && ./configure -redo
+)
+log "Compiling Qt..."
+make -C /tmp/qt5 -j$(nproc)
+log "Installing Qt..."
+make -C /tmp/qt5 -j$(nproc) install
+
+#
 # MakeMKV OSS
 #
 mkdir /tmp/makemkv-oss
@@ -153,7 +218,7 @@ strip "$MAKEMKV_ROOT_DIR"/lib/umask_wrapper.so
 log "Adding extra libraries..."
 mkdir -p \
     "$MAKEMKV_ROOT_DIR"/lib/qt5/plugins/platforms
-cp -av /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so "$MAKEMKV_ROOT_DIR"/lib/qt5/plugins/platforms/
+cp -av /usr/plugins/platforms/libqxcb.so "$MAKEMKV_ROOT_DIR"/lib/qt5/plugins/platforms/
 cp -av /usr/lib/x86_64-linux-gnu/libcurl.so.4* "$MAKEMKV_ROOT_DIR"/lib/
 cp -av /lib/x86_64-linux-gnu/libnss_compat* "$MAKEMKV_ROOT_DIR"/lib/
 cp -av /lib/x86_64-linux-gnu/libnsl*so* "$MAKEMKV_ROOT_DIR"/lib/
