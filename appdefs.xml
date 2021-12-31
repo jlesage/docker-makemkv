@@ -133,6 +133,14 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.21.2</version>
+        <date>2021-12-30</date>
+        <change>Fixed extraction of CC subtitles.</change>
+        <change>Fixed permissions of files created by MakeMKV.</change>
+        <change>Now using baseimage version 3.5.8, based on Alpine 3.15, which brings the following change:</change>
+        <change level="2">Updated installed packages to get latest security fixes.</change>
+      </release>
+      <release>
         <version>1.21.1</version>
         <date>2021-11-07</date>
         <change>Updated MakeMKV to version 1.16.5.</change>
