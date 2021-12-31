@@ -7,4 +7,4 @@
 #export QT_DEBUG_PLUGINS=1
 
 cd /storage
-exec env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so /opt/makemkv/bin/makemkv
+exec env HOME=/config LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkv

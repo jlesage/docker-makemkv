@@ -7,7 +7,7 @@ log() {
     echo "[cont-init.d] $(basename $0): $*"
 }
 
-MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/umask_wrapper.so /opt/makemkv/bin/makemkvcon"
+MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkvcon"
 
 # Clear actual services, if any.
 rm -rf /etc/services.d/autodiscripper*

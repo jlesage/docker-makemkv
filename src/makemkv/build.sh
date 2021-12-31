@@ -205,13 +205,13 @@ patch -p0 -d /tmp/makemkv-bin < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
 make DESTDIR="$MAKEMKV_ROOT_DIR" -C /tmp/makemkv-bin install
 
 #
-# Umask Wrapper
+# Chmod Wrapper
 #
-log "Compiling umask wrapper..."
-gcc -o /tmp/umask_wrapper.so "$SCRIPT_DIR/umask_wrapper.c" -fPIC -shared
-log "Installing umask wrapper..."
-cp -v /tmp/umask_wrapper.so "$MAKEMKV_ROOT_DIR"/lib/
-strip "$MAKEMKV_ROOT_DIR"/lib/umask_wrapper.so
+log "Compiling libwrapper..."
+gcc -o /tmp/libwrapper.so "$SCRIPT_DIR/libwrapper.c" -fPIC -shared -ldl
+log "Installing chmod wrapper..."
+cp -v /tmp/libwrapper.so "$MAKEMKV_ROOT_DIR"/lib/
+strip "$MAKEMKV_ROOT_DIR"/lib/libwrapper.so
 
 # Add needed liraries that are not catched by tracking dependencies.  These are
 # loaded dynamically via dlopen.
