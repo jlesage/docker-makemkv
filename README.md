@@ -520,6 +520,27 @@ startup, messages similar to these ones are outputed:
 In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
 exposed to the container.
 
+**NOTE**: The container's log can be viewed by running the command
+`docker logs <container name>`.
+
+Alternatively, the devices can be found by executing the following command on
+the **host**:
+
+```
+lsscsi -g
+```
+
+From the command's output, the last two columns associated to the optical drive
+indicate the Linux devices that should be exposed to the container.  In the
+following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
+
+```
+[0:0:0:0]    disk    ATA      TOSHIBA DT01ACA0 A800  /dev/sda   /dev/sg0
+[1:0:0:0]    disk    ATA      ST3500418AS      HP34  /dev/sdb   /dev/sg1
+[2:0:0:0]    disk    ATA      WDC WD6401AALS-0 3B01  /dev/sdc   /dev/sg2
+[4:0:0:0]    cd/dvd  hp HLDS  DVDRW  GUD1N     LD02  /dev/sr0   /dev/sg3
+```
+
 ## Automatic Disc Ripper
 
 This container has an automatic disc ripper built-in.  When enabled, any DVD or
