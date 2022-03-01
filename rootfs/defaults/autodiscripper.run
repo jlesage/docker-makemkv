@@ -262,13 +262,22 @@ while true; do
                     log "Disc rip terminated with failure."
                 fi
                 if [ "${AUTO_DISC_RIPPER_EJECT:-0}" -eq 1 ]; then
-                    log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
-                    eject "$DRV_DEV" > /dev/null 2>&1 || eject -s "$DRV_DEV" > /dev/null 2>&1
-                    if [ "$?" -eq 0 ]; then
-                        log "Disc ejected."
-                    else
-                        log "ERROR: Failed to eject drive $DRV_ID ($DRV_DEV)."
-                    fi
+                    EJECT_TRIES=0
+                    while true; do
+                        log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
+                        EJECT_ERR="$(eject "$DRV_DEV" 2>&1)"
+                        if [ "$?" -eq 0 ]; then
+                            log "Disc ejected."
+                            break
+                        elif [ "$EJECT_TRIES" -lt 5 ] && [ echo "$EJECT_ERR" | grep -q "Resource busy" ] ; then
+                            log "Failed to eject disc: drive busy.  Retrying..."
+                            EJECT_TRIES="$(expr $EJECT_TRIES + 1)"
+                            sleep 5
+                        else
+                            log "ERROR: Failed to eject drive $DRV_ID ($DRV_DEV): $EJECT_ERR."
+                            break
+                        fi
+                    done
                 fi
             fi
             echo "$DRV" > "$DRV_INFO_FILE"
