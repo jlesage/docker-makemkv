@@ -57,7 +57,7 @@ log_yad() {
 }
 
 start_yad() {
-    tail -f "$3" 2>/dev/null | yad \
+    tail -f "$3" | yad \
         --fixed \
         --width=384 \
         --title "Automatic Disc Ripper" \
@@ -68,6 +68,7 @@ start_yad() {
         --multi-progress \
         --bar="":NORM \
         --bar="":NORM \
+        2>/dev/null \
         &
     YAD_PID=$!
 }
