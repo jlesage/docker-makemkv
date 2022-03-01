@@ -154,6 +154,13 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.21.3</version>
+        <date>2022-02-28</date>
+        <change>Updated MakeMKV to version 1.16.7.</change>
+        <change>Automatic disc ripper: Retry disc ejection if drive is busy.</change>
+        <change>Automatic disc ripper: Show error message in case disc ejection fails.</change>
+      </release>
+      <release>
         <version>1.21.2</version>
         <date>2021-12-30</date>
         <change>Fixed extraction of CC subtitles.</change>
