@@ -269,7 +269,7 @@ while true; do
                         if [ "$?" -eq 0 ]; then
                             log "Disc ejected."
                             break
-                        elif [ "$EJECT_TRIES" -lt 5 ] && [ echo "$EJECT_ERR" | grep -q "Resource busy" ] ; then
+                        elif [ "$EJECT_TRIES" -lt 5 ] && echo "$EJECT_ERR" | grep -q "Resource busy" ; then
                             log "Failed to eject disc: drive busy.  Retrying..."
                             EJECT_TRIES="$(expr $EJECT_TRIES + 1)"
                             sleep 5
