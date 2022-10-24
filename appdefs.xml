@@ -154,6 +154,11 @@ section for more details.
   <!-- Changelog of the application. -->
   <history>
       <release>
+        <version>1.22.2</version>
+        <date>2022-10-24</date>
+        <change>Updated MakeMKV to version 1.17.2.</change>
+      </release>
+      <release>
         <version>1.22.1</version>
         <date>2022-07-14</date>
         <change>Updated MakeMKV to version 1.17.1.</change>
