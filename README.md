@@ -1,15 +1,17 @@
 # Docker container for MakeMKV
-[![Docker Image Size](https://img.shields.io/docker/image-size/jlesage/makemkv/latest)](https://hub.docker.com/r/jlesage/makemkv/tags) [![Build Status](https://drone.le-sage.com/api/badges/jlesage/docker-makemkv/status.svg)](https://drone.le-sage.com/jlesage/docker-makemkv) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-makemkv.svg)](https://github.com/jlesage/docker-makemkv/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage/0usd)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jlesage/makemkv/latest)](https://hub.docker.com/r/jlesage/makemkv/tags) [![Build Status](https://github.com/jlesage/docker-makemkv/actions/workflows/build-image.yml/badge.svg?branch=master)](https://github.com/jlesage/docker-makemkv/actions/workflows/build-image.yml) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-makemkv.svg)](https://github.com/jlesage/docker-makemkv/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage)
 
-This is a Docker container for [MakeMKV](http://www.makemkv.com/).
+This is a Docker container for [MakeMKV](https://www.makemkv.com).
 
-The GUI of the application is accessed through a modern web browser (no installation or configuration needed on the client side) or via any VNC client.
+The GUI of the application is accessed through a modern web browser (no
+installation or configuration needed on the client side) or via any VNC client.
 
-A fully automated mode is also available: insert a DVD or Blu-ray disc into an optical drive and let MakeMKV rips it without any user interaction.
+A fully automated mode is also available: insert a DVD or Blu-ray disc into an
+optical drive and let MakeMKV rips it without any user interaction.
 
 ---
 
-[![MakeMKV logo](https://images.weserv.nl/?url=raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png&w=200)](http://www.makemkv.com/)[![MakeMKV](https://dummyimage.com/400x110/ffffff/575757&text=MakeMKV)](http://www.makemkv.com/)
+[![MakeMKV logo](https://images.weserv.nl/?url=raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png&w=110)](https://www.makemkv.com)[![MakeMKV](https://images.placeholders.dev/?width=224&height=110&fontFamily=Georgia,sans-serif&fontWeight=400&fontSize=52&text=MakeMKV&bgColor=rgba(0,0,0,0.0)&textColor=rgba(121,121,121,1))](https://www.makemkv.com)
 
 MakeMKV is your one-click solution to convert video that you own into free and
 patents-unencumbered format that can be played everywhere. MakeMKV is a format
@@ -22,33 +24,33 @@ multiple video/audio tracks with all meta-information and preserve chapters.
 
 ## Table of Content
 
-   * [Docker container for MakeMKV](#docker-container-for-makemkv)
-      * [Table of Content](#table-of-content)
-      * [Quick Start](#quick-start)
-      * [Usage](#usage)
-         * [Environment Variables](#environment-variables)
-         * [Data Volumes](#data-volumes)
-         * [Ports](#ports)
-         * [Changing Parameters of a Running Container](#changing-parameters-of-a-running-container)
-      * [Docker Compose File](#docker-compose-file)
-      * [Docker Image Update](#docker-image-update)
-         * [Synology](#synology)
-         * [unRAID](#unraid)
-      * [User/Group IDs](#usergroup-ids)
-      * [Accessing the GUI](#accessing-the-gui)
-      * [Security](#security)
-         * [SSVNC](#ssvnc)
-         * [Certificates](#certificates)
-         * [VNC Password](#vnc-password)
-      * [Reverse Proxy](#reverse-proxy)
-         * [Routing Based on Hostname](#routing-based-on-hostname)
-         * [Routing Based on URL Path](#routing-based-on-url-path)
-      * [Shell Access](#shell-access)
-      * [Access to Optical Drive(s)](#access-to-optical-drives)
-      * [Automatic Disc Ripper](#automatic-disc-ripper)
-      * [Troubleshooting](#troubleshooting)
-         * [Expired Beta Key](#expired-beta-key)
-      * [Support or Contact](#support-or-contact)
+   * [Quick Start](#quick-start)
+   * [Usage](#usage)
+      * [Environment Variables](#environment-variables)
+         * [Deployment Considerations](#deployment-considerations)
+      * [Data Volumes](#data-volumes)
+      * [Ports](#ports)
+      * [Changing Parameters of a Running Container](#changing-parameters-of-a-running-container)
+   * [Docker Compose File](#docker-compose-file)
+   * [Docker Image Versioning](#docker-image-versioning)
+   * [Docker Image Update](#docker-image-update)
+      * [Synology](#synology)
+      * [unRAID](#unraid)
+   * [User/Group IDs](#usergroup-ids)
+   * [Accessing the GUI](#accessing-the-gui)
+   * [Security](#security)
+      * [SSVNC](#ssvnc)
+      * [Certificates](#certificates)
+      * [VNC Password](#vnc-password)
+   * [Reverse Proxy](#reverse-proxy)
+      * [Routing Based on Hostname](#routing-based-on-hostname)
+      * [Routing Based on URL Path](#routing-based-on-url-path)
+   * [Shell Access](#shell-access)
+   * [Access to Optical Drive(s)](#access-to-optical-drives)
+   * [Automatic Disc Ripper](#automatic-disc-ripper)
+   * [Troubleshooting](#troubleshooting)
+      * [Expired Beta Key](#expired-beta-key)
+   * [Support or Contact](#support-or-contact)
 
 ## Quick Start
 
@@ -56,22 +58,22 @@ multiple video/audio tracks with all meta-information and preserve chapters.
 and parameters should be adjusted to your need.
 
 Launch the MakeMKV docker container with the following command:
-```
+```shell
 docker run -d \
     --name=makemkv \
     -p 5800:5800 \
     -v /docker/appdata/makemkv:/config:rw \
-    -v $HOME:/storage:ro \
-    -v $HOME/MakeMKV/output:/output:rw \
+    -v /home/user:/storage:ro \
+    -v /home/user/MakeMKV/output:/output:rw \
     --device /dev/sr0 \
     --device /dev/sg2 \
     jlesage/makemkv
 ```
 
 Where:
-  - `/docker/appdata/makemkv`: This is where the application stores its configuration, log and any files needing persistency.
-  - `$HOME`: This location contains files from your host that need to be accessible by the application.
-  - `$HOME/MakeMKV/output`: This is where extracted videos are written.
+  - `/docker/appdata/makemkv`: This is where the application stores its configuration, states, log and any files needing persistency.
+  - `/home/user`: This location contains files from your host that need to be accessible to the application.
+  - `/home/user/MakeMKV/output`: This is where extracted videos are written.
   - `/dev/sr0`: This is the first Linux device file representing the optical drive.
   - `/dev/sg2`: This is the second Linux device file representing the optical drive.
 
@@ -80,7 +82,7 @@ Files from the host appear under the `/storage` folder in the container.
 
 ## Usage
 
-```
+```shell
 docker run [-d] \
     --name=makemkv \
     [-e <VARIABLE_NAME>=<VALUE>]... \
@@ -105,17 +107,23 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |----------------|----------------------------------------------|---------|
 |`USER_ID`| ID of the user the application runs as.  See [User/Group IDs](#usergroup-ids) to better understand when this should be set. | `1000` |
 |`GROUP_ID`| ID of the group the application runs as.  See [User/Group IDs](#usergroup-ids) to better understand when this should be set. | `1000` |
-|`SUP_GROUP_IDS`| Comma-separated list of supplementary group IDs of the application. | (unset) |
-|`UMASK`| Mask that controls how file permissions are set for newly created files. The value of the mask is in octal notation.  By default, this variable is not set and the default umask of `022` is used, meaning that newly created files are readable by everyone, but only writable by the owner. See the following online umask calculator: http://wintelguy.com/umask-calc.pl | (unset) |
-|`TZ`| [TimeZone] of the container.  Timezone can also be set by mapping `/etc/localtime` between the host and the container. | `Etc/UTC` |
-|`KEEP_APP_RUNNING`| When set to `1`, the application will be automatically restarted if it crashes or if a user quits it. | `0` |
-|`APP_NICENESS`| Priority at which the application should run.  A niceness value of -20 is the highest priority and 19 is the lowest priority.  By default, niceness is not set, meaning that the default niceness of 0 is used.  **NOTE**: A negative niceness (priority increase) requires additional permissions.  In this case, the container should be run with the docker option `--cap-add=SYS_NICE`. | (unset) |
-|`CLEAN_TMP_DIR`| When set to `1`, all files in the `/tmp` directory are deleted during the container startup. | `1` |
-|`DISPLAY_WIDTH`| Width (in pixels) of the application's window. | `1280` |
-|`DISPLAY_HEIGHT`| Height (in pixels) of the application's window. | `768` |
+|`SUP_GROUP_IDS`| Comma-separated list of supplementary group IDs of the application. | `""` |
+|`UMASK`| Mask that controls how file permissions are set for newly created files. The value of the mask is in octal notation.  By default, the default umask value is `0022`, meaning that newly created files are readable by everyone, but only writable by the owner.  See the online umask calculator at http://wintelguy.com/umask-calc.pl. | `0022` |
+|`LANG`| Set the [locale](https://en.wikipedia.org/wiki/Locale_(computer_software)), which defines the application's language, **if supported**.  Format of the locale is `language[_territory][.codeset]`, where language is an [ISO 639 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), territory is an [ISO 3166 country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) and codeset is a character set, like `UTF-8`.  For example, Australian English using the UTF-8 encoding is `en_AU.UTF-8`. | `en_US.UTF-8` |
+|`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container.  Timezone can also be set by mapping `/etc/localtime` between the host and the container. | `Etc/UTC` |
+|`KEEP_APP_RUNNING`| When set to `1`, the application will be automatically restarted when it crashes or terminates. | `0` |
+|`APP_NICENESS`| Priority at which the application should run.  A niceness value of -20 is the highest priority and 19 is the lowest priority.  The default niceness value is 0.  **NOTE**: A negative niceness (priority increase) requires additional permissions.  In this case, the container should be run with the docker option `--cap-add=SYS_NICE`. | `0` |
+|`INSTALL_PACKAGES`| Space-separated list of packages to install during the startup of the container.  Packages are installed from the repository of the Linux distribution this container is based on.  **ATTENTION**: Container functionality can be affected when installing a package that overrides existing container files (e.g. binaries). | `""` |
+|`CONTAINER_DEBUG`| Set to `1` to enable debug logging. | `0` |
+|`DISPLAY_WIDTH`| Width (in pixels) of the application's window. | `1920` |
+|`DISPLAY_HEIGHT`| Height (in pixels) of the application's window. | `1080` |
+|`DARK_MODE`| When set to `1`, dark mode is enabled for the application. | `0` |
 |`SECURE_CONNECTION`| When set to `1`, an encrypted connection is used to access the application's GUI (either via a web browser or VNC client).  See the [Security](#security) section for more details. | `0` |
-|`VNC_PASSWORD`| Password needed to connect to the application's GUI.  See the [VNC Password](#vnc-password) section for more details. | (unset) |
-|`X11VNC_EXTRA_OPTS`| Extra options to pass to the x11vnc server running in the Docker container.  **WARNING**: For advanced users. Do not use unless you know what you are doing. | (unset) |
+|`SECURE_CONNECTION_VNC_METHOD`| Method used to perform the secure VNC connection.  Possible values are `SSL` or `TLS`.  See the [Security](#security) section for more details. | `SSL` |
+|`SECURE_CONNECTION_CERTS_CHECK_INTERVAL`| Interval, in seconds, at which the system verifies if web or VNC certificates have changed.  When a change is detected, the affected services are automatically restarted.  A value of `0` disables the check. | `60` |
+|`WEB_LISTENING_PORT`| Port used by the web server to serve the UI of the application.  This port is used internally by the container and it is usually not required to be changed.  By default, a container is created with the default bridge network, meaning that, to be accessible, each internal container port must be mapped to an external port (using the `-p` or `--publish` argument).  However, if the container is created with another network type, changing the port used by the container might be useful to prevent conflict with other services/containers.  **NOTE**: a value of `-1` disables listening, meaning that the application's UI won't be accessible over HTTP/HTTPs. | `5800` |
+|`VNC_LISTENING_PORT`| Port used by the VNC server to serve the UI of the application.  This port is used internally by the container and it is usually not required to be changed.  By default, a container is created with the default bridge network, meaning that, to be accessible, each internal container port must be mapped to an external port (using the `-p` or `--publish` argument).  However, if the container is created with another network type, changing the port used by the container might be useful to prevent conflict with other services/containers.  **NOTE**: a value of `-1` disables listening, meaning that the application's UI won't be accessible over VNC. | `5900` |
+|`VNC_PASSWORD`| Password needed to connect to the application's GUI.  See the [VNC Password](#vnc-password) section for more details. | `""` |
 |`ENABLE_CJK_FONT`| When set to `1`, open-source computer font `WenQuanYi Zen Hei` is installed.  This font contains a large range of Chinese/Japanese/Korean characters. | `0` |
 |`MAKEMKV_KEY`| MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
 |`AUTO_DISC_RIPPER`| When set to `1`, the automatic disc ripper is enabled. | `0` |
@@ -128,6 +136,43 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR`| When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc.  If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters.  When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used. | `0` |
 |`AUTO_DISC_RIPPER_NO_GUI_PROGRESS`| When set to `1`, progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI. | `0` |
 
+#### Deployment Considerations
+
+Many tools used to manage Docker containers extract environment variables
+defined by the Docker image and use them to create/deploy the container.  For
+example, this is done by:
+  - The Docker application on Synology NAS
+  - The Container Station on QNAP NAS
+  - Portainer
+  - etc.
+
+While this can be useful for the user to adjust the value of environment
+variables to fit its needs, it can also be confusing and dangerous to keep all
+of them.
+
+A good pratice is to set/keep only the variables that are needed for the
+container to behave as desired in a specific setup.  If the value of variable is
+kept to its default value, it means that it can be removed.  Keep in mind that
+all variables are optional, meaning that none of them is required for the
+container to start.
+
+Removing environment variables that are not needed provides some advantages:
+
+  - Prevents keeping variables that are no longer used by the container.  Over
+    time, with image updates, some variables might be removed.
+  - Allows the Docker image to change/fix a default value.  Again, with image
+    updates, the default value of a variable might be changed to fix an issue,
+    or to better support a new feature.
+  - Prevents changes to a variable that might affect the correct function of
+    the container.  Some undocumented variables, like `PATH` or `ENV`, are
+    required to be exposed, but are not meant to be changed by users.  However,
+    container management tools still show these variables to users.
+  - There is a bug with the Container Station on QNAP, where the value of an
+    environment variable is mandatory.  This behavior is wrong and it's
+    perfectly fine to have a variable without value.  In fact, this container
+    does have variables without value by default.  Thus, removing uneeded
+    variables is a good way to prevent deployment issue on QNAP.
+
 ### Data Volumes
 
 The following table describes data volumes used by the container.  The mappings
@@ -136,8 +181,8 @@ format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 
 | Container path  | Permissions | Description |
 |-----------------|-------------|-------------|
-|`/config`| rw | This is where the application stores its configuration, log and any files needing persistency. |
-|`/storage`| ro | This location contains files from your host that need to be accessible by the application. |
+|`/config`| rw | This is where the application stores its configuration, states, log and any files needing persistency. |
+|`/storage`| ro | This location contains files from your host that need to be accessible to the application. |
 |`/output`| rw | This is where extracted videos are written. |
 
 ### Ports
@@ -149,8 +194,8 @@ container cannot be changed, but you are free to use any port on the host side.
 
 | Port | Mapping to host | Description |
 |------|-----------------|-------------|
-| 5800 | Mandatory | Port used to access the application's GUI via the web interface. |
-| 5900 | Optional | Port used to access the application's GUI via the VNC protocol.  Optional if no VNC client is used. |
+| 5800 | Optional | Port to access the application's GUI via the web interface.  Mapping to the host is optional if access through the web interface is not wanted.  For a container not using the default bridge network, the port can be changed with the `WEB_LISTENING_PORT` environment variable. |
+| 5900 | Optional | Port to access the application's GUI via the VNC protocol.  Mapping to the host is optional if access through the VNC protocol is not wanted.  For a container not using the default bridge network, the port can be changed with the `VNC_LISTENING_PORT` environment variable. |
 
 ### Changing Parameters of a Running Container
 
@@ -194,12 +239,25 @@ services:
       - "5800:5800"
     volumes:
       - "/docker/appdata/makemkv:/config:rw"
-      - "$HOME:/storage:ro"
-      - "$HOME/MakeMKV/output:/output:rw"
+      - "/home/user:/storage:ro"
+      - "/home/user/MakeMKV/output:/output:rw"
     devices:
       - "/dev/sr0:/dev/sr0"
       - "/dev/sg2:/dev/sg2"
 ```
+
+## Docker Image Versioning
+
+Each release of a Docker image is versioned.  Prior to october 2022, the
+[semantic versioning](https://semver.org) was used as the versioning scheme.
+
+Since then, versioning scheme changed to
+[calendar versioning](https://calver.org).  The format used is `YY.MM.SEQUENCE`,
+where:
+  - `YY` is the zero-padded year (relative to year 2000).
+  - `MM` is the zero-padded month.
+  - `SEQUENCE` is the incremental release number within the month (first release
+    is 1, second is 2, etc).
 
 ## Docker Image Update
 
@@ -477,12 +535,12 @@ server {
 
 To get shell access to the running container, execute the following command:
 
-```
+```shell
 docker exec -ti CONTAINER sh
 ```
 
 Where `CONTAINER` is the ID or the name of the container used during its
-creation (e.g. `crashplan-pro`).
+creation.
 
 ## Access to Optical Drive(s)
 
@@ -508,13 +566,13 @@ The easiest way to determine the right Linux devices to expose is to run the
 container (without `--device` parameter) and look at its log: during the
 startup, messages similar to these ones are outputed:
 ```
-[cont-init.d] 95-check-optical-drive.sh: executing...
-[cont-init.d] 95-check-optical-drive.sh: looking for usable optical drives...
-[cont-init.d] 95-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
-[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
-[cont-init.d] 95-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
-[cont-init.d] 95-check-optical-drive.sh: no usable optical drive found.
-[cont-init.d] 95-check-optical-drive.sh: exited 0.
+[cont-init.d] 54-check-optical-drive.sh: executing...
+[cont-init.d] 54-check-optical-drive.sh: looking for usable optical drives...
+[cont-init.d] 54-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
+[cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
+[cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
+[cont-init.d] 54-check-optical-drive.sh: no usable optical drive found.
+[cont-init.d] 54-check-optical-drive.sh: exited 0.
 ```
 
 In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
@@ -586,8 +644,6 @@ functional.
 **NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
 be set to `BETA`.  See the [Environment Variables](#environment-variables)
 section for more details.
-
-[TimeZone]: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 ## Support or Contact
 
