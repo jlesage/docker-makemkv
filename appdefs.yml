@@ -1,0 +1,674 @@
+---
+
+#
+# Definitions for MakeMKV docker container.
+#
+# This file is used as data source to generate README.md and unRAID template files
+# from Jinja2 templates.
+#
+
+app:
+  id: 6
+  name: makemkv
+  friendly_name: MakeMKV
+  gui_type: x11
+  project:
+    description: |-
+      MakeMKV is your one-click solution to convert video that you own into free and
+      patents-unencumbered format that can be played everywhere. MakeMKV is a format
+      converter, otherwise called "transcoder". It converts the video clips from
+      proprietary (and usually encrypted) disc into a set of MKV files, preserving
+      most information but not changing it in any way. The MKV format can store
+      multiple video/audio tracks with all meta-information and preserve chapters.
+    url: https://www.makemkv.com
+  unraid:
+    extra_description: >-
+      **NOTE**: For the container to have access to your optical drive(s), you
+      need to add them to your container configuration.  This is done by adding
+      a new "Device".  An optical drive is represented by two Linux device
+      files: "/dev/srX" and "/dev/sgY".  For optimal performance, the container
+      needs both of them.  To determine the right devices to use, start the
+      container and look at its log.
+    support_url: https://forums.unraid.net/topic/58352-support-makemkv/
+    category: "MediaApp:Video"
+  documentation:
+    overview: |-
+      A fully automated mode is also available: insert a DVD or Blu-ray disc into an
+      optical drive and let MakeMKV rips it without any user interaction.
+    sections:
+      - title: Access to Optical Drive(s)
+        level: 2
+        content: |-
+          By default, a Docker container doesn't have access to host's devices.  However,
+          access to one or more devices can be granted with the `--device DEV` parameter.
+
+          In the Linux world, an optical drive is represented by two different device
+          files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
+
+          For best performance, it is recommended to expose both these devices to the
+          container.  For example, for an optical drive represented by `/dev/sr0` and
+          `/dev/sg1`, the following parameters would be added to the `docker run`
+          command:
+          ```
+          --device /dev/sr0 --device /dev/sg1
+          ```
+
+          **NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
+          expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
+          could be affected.
+
+          The easiest way to determine the right Linux devices to expose is to run the
+          container (without `--device` parameter) and look at its log: during the
+          startup, messages similar to these ones are outputed:
+          ```
+          [cont-init.d] 54-check-optical-drive.sh: executing...
+          [cont-init.d] 54-check-optical-drive.sh: looking for usable optical drives...
+          [cont-init.d] 54-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
+          [cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
+          [cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
+          [cont-init.d] 54-check-optical-drive.sh: no usable optical drive found.
+          [cont-init.d] 54-check-optical-drive.sh: exited 0.
+          ```
+
+          In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+          exposed to the container.
+
+          **NOTE**: The container's log can be viewed by running the command
+          `docker logs <container name>`.
+
+          Alternatively, the devices can be found by executing the following command on
+          the **host**:
+
+          ```
+          lsscsi -g
+          ```
+
+          From the command's output, the last two columns associated to the optical drive
+          indicate the Linux devices that should be exposed to the container.  In the
+          following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
+
+          ```
+          [0:0:0:0]    disk    ATA      TOSHIBA DT01ACA0 A800  /dev/sda   /dev/sg0
+          [1:0:0:0]    disk    ATA      ST3500418AS      HP34  /dev/sdb   /dev/sg1
+          [2:0:0:0]    disk    ATA      WDC WD6401AALS-0 3B01  /dev/sdc   /dev/sg2
+          [4:0:0:0]    cd/dvd  hp HLDS  DVDRW  GUD1N     LD02  /dev/sr0   /dev/sg3
+          ```
+      - title: Automatic Disc Ripper
+        level: 2
+        content: |-
+          This container has an automatic disc ripper built-in.  When enabled, any DVD or
+          Blu-ray video disc inserted into an optical drive is automatically ripped.  In
+          other words, MakeMKV decrypts and extracts all titles (such as the main movie,
+          bonus features, etc) from the disc to MKV files.
+
+          To enable the automatic disc ripper, set the environment variable
+          `AUTO_DISC_RIPPER` to `1`.
+
+          To eject the disc from the drive when ripping is terminated, set the environment
+          variable `AUTO_DISC_RIPPER_EJECT` to `1`.
+
+          If multiple drives are available, discs can be ripped simultaneously by
+          setting the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
+
+          See the [Environment Variables](#environment-variables) section for details
+          about setting environment variables.
+
+          **NOTE**: All titles, audio tracks, chapters, subtitles, etc are
+                  extracted/preserved.
+
+          **NOTE**: Titles and audio tracks are kept in their original format.  They are
+                  not transcoded or converted to other formats or into smaller sizes.
+
+          **NOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+
+          **NOTE**: MKV Files are written to the `/output` folder of the container.
+
+          **NOTE**: The automatic disc ripper processes all available optical drives.
+      - title: Troubleshooting
+        level: 2
+      - title: Expired Beta Key
+        level: 3
+        content: |-
+          If the beta key is expired, just restart the container to automatically fetch
+          and install the latest one.
+
+          **NOTE**: Once beta key expires, it can take few days before a new key is made
+          available by the author of MakeMKV.  During this time, the application is not
+          functional.
+
+          **NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
+          be set to `BETA`.  See the [Environment Variables](#environment-variables)
+          section for more details.
+  changelog:
+    - version: 1.22.2
+      date: 2022-10-24
+      changes:
+        - 'Updated MakeMKV to version 1.17.2.'
+    - version: 1.22.1
+      date: 2022-07-14
+      changes:
+        - 'Updated MakeMKV to version 1.17.1.'
+        - 'Fixed the disc eject retry mechanism of the automatic disc ripper.'
+    - version: 1.22.0
+      date: 2022-06-28
+      changes:
+        - 'Updated MakeMKV to version 1.17.0.'
+    - version: 1.21.3
+      date: 2022-02-28
+      changes:
+        - 'Updated MakeMKV to version 1.16.7.'
+        - 'Automatic disc ripper: Retry disc ejection if drive is busy.'
+        - 'Automatic disc ripper: Show error message in case disc ejection fails.'
+    - version: 1.21.2
+      date: 2021-12-30
+      changes:
+        - 'Fixed extraction of CC subtitles.'
+        - 'Fixed permissions of files created by MakeMKV.'
+        - 'Now using baseimage version 3.5.8, based on Alpine 3.15, which brings the following change:'
+        - '2:Updated installed packages to get latest security fixes.'
+    - version: 1.21.1
+      date: 2021-11-07
+      changes:
+        - 'Updated MakeMKV to version 1.16.5.'
+    - version: 1.21.0
+      date: 2021-07-23
+      changes:
+        - 'Updated MakeMKV to version 1.16.4.'
+        - 'Added environment variable that defines the custom MakeMKV profile the automatic video converter should use.'
+        - 'Fixed an issue where the write test on the output folder would incorrectly fail.'
+    - version: 1.20.3
+      date: 2021-04-14
+      changes:
+        - 'Now using baseimage version 3.5.7, which brings the following change:'
+        - '2:Updated installed packages to get latest security fixes.'
+    - version: 1.20.2
+      date: 2021-03-21
+      changes:
+        - 'Updated MakeMKV to version 1.16.3.'
+    - version: 1.20.1
+      date: 2021-03-08
+      changes:
+        - 'Updated MakeMKV to version 1.16.1.'
+    - version: 1.20.0
+      date: 2021-03-04
+      changes:
+        - 'Updated MakeMKV to version 1.16.0.'
+    - version: 1.19.0
+      date: 2021-01-04
+      changes:
+        - 'The progress of a disc processed by the automatic disc ripper is now visible in the UI.'
+        - 'Fixed issue where titles were not identified for discs using playlist obfuscation.'
+        - 'Fixed issue where the automatic disc ripper would stop processing the disc on an ''READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION'' error, even though this error can be harmless in some situations.'
+        - 'Fixed issue where the automatic disc ripper would fail to kill the right MakeMKV instance.'
+        - 'Now using baseimage based on Alpine 3.12.'
+    - version: 1.18.1
+      date: 2020-12-15
+      changes:
+        - 'Fixed issue where ripping of UHD discs would fail.'
+    - version: 1.18.0
+      date: 2020-12-14
+      changes:
+        - 'Updated MakeMKV to version 1.15.4.'
+        - 'Updated FFmpeg to version 4.3.1.'
+    - version: 1.17.0
+      date: 2020-10-04
+      changes:
+        - 'Upgraded MakeMKV to version 1.15.3.'
+    - version: 1.16.0
+      date: 2020-07-23
+      changes:
+        - 'Upgraded MakeMKV to version 1.15.2.'
+        - 'Now using baseimage v3.5.6, which brings the following changes:'
+        - '2:Upgraded glibc to version 2.31 on Alpine Linux images with glibc integrated.'
+        - '2:Updated installed packages to get latest security fixes.'
+        - '2:Adjusted the log monitor target for recent versions of YAD.'
+    - version: 1.15.1
+      date: 2020-05-11
+      changes:
+        - 'Fixed an issue where the automatic disc ripper would not use a drive under certain conditions.'
+    - version: 1.15.0
+      date: 2020-04-15
+      changes:
+        - 'Upgraded MakeMKV to version 1.15.1.'
+        - 'Upgraded OpenJDK to version 11.0.6.'
+        - 'Now using baseimage v3.5.3, which brings the following changes:'
+        - '2:Updated installed packages to get latest security fixes.'
+        - '2:Make sure the tzdata is installed.'
+    - version: 1.14.0
+      date: 2020-03-08
+      changes:
+        - 'Upgraded MakeMKV to version 1.15.0.'
+        - 'Upgraded FFmpeg to version 4.2.2.'
+        - 'Upgraded FDK AAC to version 2.0.1.'
+    - version: 1.13.1
+      date: 2019-12-05
+      changes:
+        - 'Updated MakeMKV to version 1.14.7.'
+    - version: 1.13.0
+      date: 2019-12-03
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.6.'
+    - version: 1.12.3
+      date: 2019-10-03
+      changes:
+        - 'Really fixed issue where the container would not start with Docker version less than 18.06 because of usage of `statx` system call.'
+    - version: 1.12.2
+      date: 2019-09-27
+      changes:
+        - 'Fixed issue where the container would not start with Docker version less than 18.06.'
+    - version: 1.12.1
+      date: 2019-09-15
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.5.'
+        - 'Fixed fontconfig errors showing during startup.'
+        - 'Switched to Azul''s Zulu OpenJDK 11.'
+    - version: 1.12.0
+      date: 2019-06-11
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.4.'
+        - 'Now using baseimage v3.5.2, which brings the following changes:'
+        - '2:Updated installed packages to get latest security fixes.'
+        - '2:Fixed issue where the container could have a zombie process.'
+        - '2:Fixed issue where the password would not be submitted when pressing the enter key in the password modal.'
+        - '2:Use relative path for favicon ressources to be more friendly with reverse proxy senarios.'
+    - version: 1.11.1
+      date: 2019-03-30
+      changes:
+        - 'Updated URL the beta key is fetched from.'
+    - version: 1.11.0
+      date: 2019-03-18
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.3.'
+        - 'Upgraded FDK AAC to version 2.0.0.'
+        - 'Use baseimage based on Alpine Linux 3.9.'
+    - version: 1.10.5
+      date: 2019-03-13
+      changes:
+        - 'Updated default configuration: allow MakeMKV to contact web server.'
+        - 'Updated OpenJDK to version 13.'
+    - version: 1.10.4
+      date: 2018-12-03
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.2.'
+        - 'Added ccextractor, needed to extract closed captions.'
+    - version: 1.10.3
+      date: 2018-11-13
+      changes:
+        - 'Reduced the size of the Docker image.'
+    - version: 1.10.2
+      date: 2018-11-12
+      changes:
+        - 'Fixed an issue where the automatic disc ripper would fail to start when `USER_ID` is set to `0`.'
+    - version: 1.10.1
+      date: 2018-11-09
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.1.'
+    - version: 1.10.0
+      date: 2018-11-08
+      changes:
+        - 'Upgraded MakeMKV to version 1.14.0.'
+        - 'Upgraded FFmpeg to version 4.1.'
+        - 'Fixed Java invocation failure.'
+        - 'Small enhancements to the MakeMKV builder.'
+    - version: 1.9.5
+      date: 2018-10-26
+      changes:
+        - 'Updated OpenJDK to version 11.0.1.  This fixes an issue where MakeMKV would crash with certain BluRay discs.'
+        - 'Auto disc ripper: Make sure to abort if tray is opened.'
+    - version: 1.9.4
+      date: 2018-10-02
+      changes:
+        - 'Fixed issue where files and folders created for the backup of a Blu-Ray disc would not follow the configured umask.'
+        - 'The auto disc ripper now drops root privileges at start.'
+        - 'Added the `AUTO_DISC_RIPPER_FORCE_UNIQUE_DIR` environment variable to better support workflows involving video discs with the same label.'
+        - 'Instead of silently failing to open an URL, a pop-up window is now displayed when certain menu items are selected.'
+    - version: 1.9.3
+      date: 2018-09-18
+      changes:
+        - 'Now using baseimage v3.5.1, which brings the following changes:'
+        - '2:Updated installed packages to get latest security fixes.'
+        - 'During container startup, make sure the MakeMKV data directory is set to the correct value.'
+    - version: 1.9.2
+      date: 2018-08-20
+      changes:
+        - 'Fixed an issue where fetching the beta key would fail.'
+    - version: 1.9.1
+      date: 2018-07-27
+      changes:
+        - 'Upgraded MakeMKV to version 1.12.3.'
+        - 'Reverted FFmpeg to version 2.8.14.'
+    - version: 1.9.0
+      date: 2018-07-18
+      changes:
+        - 'Auto disc ripper: Added support for parallel discs ripping.'
+        - 'Now using baseimage v3.4.0, which is based on Alpine Linux 3.8.'
+    - version: 1.8.0
+      date: 2018-04-28
+      changes:
+        - 'Upgraded MakeMKV to version 1.12.2.'
+        - 'Upgraded FDK AAC to version 0.1.6.'
+        - 'Upgraded FFmpeg to version 2.8.14.'
+        - 'Switched to a baseimage based on Alpine Linux 3.7.'
+    - version: 1.7.1
+      date: 2018-03-02
+      changes:
+        - 'Now using baseimage v3.3.4, which brings the following changes (since last used version):'
+        - '2:Make sure the log monitor is started after the X server.'
+        - '2:Fixed an issue where the log monitor `yad` target would use XDG folders of the application.'
+        - '2:Fixed issue where log monitor states were not cleared during container startup.'
+    - version: 1.7.0
+      date: 2018-02-04
+      changes:
+        - 'Upgraded MakeMKV to version 1.12.0.'
+    - version: 1.6.4
+      date: 2018-02-03
+      changes:
+        - 'Now using baseimage v3.3.2, which brings the following changes:'
+        - '2:Restored timezone support in Alpine Linux images with glibc.'
+        - '2:Fixed issue in `add-pkg` helper where a package could be incorrectly detected as installed.'
+    - version: 1.6.3
+      date: 2018-02-02
+      changes:
+        - 'Updated the beta key in the default configuration file.'
+    - version: 1.6.2
+      date: 2018-01-30
+      changes:
+        - 'Now using baseimage v3.3.1, which brings the following changes:'
+        - '2:Adjusted the way some ressources are accessed to better support reverse proxy to the container.'
+    - version: 1.6.1
+      date: 2018-01-22
+      changes:
+        - 'Updated the way optical drives are detected.'
+        - 'Display, in the container''s log, devices associated to an optical drive that need to be exposed.'
+    - version: 1.6.0
+      date: 2018-01-22
+      changes:
+        - 'Now using baseimage v3.3.0, which brings the following changes (since last used version):'
+        - '2:For Alpine Linux images with glibc, automatically update dynamic linker''s cache after new libraries are installed.'
+        - '2:Fixed the LANG environment variable not being set properly.'
+        - '2:Added the ability to automatically install a CJK (Chinese/Japanese/Korean) font.'
+    - version: 1.5.3
+      date: 2018-01-19
+      changes:
+        - 'Upgraded MakeMKV to version 1.10.10.'
+    - version: 1.5.2
+      date: 2018-01-11
+      changes:
+        - 'Now using baseimage v3.2.2, which brings the following changes (since last used version):'
+        - '2:Upgraded S6 overlay to version 1.21.2.2.'
+        - '2:Upgraded glibc to version 2.26 (Alpine Linux glibc images).'
+        - '2:Adjusted the way ownership of /config is taken to better support cases where the folder is mapped to a network share.'
+        - 'Small adjustment to the way ownership of files are taken.'
+        - 'Upgraded MakeMKV to version 1.10.9.'
+    - version: 1.5.1
+      date: 2017-12-12
+      changes:
+        - 'Now using baseimage v3.1.4, which brings the following changes:'
+        - '2:Set 2 worker processes for nginx.'
+    - version: 1.5.0
+      date: 2017-12-04
+      changes:
+        - 'Added `AUTO_DISC_RIPPER_INTERVAL` environment variable, used to set the interval the automatic disc ripper checks for the presence of a DVD/Blu-ray discs.'
+    - version: 1.4.1
+      date: 2017-11-30
+      changes:
+        - 'Removed unused volume.'
+    - version: 1.4.0
+      date: 2017-11-20
+      changes:
+        - 'Now using baseimage v3.1.3, which brings the following changes (from last used version):'
+        - '2:Upgraded S6 overlay to version 1.21.2.1.'
+        - '2:Enhanced integration of service dependencies functionality.'
+        - '2:Added a simple log monitor.'
+        - '2:Fixed race condition where container''s exit code would not be the expected one.'
+        - '2:Fixed issue where application''s GUI fails to displayed when accessing it through the web interface via standard ports 80/443.'
+        - '2:Fixed an issue where a self-disabled service could be restarted.'
+    - version: 1.3.1
+      date: 2017-11-19
+      changes:
+        - 'Upgraded MakeMKV to version 1.10.8.'
+    - version: 1.3.0
+      date: 2017-10-10
+      changes:
+        - 'Now using baseimage v3.0.2, which brings the following changes:'
+        - '2:Better support for service dependencies.'
+        - '2:Added support for secure access to the application''s GUI.'
+    - version: 1.2.6
+      date: 2017-09-08
+      changes:
+        - 'Now using baseimage v2.0.8, which brings the following changes (from last used version):'
+        - '2:Fixed timezone support on alpine-glibc images.'
+        - '2:Fixed duplicated entries in /etc/passwd and /etc/group that were created after a restart of the container.'
+        - 'Upgraded MakeMKV to version 1.10.7.'
+    - version: 1.2.5
+      date: 2017-08-14
+      changes:
+        - 'Now using baseimage v2.0.6, which brings the following changes:'
+        - '2:Upgraded S6 overlay to version 1.20.0.0.'
+    - version: 1.2.4
+      date: 2017-07-31
+      changes:
+        - 'Now using baseimage v2.0.5, which brings the following changes (from last used version):'
+        - '2:Clear the environment of the container during startup.'
+        - '2:Clear the /tmp folder during startup.'
+        - '2:Cleanly terminate the X server when container is restarted/stopped.'
+        - '2:Improved robustness of X server starting process.'
+        - '2:Removed unneeded files from the image.'
+    - version: 1.2.3
+      date: 2017-07-27
+      changes:
+        - 'Now using baseimage v2.0.3, which brings the following changes:'
+        - '2:Improved robustness of the X server starting process.'
+    - version: 1.2.2
+      date: 2017-07-23
+      changes:
+        - 'Now using baseimage v2.0.2, which brings the following changes:'
+        - '2:Proper VNC port is exposed.'
+    - version: 1.2.1
+      date: 2017-07-18
+      changes:
+        - 'Now using baseimage v2.0.1, which brings the following changes:'
+        - '2:Internal enhancements.'
+        - '2:Clean temporary files left by npm.'
+    - version: 1.2.0
+      date: 2017-07-17
+      changes:
+        - 'Now using baseimage v2.0.0, which brings the following changes:'
+        - '2:Various internal enhancements.'
+        - '2:Fixed the way a service waits for another one.'
+    - version: 1.1.0
+      date: 2017-07-04
+      changes:
+        - 'Make sure the respect the umask when creating MKV files.'
+        - 'Fixed disc ejection after rip.'
+        - 'Now using baseimage v1.5.0, which brings the following changes:'
+        - '2:Added the UMASK environment variable to control how file permissions are set for newly created files.'
+        - '2:Added the X11VNC_EXTRA_OPTS environment variable used to pass additional arguments to the x11vnc server.'
+        - '2:By default, activate auto-scaling of application''s window.'
+        - '2:Applied latest Alpine Linux security updates.'
+    - version: 1.0.0
+      date: 2017-06-26
+      changes:
+        - 'Initial release.'
+
+container:
+  storage_permissions: ro
+
+  # Environment variables.
+  environment_variables:
+    - name: MAKEMKV_KEY
+      description: >-
+        MakeMKV registration key to use.  The key is written to the
+        configuration file during container startup.  When set to `BETA`, the
+        latest beta key is automatically used.  When set to `UNSET`, no key is
+        automatically written to the configuration file.
+      type: public
+      default: "BETA"
+      unraid_template:
+        title: "License Key"
+        description: >-
+          MakeMKV registration key to use.  The key is written to the
+          configuration file during container startup.  When set to "BETA", the
+          latest beta key is automatically used.  When set to "UNSET", no key
+          is automatically written to the configuration file.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER
+      description: >-
+        When set to `1`, the automatic disc ripper is enabled.
+      type: public
+      default: 0
+      unraid_template:
+        title: "Automatic Disc Ripper: Enabled"
+        description: >-
+          Set to 1 to enable automatic rippping of DVD/Blu-ray discs.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_MAKEMKV_PROFILE
+      description: >-
+        Filename of the custom MakeMKV profile the automatic disc ripper should
+        use.  The profile is expected to be found under the `/config` folder of
+        the container, unless an absolute path is specified.
+      type: public
+      unraid_template:
+        title: "Automatic Disc Ripper: Custom MakeMKV Profile"
+        description: >-
+          Filename of the custom MakeMKV profile the automatic disc ripper should
+          use.  The profile is expected to be found under the /config folder of
+          the container, unless an absolute path is specified.
+        display: advanced
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_EJECT
+      description: >-
+        When set to `1`, disc is ejected from the drive when ripping is
+        terminated.
+      type: public
+      default: 0
+      unraid_template:
+        title: "Automatic Disc Ripper: Eject"
+        description: >-
+          Set to 1 to eject disc when ripping is terminated.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_PARALLEL_RIP
+      description: >-
+        When set to `1`, discs from all available optical drives are ripped in
+        parallel.  Else, each disc from optical drives is ripped one at time.
+      type: public
+      default: 0
+      unraid_template:
+        title: "Automatic Disc Ripper: Parallel"
+        description: >-
+          When set to 1, discs from all available optical drives are ripped in
+          parallel.  Else, each disc from optical drives is ripped one at time.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_INTERVAL
+      description: >-
+        Interval, in seconds, the automatic disc ripper checks for the presence of a DVD/Blu-ray discs.
+      type: public
+      default: 5
+      unraid_template:
+        title: "Automatic Disc Ripper: Interval"
+        display: advanced
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_MIN_TITLE_LENGTH
+      description: >-
+        Titles with a length less than this value are ignored.  Length is in
+        seconds.  By default, no value is set, meaning that value from MakeMKV's
+        configuration file is taken.
+      type: public
+      unraid_template:
+        title: "Automatic Disc Ripper: Minimum Title Length"
+        display: advanced
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_BD_MODE
+      description: >-
+        Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of
+        MKV files are produced.  When set to `backup`, a copy of the (decrypted)
+        file system is created instead. **NOTE**: This applies to Blu-ray discs
+        only.  For DVD discs, MKV files are always produced.
+      type: public
+      default: mkv
+      unraid_template:
+        title: "Automatic Disc Ripper: Blu-ray Rip Mode"
+        description: >-
+          Rip mode of Blu-ray discs.  "mkv" is the default mode, where a set of
+          MKV files are produced.  When set to "backup", a copy of the (decrypted)
+          file system is created instead. [b]NOTE[/b]: This applies to Blu-ray
+          discs only.  For DVD, MKV files are always produced.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR
+      description: >-
+        When set to `0`, files are written to `/output/DISC_LABEL/`, where
+        `DISC_LABEL` is the label/name of the disc.  If this directory exists,
+        then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX`
+        are random readable characters.  When set to `1`, the
+        `/output/DISC_LABEL-XXXXXX` pattern is always used.
+      type: public
+      default: 0
+      unraid_template:
+        title: "Automatic Disc Ripper: Force Unique Output Directory"
+        description: >-
+          When set to 0, files are written to "/output/DISC_LABEL/", where
+          "DISC_LABEL" is the label/name of the disc.  If this directory exists,
+          then files are written to "/output/DISC_LABEL-XXXXXX", where
+          "XXXXXX" are random readable characters.  When set to 1, the
+          "/output/DISC_LABEL-XXXXXX" pattern is always used.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_NO_GUI_PROGRESS
+      description: >-
+        When set to `1`, progress of discs ripped by the automatic disc ripper
+        is not shown in the MakeMKV GUI.
+      type: public
+      default: 0
+      unraid_template:
+        title: "Automatic Disc Ripper: Disable Progress in GUI"
+        description: >-
+          When set to 1, progress of discs ripped by the automatic disc ripper
+          is not shown in the MakeMKV GUI.
+        display: always
+        required: false
+        mask: false
+
+  # Volumes
+  volumes:
+    - container_path: /output
+      host_path_example: "/home/user/MakeMKV/output"
+      description: >-
+        This is where extracted videos are written.
+      permissions: rw
+      include_in_quick_start: true
+      unraid_template:
+        title: Output Directory
+        description: >-
+          This is the default output folder for converted videos.  Also used by
+          the automatic disc ripper.
+        display: always-hide
+        required: true
+        mask: false
+
+  # Network ports
+  ports: []
+
+  # Devices
+  devices:
+    - path: /dev/sr0
+      description: >-
+        This is the first Linux device file representing the optical drive.
+      include_in_quick_start: true
+    - path: /dev/sg2
+      description: >-
+        This is the second Linux device file representing the optical drive.
+      include_in_quick_start: true
