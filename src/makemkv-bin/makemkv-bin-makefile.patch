@@ -1,0 +1,18 @@
+--- a/Makefile	2023-02-08 22:43:55.929278486 -0500
++++ b/Makefile	2023-02-08 22:44:37.861100409 -0500
+@@ -1,7 +1,12 @@
+ 
+-ARCH=$(shell uname -m)
+-DESTDIR=
+-PREFIX=/usr
++ARCH=$(shell xx-info march)
++#DESTDIR=
++#PREFIX=/usr
++
++ifeq ($(ARCH),i386)
++ARCH=i386
++ARCH_OK=1
++endif
+ 
+ ifeq ($(ARCH),i586)
+ ARCH=i386

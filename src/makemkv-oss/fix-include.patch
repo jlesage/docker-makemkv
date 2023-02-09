@@ -1,0 +1,10 @@
+--- a/libdriveio/inc/lgpl/byteorder.h	2022-06-10 21:14:20.718724873 -0400
++++ b/libdriveio/inc/lgpl/byteorder.h	2022-06-10 21:14:39.206651713 -0400
+@@ -33,6 +33,7 @@
+ #elif defined(_linux_)
+ 
+ #include <endian.h>
++#include <byteswap.h>
+ 
+ #define __bswap64(x)    __bswap_64(x)
+ #define __bswap32(x)    __bswap_32(x)

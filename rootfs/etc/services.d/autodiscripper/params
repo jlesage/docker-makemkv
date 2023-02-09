@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e # Exit immediately if a command exits with a non-zero status.
+set -u # Treat unset variables as an error.
+
+SV_NAME="$(basename "$(pwd)")"
+
+DRIVE_ID=
+
+# Extract drive ID from current service name.
+if echo "$SV_NAME" | grep -q '^autodiscripper-[0-9]\+$'; then
+    DRIVE_ID="$(echo "$SV_NAME" | cut -d'-' -f2)"
+fi
+
+if [ -n "$DRIVE_ID" ]; then
+    echo "--drive-id"
+    echo "$DRIVE_ID"
+fi
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4

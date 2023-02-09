@@ -1,0 +1,29 @@
+--- a/makemkvgui/src/mainwnd.cpp	2018-10-02 07:09:49.248169888 -0400
++++ b/makemkvgui/src/mainwnd.cpp	2018-10-02 08:28:12.744184716 -0400
+@@ -1200,12 +1200,26 @@
+ 
+ void MainWnd::SlotHelppage()
+ {
++#if 0
+     SlotLaunchUrl(QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
++#else
++    QMessageBox::information(NULL,UI_QSTRING(APP_CAPTION_MSG),
++        "To view online help, please visit "+
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("onlinehelp/"));
++#endif
+ }
+ 
+ void MainWnd::SlotPurchase()
+ {
++#if 0
+     SlotLaunchUrl(QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
++#else
++    QMessageBox::information(NULL,UI_QSTRING(APP_CAPTION_MSG),
++        "To purchase "+
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_Name))+
++        ", please visit "+
++        QStringFromUtf8(m_app->GetAppString(AP_vastr_WebSiteURL))+QLatin1String("buy/"));
++#endif
+ }
+ 
+ 

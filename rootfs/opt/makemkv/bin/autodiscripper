@@ -1,0 +1,273 @@
+#!/bin/sh
+
+set -u # Treat unset variables as an error.
+set -o pipefail
+
+# Define the MakeMKV CLI command.
+MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkvcon"
+
+# Set the prefix of makemkvcon log messages.
+MAKEMKVCON_LOG_PREFIX="[makemkvcon]"
+
+log() {
+    echo "$@"
+}
+
+log_makemkvcon() {
+    if [ "${LAST_MSG:-UNSET}" != "$*" ]; then
+        echo "$MAKEMKVCON_LOG_PREFIX $*"
+        LAST_MSG="$*"
+    fi
+}
+
+log_yad() {
+    if [ -n "${YAD_LOGFILE:-}" ]; then
+        # Control the progress bar for current action.
+        echo "1:$4" >> "$YAD_LOGFILE"
+        # Control the progress bar for the current operation.
+        echo "2:$3" >> "$YAD_LOGFILE"
+        # Message to be displayed in the progress bar for the current action.
+        echo "1:#$2 - $4%" >> "$YAD_LOGFILE"
+        # Message to be displayed in the progress bar for the current operation.
+        echo "2:#$1 - $3%" >> "$YAD_LOGFILE"
+    fi
+}
+
+start_yad() {
+    tail -f "$3" | yad \
+        --fixed \
+        --width=384 \
+        --title "Automatic Disc Ripper" \
+        --window-icon /opt/novnc/images/icons/master_icon.png \
+        --borders 10 \
+        --text "Ripping disc ($2) from drive $1..." \
+        --no-buttons \
+        --multi-progress \
+        --bar="":NORM \
+        --bar="":NORM \
+        2>/dev/null \
+        &
+    YAD_PID=$!
+}
+
+stop_yad() {
+    if [ -n "${YAD_PID:-}" ]; then
+        kill "${YAD_PID}" 2> /dev/null || true
+        YAD_PID=
+    fi
+}
+
+kill_makemkvcon() {
+    PID="$(ps -o pid,args | grep "/opt/makemkv/bin/makemkvcon" | grep -vw grep | grep -vw guiserver | grep " $1 " | tr -s ' ' | xargs | cut -d' ' -f1)"
+    if [ "${PID:-UNSET}" != "UNSET" ]; then
+        kill -sigkill $PID
+        wait $PID >/dev/null 2>&1
+    fi
+}
+
+process_makemkvcon_output() {
+    CURRENT_OPERATION=
+    CURRENT_ACTION=
+    while read OUTPUT; do
+        OUTPUT_TYPE="$(echo "$OUTPUT" | cut -d':' -f1)"
+        if [ "$OUTPUT_TYPE" = "PRGT" ]; then
+            CURRENT_OPERATION="$(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            log_makemkvcon "Current operation: $CURRENT_OPERATION"
+        elif [ "$OUTPUT_TYPE" = "PRGC" ]; then
+            CURRENT_ACTION="$(echo "$OUTPUT" | cut -d',' -f3 | tr -d '"')"
+            log_makemkvcon "Current action: $CURRENT_ACTION"
+        elif [ "$OUTPUT_TYPE" = "PRGV" ]; then
+            AC_VAL="$(echo "$OUTPUT" | cut -d',' -f1 | cut -d':' -f2)"
+            OP_VAL="$(echo "$OUTPUT" | cut -d',' -f2)"
+            MAX="$(echo "$OUTPUT" | cut -d',' -f3)"
+            AC_PERCENT="$(expr $AC_VAL \* 100 / $MAX)"
+            OP_PERCENT="$(expr $OP_VAL \* 100 / $MAX)"
+            log_makemkvcon "Current progress - $AC_PERCENT%, Total progress - $OP_PERCENT%"
+            log_yad "$CURRENT_OPERATION" "$CURRENT_ACTION" "$OP_PERCENT" "$AC_PERCENT"
+        elif [ "$OUTPUT_TYPE" = "MSG" ]; then
+            MSG_CODE="$(echo "$OUTPUT" | cut -d',' -f1 | cut -d':' -f2)"
+            MSG_FLAGS="$(echo "$OUTPUT" | cut -d',' -f2)"
+
+            # Display the raw message string suitable for output.
+            log_makemkvcon "$(echo "$OUTPUT" | cut -d',' -f4 | tr -d '"')"
+
+            # Special handling for some message codes.
+            case $MSG_CODE in
+                5037)
+                    # MSG:5037,516,2,"Copy complete. 0 titles saved, 1 failed.","Copy complete. %1 titles saved, %2 failed.","0","1"
+                    exit 1
+                    ;;
+                5038)
+                    # MSG:5038,776,2,"The total size of all output files may reach as much as 2384 megabytes while there are only 10 megabytes free on the destination drive. Do you still want to continue?","The total size of all output files may reach as much as %1 megabytes while there are only %2 megabytes free on the destination drive. Do you still want to continue?","2384","10"
+                    log "Terminating makemkvcon due to insufficient disk space..."
+                    kill_makemkvcon "$1"
+                    exit 1
+                    ;;
+                2003)
+                    # MSG:2003,0,3,"Error 'Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN' occurred while reading '/BDMV/STREAM/00007.m2ts' at offset '3729653760'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN","/BDMV/STREAM/00007.m2ts","3729653760"
+                    #
+                    # NOTE: The message code 2003 is used for multiple kind of
+                    # SCSI errors.  We don't have to terminate with the
+                    # following message, since in some cases it is harmless.
+                    # See:
+                    #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38393
+                    #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38449
+                    # MSG:2003,0,3,"Error 'Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION' occurred while reading 'DVD+R-DL ATAPI DVD A  DH16AASH SA15' at offset '1048576'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - ILLEGAL REQUEST:READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION","DVD+R-DL ATAPI DVD A  DH16AASH SA15","1048576"
+                    if ! echo "$OUTPUT" | grep -q "READ OF SCRAMBLED SECTOR WITHOUT AUTHENTICATION"; then
+                        kill_makemkvcon "$1"
+                        exit 1
+                    fi
+                    ;;
+            esac
+        fi
+    done
+}
+
+process_disc() {
+    SRC="$1"
+    LABEL="${2:-$(date +%Y-%m-%d-%H-%M-%S)}"
+    IS_BD="${3:-0}"
+
+    if [ -d "/output/$LABEL" ] || [ "${AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR:-0}" -ne 0 ]; then
+        OUTPUT_DIR="$(mktemp -du "/output/${LABEL}-XXXXXX")"
+    else
+        OUTPUT_DIR="/output/$LABEL"
+    fi
+
+    mkdir "$OUTPUT_DIR"
+
+    MAKEMKV_COMMON_OPTS="-r --progress=-same"
+    if [ "${AUTO_DISC_RIPPER_MIN_TITLE_LENGTH:-UNSET}" != "UNSET" ]; then
+        MAKEMKV_COMMON_OPTS="$MAKEMKV_COMMON_OPTS --minlength=$AUTO_DISC_RIPPER_MIN_TITLE_LENGTH"
+    fi
+    if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:-UNSET}" != "UNSET" ]; then
+        if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:0:1}" = "/" ]; then
+            MAKEMKV_PROFILE_PATH="$AUTO_DISC_RIPPER_MAKEMKV_PROFILE"
+        else
+            MAKEMKV_PROFILE_PATH="/config/$AUTO_DISC_RIPPER_MAKEMKV_PROFILE"
+        fi
+        if [ -f "$MAKEMKV_PROFILE_PATH" ]; then
+            MAKEMKV_COMMON_OPTS="--profile=$MAKEMKV_PROFILE_PATH $MAKEMKV_COMMON_OPTS"
+        else
+            log "ERROR: MakeMKV profile not found at $MAKEMKV_PROFILE_PATH."
+        fi
+    fi
+
+    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+        YAD_LOGFILE="$(mktemp)"
+        start_yad "$(echo $SRC | cut -d':' -f2)" "$LABEL" "$YAD_LOGFILE"
+    fi
+
+    MAKEMKV_CLI_RC=1
+    if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
+        log "Backup mode enabled for Blu-ray disc."
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"
+        MAKEMKV_CLI_RC=$?
+    else
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"
+        MAKEMKV_CLI_RC=$?
+    fi
+
+    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+        stop_yad
+        rm -f "$YAD_LOGFILE"
+    fi
+
+    return $MAKEMKV_CLI_RC
+}
+
+#log "starting..."
+
+STATE_DIR="$(mktemp -d)"
+FIRST_RUN=1
+HANDLE_DRIVE_ID=
+
+if [ "${1:-}" == "--drive-id" ]; then
+    HANDLE_DRIVE_ID="{2:-}"
+fi
+
+# If the created state directory doesn't have the execute permission, we won't
+# be able to access/read/write files under it.  This may happen with a bad UMASK
+# value.
+if [ ! -x "$STATE_DIR" ]; then
+    log "ERROR: Cannot access state directory.  Verify UMASK value."
+    rm -r "$STATE_DIR"
+    exit 1
+fi
+
+while true; do
+    # Fetch information about optical drives.
+    DRIVES_INFO="$(mktemp)"
+
+    if [ -n "$HANDLE_DRIVE_ID" ]; then
+        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:$HANDLE_DRIVE_ID," > "$DRIVES_INFO" 2>&1
+    else
+        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:" > "$DRIVES_INFO" 2>&1
+    fi
+
+    # Loop through all drives.
+    while read -r DRV; do
+        # Extract needed fields.
+        DRV_ID="$(echo "$DRV" | cut -d',' -f1 | cut -d':' -f2)"
+        DRV_STATE="$(echo "$DRV" | cut -d',' -f2)"
+        DRV_FLAGS="$(echo "$DRV" | cut -d',' -f4)"
+        DRV_LABEL="$(echo "$DRV" | cut -d',' -f6 | tr -d '"')"
+        DRV_DEV="$(echo "$DRV" | cut -d',' -f7 | tr -d '"')"
+
+        # File to which latest info of current drive is saved.
+        DRV_INFO_FILE="$STATE_DIR/d$DRV_ID"
+
+        if [ "$DRV_STATE" -ne 2 ]; then
+            # No disc, tray opened or not a valid drive.  Skip it.
+            echo > "$DRV_INFO_FILE"
+            continue
+        elif [ "$DRV" = "$(test ! -f "$DRV_INFO_FILE" || cat "$DRV_INFO_FILE")" ]; then
+            # Disc already processed.  Skip it.
+            continue
+        else
+            log "Disc detected in drive $DRV_ID ($DRV_DEV): $DRV_LABEL."
+            if [ "$DRV_FLAGS" -eq 0 ]; then
+                # Not a DVD/BluRay video disc.
+                log "Not backing up disc: Not a DVD or BluRay video disc."
+            elif [ "$FIRST_RUN" -eq 1 ]; then
+                log "Not backing up disc: Service first run.  Eject and re-insert the disc to rip it."
+            else
+                # Process disc.
+                log "Starting disc rip..."
+                process_disc "disc:$DRV_ID" "$DRV_LABEL" "$(expr \( $DRV_FLAGS / 4 \) % 2)"
+                if [ "$?" -eq 0 ]; then
+                    log "Disc rip terminated successfully."
+                else
+                    log "Disc rip terminated with failure."
+                fi
+                if [ "${AUTO_DISC_RIPPER_EJECT:-0}" -eq 1 ]; then
+                    EJECT_TRIES=0
+                    while true; do
+                        log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
+                        EJECT_ERR="$(eject "$DRV_DEV" 2>&1)"
+                        if [ "$?" -eq 0 ]; then
+                            log "Disc ejected."
+                            break
+                        elif [ "$EJECT_TRIES" -lt 5 ] && echo "$EJECT_ERR" | grep -q "Resource busy" ; then
+                            log "Failed to eject disc: drive busy.  Retrying..."
+                            EJECT_TRIES="$(expr $EJECT_TRIES + 1)"
+                            sleep 5
+                        else
+                            log "ERROR: Failed to eject drive $DRV_ID ($DRV_DEV): $EJECT_ERR."
+                            break
+                        fi
+                    done
+                fi
+            fi
+            echo "$DRV" > "$DRV_INFO_FILE"
+        fi
+    done < "$DRIVES_INFO"
+    rm "$DRIVES_INFO"
+    [ "$FIRST_RUN" -eq 0 ] || log "Ready."
+    FIRST_RUN=0
+    sleep "${AUTO_DISC_RIPPER_INTERVAL:-5}"
+done
+
+rm -r "$STATE_DIR"
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4

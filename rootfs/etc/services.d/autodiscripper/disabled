@@ -1,0 +1,56 @@
+#!/bin/sh
+
+set -e # Exit immediately if a command exits with a non-zero status.
+set -u # Treat unset variables as an error.
+
+SV_NAME="$(basename "$(pwd)")"
+DRIVES_INFO_FILE="/tmp/.makemkv_supported_drives"
+DRIVE_ID=
+
+# Check if the automatic disc ripper is enabled.
+if is-bool-val-false "${AUTO_DISC_RIPPER:-0}"; then
+    echo "true"
+    exit 0
+fi
+
+# Extract drive ID from current service name.
+if echo "$SV_NAME" | grep -q '^autodiscripper-[0-9]\+$'; then
+    DRIVE_ID="$(echo "$SV_NAME" | cut -d'-' -f2)"
+fi
+
+# Make sure we have drive information.
+if [ ! -f "$DRIVES_INFO_FILE" ] || [ -z "$(cat "$DRIVES_INFO_FILE")" ]; then
+    echo "true"
+    exit 0
+fi
+
+if is-bool-val-false "${AUTO_DISC_RIPPER_PARALLEL_RIP:-0}"; then
+    # Parallel rip is disabled.
+
+    # Make sure current service is not for a specific drive.
+    if [ -n "$DRIVE_ID" ]; then
+        echo "true"
+        exit 0
+    fi
+else
+    # Parallel rip is enabled.
+
+    # Make sure current service is for a specific drive.
+    if [ -z "$DRIVE_ID" ]; then
+        echo "true"
+        exit 0
+    fi
+
+    # Check if drive is supported/exists.
+    if [ -n "$DRIVE_ID" ]; then
+        if ! grep -q "^DRV:$DRIVE_ID," "$DRIVES_INFO_FILE"; then
+            echo "true"
+            exit 0
+        fi
+    fi
+fi
+
+# We are all good.
+echo "false"
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4

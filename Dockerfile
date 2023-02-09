@@ -4,6 +4,9 @@
 # https://github.com/jlesage/docker-makemkv
 #
 
+# Docker image version is provided via build arg.
+ARG DOCKER_IMAGE_VERSION=
+
 # Define software versions.
 ARG MAKEMKV_VERSION=1.17.3
 
@@ -11,64 +14,63 @@ ARG MAKEMKV_VERSION=1.17.3
 ARG MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
 ARG MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSION}.tar.gz
 
-# Build MakeMKV.
-FROM ubuntu:20.04 AS makemkv
+# Get Dockerfile cross-compilation helpers.
+FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
+
+# Build MakeMKV libraries needed by the closed source binary.
+FROM --platform=$BUILDPLATFORM debian:11 AS makemkv-bin
+ARG TARGETPLATFORM
 ARG MAKEMKV_OSS_URL
 ARG MAKEMKV_BIN_URL
-COPY src/makemkv /tmp/makemkv
-RUN /tmp/makemkv/build.sh "${MAKEMKV_OSS_URL}" "${MAKEMKV_BIN_URL}"
+COPY --from=xx / /
+COPY src/makemkv-bin /build
+RUN /build/build.sh "${MAKEMKV_OSS_URL}" "${MAKEMKV_BIN_URL}"
+RUN xx-verify \
+    /opt/makemkv/bin/makemkvcon \
+    /opt/makemkv/lib/libmakemkv.so.1 \
+    /opt/makemkv/lib/libdriveio.so.0 \
+    /opt/makemkv/lib/libmmbd.so.0
 
-# Build YAD.
-# NOTE: We build a static version to reduce the number of dependencies to be
-#       added to the image.
-FROM alpine:3.14 AS yad
-COPY src/yad/build.sh /build-yad.sh
-RUN /build-yad.sh
+# Build MakeMKV open source binaries.
+FROM --platform=$BUILDPLATFORM alpine:3.16 AS makemkv-oss
+ARG TARGETPLATFORM
+ARG MAKEMKV_OSS_URL
+COPY --from=xx / /
+COPY src/makemkv-oss /build
+RUN /build/build.sh "${MAKEMKV_OSS_URL}"
+RUN xx-verify \
+    /tmp/makemkv-install/usr/bin/makemkv \
+    /tmp/makemkv-install/usr/bin/mmccextr \
+    /tmp/makemkv-install/usr/bin/mmgplsrv
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.15-v3.5.8
+FROM jlesage/baseimage-gui:alpine-3.16-v4.3.5
 
-# Docker image version is provided via build arg.
-ARG DOCKER_IMAGE_VERSION=unknown
+ARG DOCKER_IMAGE_VERSION
+ARG MAKEMKV_VERSION
 
 # Define working directory.
 WORKDIR /tmp
 
-# Install MakeMKV.
-COPY --from=makemkv /opt/makemkv /opt/makemkv
-
-# Install Java 8.
-RUN \
-    add-pkg openjdk8-jre-base && \
-    # Removed uneeded stuff.
-    rm -r \
-        /usr/lib/jvm/java-1.8-openjdk/bin \
-        /usr/lib/jvm/java-1.8-openjdk/lib \
-        /usr/lib/jvm/java-1.8-openjdk/jre/lib/ext \
-        && \
-    # Cleanup.
-    rm -rf /tmp/* /tmp/.[!.]*
-
-# Install YAD.
-COPY --from=yad /tmp/yad-install/usr/bin/yad /usr/bin/
-
 # Install dependencies.
 RUN \
     add-pkg \
+        openjdk8-jre-base \
+        # For beta key fetching.
         wget \
         sed \
+        # For the init script.
         findutils \
-        util-linux \
-        lsscsi
-
-# Adjust the openbox config.
-RUN \
-    # Maximize only the main window.
-    sed-patch 's/<application type="normal">/<application type="normal" title="MakeMKV BETA">/' \
-        /etc/xdg/openbox/rc.xml && \
-    # Make sure the main window is always in the background.
-    sed-patch '/<application type="normal" title="MakeMKV BETA">/a \    <layer>below</layer>' \
-        /etc/xdg/openbox/rc.xml
+        # For optical drive detection.
+        lsscsi \
+        # For the GUI.
+        qt5-qtbase-x11 \
+        adwaita-qt \
+        font-croscore \
+        mesa-dri-gallium \
+    && \
+    # Save some space by removing unused DRI drivers.
+    find /usr/lib/xorg/modules/dri/ -type f ! -name swrast_dri.so -exec echo "Removing {}..." ';' -delete
 
 # Generate and install favicons.
 RUN \
@@ -77,16 +79,33 @@ RUN \
 
 # Add files.
 COPY rootfs/ /
+COPY --from=makemkv-bin /opt/makemkv /opt/makemkv
+COPY --from=makemkv-oss /tmp/makemkv-install/usr /opt/makemkv
 
 # Update the default configuration file with the latest beta key.
 RUN /opt/makemkv/bin/makemkv-update-beta-key /defaults/settings.conf
 
-# Set environment variables.
-ENV APP_NAME="MakeMKV" \
-    MAKEMKV_KEY="BETA"
+# Set internal environment variables.
+RUN \
+    set-cont-env APP_NAME "MakeMKV" && \
+    set-cont-env APP_VERSION "$MAKEMKV_VERSION" && \
+    set-cont-env DOCKER_IMAGE_VERSION "$DOCKER_IMAGE_VERSION" && \
+    true
+
+# Set public environment variables.
+ENV \
+    MAKEMKV_KEY=BETA \
+    AUTO_DISC_RIPPER=0 \
+    AUTO_DISC_RIPPER_MAKEMKV_PROFILE= \
+    AUTO_DISC_RIPPER_EJECT=0 \
+    AUTO_DISC_RIPPER_PARALLEL_RIP=0 \
+    AUTO_DISC_RIPPER_INTERVAL=5 \
+    AUTO_DISC_RIPPER_MIN_TITLE_LENGTH= \
+    AUTO_DISC_RIPPER_BD_MODE=mkv \
+    AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR=0 \
+    AUTO_DISC_RIPPER_NO_GUI_PROGRESS=0
 
 # Define mountable directories.
-VOLUME ["/config"]
 VOLUME ["/storage"]
 VOLUME ["/output"]
 
@@ -94,6 +113,6 @@ VOLUME ["/output"]
 LABEL \
       org.label-schema.name="makemkv" \
       org.label-schema.description="Docker container for MakeMKV" \
-      org.label-schema.version="$DOCKER_IMAGE_VERSION" \
+      org.label-schema.version="${DOCKER_IMAGE_VERSION:-unknown}" \
       org.label-schema.vcs-url="https://github.com/jlesage/docker-makemkv" \
       org.label-schema.schema-version="1.0"

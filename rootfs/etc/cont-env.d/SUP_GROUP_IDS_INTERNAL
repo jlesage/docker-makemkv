@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Get the supplementary group ID(s) needed to access optical drive(s).  These
+# will be added to the ones provided by $SUP_GROUP_IDS.
+#
+
+set -e # Exit immediately if a command exits with a non-zero status.
+set -u # Treat unset variables as an error.
+
+GRPS=$(mktemp)
+
+DRIVES_INFO="/tmp/.drives_info"
+if [ ! -f "$DRIVES_INFO" ]; then
+    lsscsi -g -k | grep -w "cd/dvd" | tr -s ' ' > "$DRIVES_INFO"
+fi
+
+while read -r DRV; do
+    SR_DEV="$(echo "$DRV" | rev | cut -d' ' -f2 | rev)"
+    SG_DEV="$(echo "$DRV" | rev | cut -d' ' -f1 | rev)"
+
+    # Save the associated group.
+    if [ -e "$SG_DEV" ]; then
+        # Save the associated group.
+        G="$(stat -c "%g" "$SR_DEV")"
+        echo "$G" >> "$GRPS"
+    fi
+    if [ -e "$SG_DEV" ]; then
+        # Save the associated group.
+        G="$(stat -c "%g" "$SG_DEV")"
+        echo "$G" >> "$GRPS"
+    fi
+done < "$DRIVES_INFO"
+
+# Print supplementary group IDs.
+if [ "$(cat "$GRPS")" != "" ]; then
+    cat "$GRPS" | grep -v '^$' | grep -v '^0$' | sort -nub | tr '\n' ','
+    rm "$GRPS"
+else
+    rm "$GRPS"
+    exit 100
+fi
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4
