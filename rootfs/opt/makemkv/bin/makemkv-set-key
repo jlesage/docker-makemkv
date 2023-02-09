@@ -12,15 +12,15 @@ Arguments:
 "
 }
 
-KEY="$1"
-if [ -z "$1" ]; then
+KEY="${1:-}"
+if [ -z "$KEY" ]; then
     echo "ERROR: Registration key is missing."
     usage
     exit 1
 fi
 
-CONFIG_FILE=$2
-if [ -z "$1" ]; then
+CONFIG_FILE="${2:-}"
+if [ -z "$CONFIG_FILE" ]; then
     echo "ERROR: Path to the configuration file is missing."
     usage
     exit 1
@@ -36,14 +36,14 @@ CUR_KEY="$(sed -n 's|^[ \t]*app_Key[ \t]*=[ \t]*"\(.*\)"[ \t]*$|\1|gp' "$CONFIG_
 
 # If not the same, update it.
 if [ "$CUR_KEY" != "$KEY" ]; then
-    echo "Updating registration key..."
+    echo "updating registration key..."
     if grep -q '^app_Key ' "$CONFIG_FILE"; then
         sed -i "/^[ \t]*app_Key[ \t]*=/c\app_Key = \"$KEY\"" "$CONFIG_FILE"
     else
         echo "app_Key = \"$KEY\"" >> "$CONFIG_FILE"
     fi
 else
-    echo "Registration key already up-to-date."
+    echo "registration key already up-to-date."
 fi
 
-# vim: set ft=sh :
+# vim:ft=sh:ts=4:sw=4:et:sts=4

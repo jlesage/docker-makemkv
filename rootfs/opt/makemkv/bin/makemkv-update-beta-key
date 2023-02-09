@@ -12,8 +12,8 @@ Arguments:
 "
 }
 
-CONFIG_FILE=$1
-if [ -z "$1" ]; then
+CONFIG_FILE="${1:-}"
+if [ -z "$CONFIG_FILE" ]; then
     echo "ERROR: Path to the configuration file missing."
     usage
     exit 1
@@ -45,4 +45,4 @@ rm "$TMPFILE"
 
 exit $?
 
-# vim: set ft=sh :
+# vim:ft=sh:ts=4:sw=4:et:sts=4
