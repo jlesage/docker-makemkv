@@ -7,5 +7,11 @@
 #export QT_DEBUG_PLUGINS=1
 export HOME=/config
 
+DEBUG_ARGS=
+if is-bool-val-true "${CONTAINER_DEBUG:-0}"; then
+    mkdir -p /config/log/makemkv
+    DEBUG_ARGS="debug /config/log/makemkv/debug.txt"
+fi
+
 cd /storage
-exec /opt/makemkv/bin/makemkv -std
+exec /opt/makemkv/bin/makemkv $DEBUG_ARGS -std
