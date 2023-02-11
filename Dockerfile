@@ -63,6 +63,8 @@ RUN \
         findutils \
         # For optical drive detection.
         lsscsi \
+        # For the eject command.
+        util-linux-misc \
         # For the GUI.
         qt5-qtbase-x11 \
         adwaita-qt \
