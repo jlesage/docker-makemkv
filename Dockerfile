@@ -97,6 +97,7 @@ RUN \
 # Set public environment variables.
 ENV \
     MAKEMKV_KEY=BETA \
+    MAKEMKV_GUI=1 \
     AUTO_DISC_RIPPER=0 \
     AUTO_DISC_RIPPER_MAKEMKV_PROFILE= \
     AUTO_DISC_RIPPER_EJECT=0 \

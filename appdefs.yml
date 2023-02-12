@@ -514,6 +514,18 @@ container:
         display: always
         required: false
         mask: false
+    - name: MAKEMKV_GUI
+      description: >-
+        Setting this to `1` enables the MakeMKV, `0` disables it.
+      type: public
+      default: 1
+      unraid_template:
+        title: "MakeMKV GUI State"
+        description: >-
+          Setting this to 1 enables the MakeMKV GUI, 0 disables it.
+        display: advanced
+        required: false
+        mask: false
     - name: AUTO_DISC_RIPPER
       description: >-
         When set to `1`, the automatic disc ripper is enabled.

@@ -126,6 +126,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`VNC_PASSWORD`| Password needed to connect to the application's GUI.  See the [VNC Password](#vnc-password) section for more details. | `""` |
 |`ENABLE_CJK_FONT`| When set to `1`, open-source computer font `WenQuanYi Zen Hei` is installed.  This font contains a large range of Chinese/Japanese/Korean characters. | `0` |
 |`MAKEMKV_KEY`| MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
+|`MAKEMKV_GUI`| Setting this to `1` enables the MakeMKV, `0` disables it. | `1` |
 |`AUTO_DISC_RIPPER`| When set to `1`, the automatic disc ripper is enabled. | `0` |
 |`AUTO_DISC_RIPPER_MAKEMKV_PROFILE`| Filename of the custom MakeMKV profile the automatic disc ripper should use.  The profile is expected to be found under the `/config` folder of the container, unless an absolute path is specified. | (unset) |
 |`AUTO_DISC_RIPPER_EJECT`| When set to `1`, disc is ejected from the drive when ripping is terminated. | `0` |
