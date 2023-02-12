@@ -153,7 +153,7 @@ process_disc() {
         fi
     fi
 
-    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+    if is-bool-val-false "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}"; then
         YAD_LOGFILE="$(mktemp)"
         start_yad "$(echo $SRC | cut -d':' -f2)" "$LABEL" "$YAD_LOGFILE"
     fi
@@ -168,7 +168,7 @@ process_disc() {
         MAKEMKV_CLI_RC=$?
     fi
 
-    if [ "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}" -eq 0 ]; then
+    if is-bool-val-false "${AUTO_DISC_RIPPER_NO_GUI_PROGRESS:-0}"; then
         stop_yad
         rm -f "$YAD_LOGFILE"
     fi
@@ -240,7 +240,7 @@ while true; do
                 else
                     log "Disc rip terminated with failure."
                 fi
-                if [ "${AUTO_DISC_RIPPER_EJECT:-0}" -eq 1 ]; then
+                if is-bool-val-true "${AUTO_DISC_RIPPER_EJECT:-0}"; then
                     EJECT_TRIES=0
                     while true; do
                         log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
