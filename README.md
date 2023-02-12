@@ -11,7 +11,7 @@ optical drive and let MakeMKV rips it without any user interaction.
 
 ---
 
-[![MakeMKV logo](https://images.weserv.nl/?url=raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png&w=110)](https://www.makemkv.com)[![MakeMKV](https://images.placeholders.dev/?width=224&height=110&fontFamily=Georgia,sans-serif&fontWeight=400&fontSize=52&text=MakeMKV&bgColor=rgba(0,0,0,0.0)&textColor=rgba(121,121,121,1))](https://www.makemkv.com)
+[![MakeMKV logo](https://images.weserv.nl/?url=raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png&w=110)](https://www.makemkv.com)[![MakeMKV](https://images.placeholders.dev/?width=224&height=110&fontFamily=monospace&fontWeight=400&fontSize=52&text=MakeMKV&bgColor=rgba(0,0,0,0.0)&textColor=rgba(121,121,121,1))](https://www.makemkv.com)
 
 MakeMKV is your one-click solution to convert video that you own into free and
 patents-unencumbered format that can be played everywhere. MakeMKV is a format
