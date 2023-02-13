@@ -35,9 +35,10 @@ sed -i 's|app_DataDir = .*|app_DataDir = "/config/data"|' /config/settings.conf
 # Create link for MakeMKV config directory.
 # The only configuration location MakeMKV looks for seems to be
 # "$HOME/.MakeMKV".
-if [ ! -e /config/.MakeMKV ]; then
-    ln -s /config /config/.MakeMKV
-fi
+# NOTE: Make sure to re-create the link.  The `/config` might have been restored
+#       from a backup, so the symlink might no longer be one.
+rm -rf /config/.MakeMKV
+ln -s /config /config/.MakeMKV
 
 # Make sure the data directory exists.
 mkdir -p /config/data
