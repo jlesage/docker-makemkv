@@ -145,6 +145,7 @@ app:
       changes:
         - 'Updated MakeMKV to version 1.17.3.'
         - 'Added the ability to disable MakeMKV GUI.'
+        - 'Fixed Java not being found.'
         - 'Fixed disc ejection not working with the Automatic Disc Ripper.'
         - 'Versioning scheme of the Docker image changed to `YY.MM.SEQUENCE`.'
         - 'Update of the baseimage to version 4.3.5 brings the following new features:'
