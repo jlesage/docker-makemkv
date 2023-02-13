@@ -140,6 +140,18 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 23.02.1
+      date: 2023-02-12
+      changes:
+        - 'Updated MakeMKV to version 1.17.3.'
+        - 'Added the ability to disable MakeMKV GUI.'
+        - 'Fixed disc ejection not working with the Automatic Disc Ripper.'
+        - 'Versioning scheme of the Docker image changed to `YY.MM.SEQUENCE`.'
+        - 'Update of the baseimage to version 4.3.5 brings the following new features:'
+        - '2:Multi-arch image support.'
+        - '2:Support for dark mode.'
+        - '2:Support for remote window resize.'
+        - '2:Updated the web UI with a new, simplified and less intrusive look.'
     - version: 1.22.2
       date: 2022-10-24
       changes:
