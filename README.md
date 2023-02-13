@@ -620,16 +620,21 @@ See the [Environment Variables](#environment-variables) section for details
 about setting environment variables.
 
 **NOTE**: All titles, audio tracks, chapters, subtitles, etc are
-        extracted/preserved.
+          extracted/preserved.
 
 **NOTE**: Titles and audio tracks are kept in their original format.  They are
-        not transcoded or converted to other formats or into smaller sizes.
+          not transcoded or converted to other formats or into smaller sizes.
 
 **NOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
 
 **NOTE**: MKV Files are written to the `/output` folder of the container.
 
 **NOTE**: The automatic disc ripper processes all available optical drives.
+
+**NOTE**: When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set
+          to `1`), it is recommended, to minimize impact on ripping speed, to
+          increase the interval at which the presence of new discs is checked
+          (`AUTO_DISC_RIPPER_INTERVAL`).
 
 ## Troubleshooting
 
