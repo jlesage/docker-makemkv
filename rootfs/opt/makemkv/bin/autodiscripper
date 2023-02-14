@@ -176,14 +176,12 @@ process_disc() {
     return $MAKEMKV_CLI_RC
 }
 
-#log "starting..."
-
 STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1
 HANDLE_DRIVE_ID=
 
 if [ "${1:-}" == "--drive-id" ]; then
-    HANDLE_DRIVE_ID="{2:-}"
+    HANDLE_DRIVE_ID="${2:-}"
 fi
 
 # If the created state directory doesn't have the execute permission, we won't
