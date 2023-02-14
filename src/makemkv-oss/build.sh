@@ -13,7 +13,7 @@ set -u # Treat unset variables as an error.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Set same default compilation flags as abuild.
-export CFLAGS="-Os -fomit-frame-pointer"
+export CFLAGS="-Os -fomit-frame-pointer -DQT_NO_DEBUG_OUTPUT"
 export CXXFLAGS="$CFLAGS"
 export CPPFLAGS="$CFLAGS"
 export LDFLAGS="-Wl,--strip-all -Wl,--as-needed"
