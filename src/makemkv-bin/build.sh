@@ -195,6 +195,15 @@ if xx-info is-cross; then
     ln -sv "$SCRIPT_DIR/cross-compile-ldd" "$(dirname "$(which "$(xx-info)-gcc")")/$(xx-info)-ldd"
 fi
 
+# Add needed liraries that are not catched by tracking dependencies.  These are
+# loaded dynamically via dlopen.
+log "Adding extra libraries..."
+find "$(xx-info sysroot)"usr/lib -name "libcurl.so.4*" -exec cp -av {} "$MAKEMKV_ROOT_DIR"/lib/ ';'
+if [ -z "$(ls -l "$MAKEMKV_ROOT_DIR"/lib/libcurl.so.4*)" ]; then
+    log "ERROR: Could not find libcurl."
+    exit 1
+fi
+
 log "Extracting shared library dependencies..."
 find "$MAKEMKV_ROOT_DIR" -type f -executable -or -name 'lib*.so*' | while read BIN
 do
