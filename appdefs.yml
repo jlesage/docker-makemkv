@@ -145,6 +145,10 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 23.02.5
+      date: 2023-02-15
+      changes:
+        - 'Fixed issue that could occur during setup of supplementary groups of optical drives.'
     - version: 23.02.4
       date: 2023-02-15
       changes:
