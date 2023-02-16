@@ -19,7 +19,7 @@ while read -r DRV; do
     SG_DEV="$(echo "$DRV" | rev | cut -d' ' -f1 | rev)"
 
     # Save the associated group.
-    if [ -e "$SG_DEV" ]; then
+    if [ -e "$SR_DEV" ]; then
         # Save the associated group.
         G="$(stat -c "%g" "$SR_DEV")"
         echo "$G" >> "$GRPS"
