@@ -74,7 +74,7 @@ apt-get install -y --no-install-recommends \
 #
 mkdir /tmp/fdk-aac
 log "Downloading fdk-aac..."
-curl -# -L ${FDK_AAC_URL} | tar -xz --strip 1 -C /tmp/fdk-aac
+curl -# -L -f ${FDK_AAC_URL} | tar -xz --strip 1 -C /tmp/fdk-aac
 log "Configuring fdk-aac..."
 (
     cd /tmp/fdk-aac && \
@@ -95,7 +95,7 @@ make -C /tmp/fdk-aac install
 #
 mkdir /tmp/ffmpeg
 log "Downloading ffmpeg..."
-curl -# -L ${FFMPEG_URL} | tar -xJ --strip 1 -C /tmp/ffmpeg
+curl -# -L -f ${FFMPEG_URL} | tar -xJ --strip 1 -C /tmp/ffmpeg
 log "Configuring ffmpeg..."
 (
     cd /tmp/ffmpeg && ./configure \
@@ -125,7 +125,7 @@ make -C /tmp/ffmpeg install
 #
 mkdir /tmp/qt5
 log "Downloading Qt..."
-curl -# -L ${QT_URL} | tar -xJ --strip 1 -C /tmp/qt5
+curl -# -L -f ${QT_URL} | tar -xJ --strip 1 -C /tmp/qt5
 log "Configuring Qt..."
 # Create the configure options file.
 echo "\
@@ -181,7 +181,7 @@ make -C /tmp/qt5 -j$(nproc) install
 #
 mkdir /tmp/makemkv-oss
 log "Downloading MakeMKV OSS..."
-curl -# -L ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C /tmp/makemkv-oss
+curl -# -L -f ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C /tmp/makemkv-oss
 log "Configuring MakeMKV OSS..."
 (
     cd /tmp/makemkv-oss && ./configure \
@@ -199,7 +199,7 @@ rm -r /opt/makemkv/share/applications
 #
 mkdir /tmp/makemkv-bin
 log "Downloading MakeMKV bin..."
-curl -# -L ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C /tmp/makemkv-bin
+curl -# -L -f ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C /tmp/makemkv-bin
 log "Installing MakeMKV bin..."
 patch -p0 -d /tmp/makemkv-bin < "$SCRIPT_DIR/makemkv-bin-makefile.patch"
 make DESTDIR="$MAKEMKV_ROOT_DIR" -C /tmp/makemkv-bin install

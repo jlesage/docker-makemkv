@@ -65,7 +65,7 @@ fi
 
 log "Downloading MakeMKV..."
 mkdir /tmp/makemkv
-curl -# -L ${MAKEMKV_URL} | tar xz --strip 1 -C /tmp/makemkv
+curl -# -L -f ${MAKEMKV_URL} | tar xz --strip 1 -C /tmp/makemkv
 
 #
 # Compile MakeMKV.

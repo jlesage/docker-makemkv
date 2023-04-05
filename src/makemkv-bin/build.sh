@@ -69,19 +69,19 @@ xx-apt-get install -y --no-install-recommends \
 
 log "Downloading fdk-aac..."
 mkdir /tmp/fdk-aac
-curl -# -L ${FDK_AAC_URL} | tar -xz --strip 1 -C /tmp/fdk-aac
+curl -# -L -f ${FDK_AAC_URL} | tar -xz --strip 1 -C /tmp/fdk-aac
 
 log "Downloading ffmpeg..."
 mkdir /tmp/ffmpeg
-curl -# -L ${FFMPEG_URL} | tar -xJ --strip 1 -C /tmp/ffmpeg
+curl -# -L -f ${FFMPEG_URL} | tar -xJ --strip 1 -C /tmp/ffmpeg
 
 log "Downloading MakeMKV OSS..."
 mkdir /tmp/makemkv-oss
-curl -# -L ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C /tmp/makemkv-oss
+curl -# -L -f ${MAKEMKV_OSS_URL} | tar -xz --strip 1 -C /tmp/makemkv-oss
 
 log "Downloading MakeMKV bin..."
 mkdir /tmp/makemkv-bin
-curl -# -L ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C /tmp/makemkv-bin
+curl -# -L -f ${MAKEMKV_BIN_URL} | tar -xz --strip 1 -C /tmp/makemkv-bin
 
 #
 # Compile fdk-aac.

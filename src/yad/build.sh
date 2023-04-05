@@ -73,7 +73,7 @@ apk --no-cache add \
 #
 mkdir /tmp/pango
 log "Downloading pango..."
-curl -# -L ${PANGO_URL} | tar -xJ --strip 1 -C /tmp/pango
+curl -# -L -f ${PANGO_URL} | tar -xJ --strip 1 -C /tmp/pango
 log "Configuring pango..."
 (
     cd /tmp/pango && abuild-meson \
@@ -94,7 +94,7 @@ meson install --no-rebuild -C /tmp/pango/build
 #
 mkdir /tmp/atk
 log "Downloading atk..."
-curl -# -L ${ATK_URL} | tar -xJ --strip 1 -C /tmp/atk
+curl -# -L -f ${ATK_URL} | tar -xJ --strip 1 -C /tmp/atk
 log "Configuring atk..."
 (
     cd /tmp/atk && abuild-meson \
@@ -115,7 +115,7 @@ meson install --no-rebuild -C /tmp/atk/build
 #
 mkdir /tmp/gdkpixbuf
 log "Downloading GdkPixbuf..."
-curl -# -L ${GDKPIXBUF_URL} | tar -xJ --strip 1 -C /tmp/gdkpixbuf
+curl -# -L -f ${GDKPIXBUF_URL} | tar -xJ --strip 1 -C /tmp/gdkpixbuf
 log "Configuring GdkPixbuf..."
 (
     cd /tmp/gdkpixbuf && abuild-meson \
@@ -146,7 +146,7 @@ meson install --no-rebuild -C /tmp/gdkpixbuf/build
 #
 mkdir /tmp/gtk
 log "Downloading GTK..."
-curl -# -L ${GTK_URL} | tar -xJ --strip 1 -C /tmp/gtk
+curl -# -L -f ${GTK_URL} | tar -xJ --strip 1 -C /tmp/gtk
 log "Configuring GTK..."
 (
     cd /tmp/gtk && ./configure \
@@ -178,7 +178,7 @@ make -C /tmp/gtk install
 #
 mkdir /tmp/yad
 log "Downloading YAD..."
-curl -# -L ${YAD_URL} | tar xz --strip 1 -C /tmp/yad
+curl -# -L -f ${YAD_URL} | tar xz --strip 1 -C /tmp/yad
 log "Configuring YAD..."
 export LDFLAGS="$LDFLAGS --static -static" && \
 (
