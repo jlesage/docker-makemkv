@@ -3,7 +3,12 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
 
-MAKEMKV_CLI="env HOME=/config LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkvcon"
+# NOTE: Since makemkvcon is used here only to list devices, user's settings
+#       are not needed.  Thus, use a non-existing home directory.  This is
+#       a workaround for a bug where makemkvcon clears the `settings.conf`
+#       configuration file when it contains an expired beta key.
+#       See https://github.com/jlesage/docker-makemkv/issues/172
+MAKEMKV_CLI="env HOME=/home/nobody LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkvcon"
 
 # Generate machine id
 if [ ! -f /config/machine-id ]; then
