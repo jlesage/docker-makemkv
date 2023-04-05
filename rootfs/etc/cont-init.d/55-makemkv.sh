@@ -31,7 +31,9 @@ mkdir -p "$XDG_CONFIG_HOME"
 #fi
 
 # Copy default config if needed.
-[ -f /config/settings.conf ] || cp -v /defaults/settings.conf /config/
+if [ ! -f /config/settings.conf ] || [ "$(stat -c "%s" /config/settings.conf)" -eq 0 ]; then
+    cp -v /defaults/settings.conf /config/
+fi
 [ -f "$XDG_CONFIG_HOME"/QtProject.conf ] || cp -v /defaults/QtProject.conf "$XDG_CONFIG_HOME"/
 
 # Make sure the data directory is correctly set.
