@@ -145,6 +145,10 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 23.04.1
+      date: 2023-04-07
+      changes:
+        - 'Added workaround for settings being cleared by MakeMKV CLI when the beta key is expired.'
     - version: 23.03.1
       date: 2023-03-05
       changes:
