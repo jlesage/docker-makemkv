@@ -145,6 +145,11 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 23.04.2
+      date: 2023-04-29
+      changes:
+        - 'Update of the baseimage to version 4.4.0 brings the following changes:'
+        - '2:Updated TigerVNC to version 1.13.1.'
     - version: 23.04.1
       date: 2023-04-07
       changes:
