@@ -80,6 +80,7 @@ MAKEMKV_COMPILED_BINS="\
 log "Patching MakeMKV..."
 patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/fix-include.patch"
 patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/launch-url.patch"
+patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/report-script.patch"
 
 log "Configuring MakeMKV..."
 (

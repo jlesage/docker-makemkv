@@ -1,0 +1,37 @@
+diff --git a/makemkvgui/src/mainwnd.cpp b/makemkvgui/src/mainwnd.cpp
+index b69b6e5..8716922 100644
+--- a/makemkvgui/src/mainwnd.cpp
++++ b/makemkvgui/src/mainwnd.cpp
+@@ -25,6 +25,23 @@
+ #include "dvdbox.h"
+ #include "drivebox.h"
+ #include "image_defs.h"
++#include <QProcess>
++
++static void invokeReportScript(unsigned long code, const QString &text, const QString &path) {
++    static QString reportScript = qEnvironmentVariable("MAKEMKV_REPORT_SCRIPT");
++    if (reportScript.isEmpty()) return;
++
++    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
++    env.insert("MAKEMKV_CODE", QString::number(code));
++    env.insert("MAKEMKV_TEXT", text);
++    env.insert("MAKEMKV_PATH", path);
++
++    QProcess process;
++    process.setProgram(reportScript);
++    process.setArguments({});
++    process.setProcessEnvironment(env);
++    process.startDetached();
++}
+ 
+ MainWnd* MainWnd::m_myself_static=NULL;
+ 
+@@ -1070,6 +1087,8 @@ int MainWnd::ReportUiMessage(
+         return 0;
+     }
+ 
++    invokeReportScript(Code, QStringFromUtf8(Text), saveFolderBox->text());
++
+     // look if this is a dialog-box message and dispatch it here
+     if (( (Flags&AP_UIMSG_BOX_MASK) == AP_UIMSG_BOXOK ) ||
+         ( (Flags&AP_UIMSG_BOX_MASK) == AP_UIMSG_BOXERROR ) ||

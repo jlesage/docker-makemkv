@@ -129,6 +129,43 @@ app:
                     to `1`), it is recommended, to minimize impact on ripping speed, to
                     increase the interval at which the presence of new discs is checked
                     (`AUTO_DISC_RIPPER_INTERVAL`).
+      - title: Capture Events of MakeMKV GUI
+        level: 2
+        content: |-
+          By setting the `MAKEMKV_REPORT_SCRIPT` environment variable to point to an
+          executable, you're able to capture events that are sent to the GUI.  This is
+          useful if you want to automatically post-process media.
+
+          **NOTE**: This isn't implemented yet for the automatic disc ripper!
+
+          If set, the script is called for every event that is logged in the log window
+          of the GUI.  The logged data is passed through environment variables to your
+          script:
+
+          - `MAKEMKV_CODE` The code of the log event, see below
+          - `MAKEMKV_TEXT` The (localized) text of the log event
+          - `MAKEMKV_PATH` The current output path
+
+          **NOTE**: If you don't want to bake your own docker image, you can put your
+                    script into the config/ directory.
+      - title: Codes
+        level: 3
+        content: |-
+          - `5011` Analysis of an opened disc has finished, waiting for the user to proceed
+          - `5014` Ripping start of a title
+          - `5005` Ripping finish of a title
+          - `5036` Ripping of all requested titles has finished successfully
+          - Many more
+      - title: Sample Script
+        level: 3
+        content: |-
+          This scripts simply logs all events into report.log in the config directory.
+          Save it as config/report.sh and set `MAKEMKV_REPORT_SCRIPT=/config/report.sh`.
+
+          ```sh
+          #!/bin/sh
+          echo "$(date) ${MAKEMKV_CODE} ${MAKEMKV_PATH} ${MAKEMKV_TEXT}" >> /config/report.log
+          ```
       - title: Troubleshooting
         level: 2
       - title: Expired Beta Key
