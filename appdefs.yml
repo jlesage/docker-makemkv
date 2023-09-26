@@ -145,6 +145,10 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 23.09.1
+      date: 2023-09-26
+      changes:
+        - 'Updated MakeMKV to version 1.17.5.'
     - version: 23.06.1
       date: 2023-06-05
       changes:
