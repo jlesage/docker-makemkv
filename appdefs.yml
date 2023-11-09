@@ -12,6 +12,7 @@ app:
   name: makemkv
   friendly_name: MakeMKV
   gui_type: x11
+  base_os: alpine
   project:
     description: |-
       MakeMKV is your one-click solution to convert video that you own into free and
