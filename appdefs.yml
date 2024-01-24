@@ -146,6 +146,13 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 24.01.1
+      date: 2024-01-23
+      changes:
+        - 'Updated MakeMKV to version 1.17.6.'
+        - 'Updated baseimage to version 4.5.3, which brings the following changes:'
+        - '2:Disabled fullscreen support when page is loaded into an iFrame.'
+        - '2:Rebuilt against latest distro images to get security fixes.'
     - version: 23.11.2
       date: 2023-11-19
       changes:
