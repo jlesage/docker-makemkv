@@ -59,8 +59,9 @@ multiple video/audio tracks with all meta-information and preserve chapters.
 
 ## Quick Start
 
-**NOTE**: The Docker command provided in this quick start is given as an example
-and parameters should be adjusted to your need.
+**NOTE**:
+    The Docker command provided in this quick start is given as an example
+    and parameters should be adjusted to your need.
 
 Launch the MakeMKV docker container with the following command:
 ```shell
@@ -76,6 +77,7 @@ docker run -d \
 ```
 
 Where:
+
   - `/docker/appdata/makemkv`: This is where the application stores its configuration, states, log and any files needing persistency.
   - `/home/user`: This location contains files from your host that need to be accessible to the application.
   - `/home/user/MakeMKV/output`: This is where extracted videos are written.
@@ -114,12 +116,13 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`USER_ID`| ID of the user the application runs as.  See [User/Group IDs](#usergroup-ids) to better understand when this should be set. | `1000` |
 |`GROUP_ID`| ID of the group the application runs as.  See [User/Group IDs](#usergroup-ids) to better understand when this should be set. | `1000` |
 |`SUP_GROUP_IDS`| Comma-separated list of supplementary group IDs of the application. | (no value) |
-|`UMASK`| Mask that controls how file permissions are set for newly created files. The value of the mask is in octal notation.  By default, the default umask value is `0022`, meaning that newly created files are readable by everyone, but only writable by the owner.  See the online umask calculator at http://wintelguy.com/umask-calc.pl. | `0022` |
+|`UMASK`| Mask that controls how permissions are set for newly created files and folders.  The value of the mask is in octal notation.  By default, the default umask value is `0022`, meaning that newly created files and folders are readable by everyone, but only writable by the owner.  See the online umask calculator at http://wintelguy.com/umask-calc.pl. | `0022` |
 |`LANG`| Set the [locale](https://en.wikipedia.org/wiki/Locale_(computer_software)), which defines the application's language, **if supported**.  Format of the locale is `language[_territory][.codeset]`, where language is an [ISO 639 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), territory is an [ISO 3166 country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) and codeset is a character set, like `UTF-8`.  For example, Australian English using the UTF-8 encoding is `en_AU.UTF-8`. | `en_US.UTF-8` |
 |`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container.  Timezone can also be set by mapping `/etc/localtime` between the host and the container. | `Etc/UTC` |
 |`KEEP_APP_RUNNING`| When set to `1`, the application will be automatically restarted when it crashes or terminates. | `0` |
 |`APP_NICENESS`| Priority at which the application should run.  A niceness value of -20 is the highest priority and 19 is the lowest priority.  The default niceness value is 0.  **NOTE**: A negative niceness (priority increase) requires additional permissions.  In this case, the container should be run with the docker option `--cap-add=SYS_NICE`. | `0` |
-|`INSTALL_PACKAGES`| Space-separated list of packages to install during the startup of the container.  Packages are installed from the repository of the Linux distribution this container is based on.  **ATTENTION**: Container functionality can be affected when installing a package that overrides existing container files (e.g. binaries). | (no value) |
+|`INSTALL_PACKAGES`| Space-separated list of packages to install during the startup of the container.  List of available packages can be found at https://mirrors.alpinelinux.org.  **ATTENTION**: Container functionality can be affected when installing a package that overrides existing container files (e.g. binaries). | (no value) |
+|`PACKAGES_MIRROR`| Mirror of the repository to use when installing packages. List of mirrors is available at https://mirrors.alpinelinux.org. | (no value) |
 |`CONTAINER_DEBUG`| Set to `1` to enable debug logging. | `0` |
 |`DISPLAY_WIDTH`| Width (in pixels) of the application's window. | `1920` |
 |`DISPLAY_HEIGHT`| Height (in pixels) of the application's window. | `1080` |
@@ -221,20 +224,23 @@ parameter(s) of an existing container.  The general idea is to destroy and
 re-create the container:
 
   1. Stop the container (if it is running):
-```
+```shell
 docker stop makemkv
 ```
+
   2. Remove the container:
-```
+```shell
 docker rm makemkv
 ```
+
   3. Create/start the container using the `docker run` command, by adjusting
      parameters as needed.
 
-**NOTE**: Since all application's data is saved under the `/config` container
-folder, destroying and re-creating a container is not a problem: nothing is lost
-and the application comes back with the same state (as long as the mapping of
-the `/config` folder remains the same).
+**NOTE**:
+    Since all application's data is saved under the `/config` container
+    folder, destroying and re-creating a container is not a problem: nothing is
+    lost and the application comes back with the same state (as long as the
+    mapping of the `/config` folder remains the same).
 
 ## Docker Compose File
 
@@ -290,17 +296,20 @@ Watchtower will seamlessly perform the necessary steps to update the container.
 Finally, the Docker image can be manually updated with these steps:
 
   1. Fetch the latest image:
-```
+```shell
 docker pull jlesage/makemkv
 ```
+
   2. Stop the container:
-```
+```shell
 docker stop makemkv
 ```
+
   3. Remove the container:
-```
+```shell
 docker rm makemkv
 ```
+
   4. Create and start the container using the `docker run` command, with the
 the same parameters that were used when it was deployed initially.
 
@@ -351,7 +360,7 @@ user owning the data volume on the host:
     id <username>
 
 Which gives an output like this one:
-```
+```text
 uid=1000(myuser) gid=1000(myuser) groups=1000(myuser),4(adm),24(cdrom),27(sudo),46(plugdev),113(lpadmin)
 ```
 
@@ -365,13 +374,13 @@ graphical interface of the application can be accessed via:
 
   * A web browser:
 
-```
+```text
 http://<HOST IP ADDR>:5800
 ```
 
   * Any VNC client:
 
-```
+```text
 <HOST IP ADDR>:5900
 ```
 
@@ -400,7 +409,7 @@ few VNC clients support this method.  [SSVNC] is one of them.
 While the Linux version of [SSVNC] works well, the Windows version has some
 issues.  At the time of writing, the latest version `1.0.30` is not functional,
 as a connection fails with the following error:
-```
+```text
 ReadExact: Socket error while reading
 ```
 However, for your convenience, an unofficial and working version is provided
@@ -424,11 +433,13 @@ PEM encoded, x509 certificates.
 |`/config/certs/web-privkey.pem`  |HTTPs connection encryption.|Web server's private key.|
 |`/config/certs/web-fullchain.pem`|HTTPs connection encryption.|Web server's certificate, bundled with any root and intermediate certificates.|
 
-**NOTE**: To prevent any certificate validity warnings/errors from the browser
-or VNC client, make sure to supply your own valid certificates.
+**NOTE**:
+    To prevent any certificate validity warnings/errors from the browser
+    or VNC client, make sure to supply your own valid certificates.
 
-**NOTE**: Certificate files are monitored and relevant daemons are automatically
-restarted when changes are detected.
+**NOTE**:
+    Certificate files are monitored and relevant daemons are automatically
+    restarted when changes are detected.
 
 ### VNC Password
 
@@ -446,10 +457,11 @@ The level of security provided by the VNC password depends on two things:
 When using a VNC password, it is highly desirable to enable the secure
 connection to prevent sending the password in clear over an unencrypted channel.
 
-**ATTENTION**: Password is limited to 8 characters.  This limitation comes from
-the Remote Framebuffer Protocol [RFC](https://tools.ietf.org/html/rfc6143) (see
-section [7.2.2](https://tools.ietf.org/html/rfc6143#section-7.2.2)).  Any
-characters beyond the limit are ignored.
+**ATTENTION**:
+    Password is limited to 8 characters.  This limitation comes from
+    the Remote Framebuffer Protocol [RFC](https://tools.ietf.org/html/rfc6143)
+    (see section [7.2.2](https://tools.ietf.org/html/rfc6143#section-7.2.2)).
+    Any characters beyond the limit are ignored.
 
 ## Reverse Proxy
 
@@ -470,7 +482,7 @@ as this container.  The server would proxy all HTTP requests sent to
 Here are the relevant configuration elements that would be added to the NGINX
 configuration:
 
-```
+```nginx
 map $http_upgrade $connection_upgrade {
 	default upgrade;
 	''      close;
@@ -516,7 +528,7 @@ as this container.  The server would proxy all HTTP requests for
 Here are the relevant configuration elements that would be added to the NGINX
 configuration:
 
-```
+```nginx
 map $http_upgrade $connection_upgrade {
 	default upgrade;
 	''      close;

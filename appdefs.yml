@@ -12,6 +12,7 @@ app:
   name: makemkv
   friendly_name: MakeMKV
   gui_type: x11
+  base_os: alpine
   project:
     description: |-
       MakeMKV is your one-click solution to convert video that you own into free and
@@ -182,6 +183,32 @@ app:
           be set to `BETA`.  See the [Environment Variables](#environment-variables)
           section for more details.
   changelog:
+    - version: 24.01.1
+      date: 2024-01-23
+      changes:
+        - 'Updated MakeMKV to version 1.17.6.'
+        - 'Updated baseimage to version 4.5.3, which brings the following changes:'
+        - '2:Disabled fullscreen support when page is loaded into an iFrame.'
+        - '2:Rebuilt against latest distro images to get security fixes.'
+    - version: 23.11.2
+      date: 2023-11-19
+      changes:
+        - 'Updated baseimage to version 4.5.2, which brings the following changes:'
+        - '2:Fixed issue that would cause the helper that takes ownership of a directory to fail when using a very high user or group ID.'
+    - version: 23.11.1
+      date: 2023-11-10
+      changes:
+        - 'Updated baseimage to version 4.5.1, which brings the following changes:'
+        - '2:Mirror for packages installation can be set via the `PACKAGES_MIRROR` environment variable.'
+        - '2:Improved the way the `take-ownership` script is working.'
+        - '2:Readiness and minimum running time checks should not be done for a service defined with an interval.'
+        - '2:Raise an error when a synched service fails to start.'
+        - '2:Minimum running time check of a service was using an incorrect way to verify if process is still alive.'
+        - '2:Fixed installation of CJK font.'
+    - version: 23.09.1
+      date: 2023-09-26
+      changes:
+        - 'Updated MakeMKV to version 1.17.5.'
     - version: 23.06.1
       date: 2023-06-05
       changes:

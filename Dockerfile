@@ -8,7 +8,7 @@
 ARG DOCKER_IMAGE_VERSION=
 
 # Define software versions.
-ARG MAKEMKV_VERSION=1.17.4
+ARG MAKEMKV_VERSION=1.17.6
 
 # Define software download URLs.
 ARG MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
@@ -44,7 +44,7 @@ RUN xx-verify \
     /tmp/makemkv-install/usr/bin/mmgplsrv
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.16-v4.4.2
+FROM jlesage/baseimage-gui:alpine-3.16-v4.5.3
 
 ARG DOCKER_IMAGE_VERSION
 ARG MAKEMKV_VERSION
