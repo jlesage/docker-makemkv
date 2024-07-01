@@ -15,3 +15,5 @@ fi
 
 cd /storage
 exec /opt/makemkv/bin/makemkv $DEBUG_ARGS -std
+
+# vim:ft=sh:ts=4:sw=4:et:sts=4
