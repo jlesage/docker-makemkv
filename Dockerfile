@@ -44,7 +44,7 @@ RUN xx-verify \
     /tmp/makemkv-install/usr/bin/mmgplsrv
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.16-v4.5.3
+FROM jlesage/baseimage-gui:alpine-3.16-v4.6.3
 
 ARG DOCKER_IMAGE_VERSION
 ARG MAKEMKV_VERSION
@@ -68,11 +68,7 @@ RUN \
         # For the GUI.
         qt5-qtbase-x11 \
         adwaita-qt \
-        font-croscore \
-        mesa-dri-gallium \
-    && \
-    # Save some space by removing unused DRI drivers.
-    find /usr/lib/xorg/modules/dri/ -type f ! -name swrast_dri.so -exec echo "Removing {}..." ';' -delete
+        font-croscore
 
 # Generate and install favicons.
 RUN \
