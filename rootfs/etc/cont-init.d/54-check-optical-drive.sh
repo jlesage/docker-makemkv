@@ -13,8 +13,8 @@ if [ ! -f "$DRIVES_INFO" ]; then
 fi
 
 while read -r DRV; do
-    SR_DEV="$(echo "$DRV" | rev | cut -d' ' -f2 | rev)"
-    SG_DEV="$(echo "$DRV" | rev | cut -d' ' -f1 | rev)"
+    SR_DEV="$(echo "$DRV" | grep -oE '/dev/sr[0-9]+')"
+    SG_DEV="$(echo "$DRV" | grep -oE '/dev/sg[0-9]+')"
 
     if [ -e "$SG_DEV" ] && [ -e "$SR_DEV" ]; then
         FOUND_USABLE_DRIVE=1
