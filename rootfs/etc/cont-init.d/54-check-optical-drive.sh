@@ -2,7 +2,6 @@
 set -x
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
-set -o pipefail
 
 echo "looking for usable optical drives..."
 
@@ -14,8 +13,8 @@ if [ ! -f "$DRIVES_INFO" ]; then
 fi
 
 while read -r DRV; do
-    SR_DEV="$(echo "$DRV" | grep -oE '/dev/sr[0-9]+')"
-    SG_DEV="$(echo "$DRV" | grep -oE '/dev/sg[0-9]+')"
+    SR_DEV="$(echo "$DRV" | { grep -oE '/dev/sr[0-9]+' || true; } )"
+    SG_DEV="$(echo "$DRV" | { grep -oE '/dev/sg[0-9]+' || true; } )"
 
     if [ -e "$SG_DEV" ] && [ -e "$SR_DEV" ]; then
         FOUND_USABLE_DRIVE=1
