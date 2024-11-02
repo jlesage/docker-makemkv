@@ -56,8 +56,8 @@ xx-apt-get install -y --no-install-recommends \
     binutils \
     gcc \
     g++ \
-    libgcc-10-dev \
-    libstdc++-10-dev \
+    libgcc-12-dev \
+    libstdc++-12-dev \
     libc6-dev \
     libssl-dev \
     libexpat1-dev \

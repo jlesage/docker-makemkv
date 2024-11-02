@@ -8,7 +8,7 @@
 ARG DOCKER_IMAGE_VERSION=
 
 # Define software versions.
-ARG MAKEMKV_VERSION=1.17.7
+ARG MAKEMKV_VERSION=1.17.8
 
 # Define software download URLs.
 ARG MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
@@ -18,7 +18,7 @@ ARG MAKEMKV_BIN_URL=https://www.makemkv.com/download/makemkv-bin-${MAKEMKV_VERSI
 FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 
 # Build MakeMKV libraries needed by the closed source binary.
-FROM --platform=$BUILDPLATFORM debian:11 AS makemkv-bin
+FROM --platform=$BUILDPLATFORM debian:12 AS makemkv-bin
 ARG TARGETPLATFORM
 ARG MAKEMKV_OSS_URL
 ARG MAKEMKV_BIN_URL
