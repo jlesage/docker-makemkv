@@ -25,6 +25,21 @@ function log {
 MAKEMKV_OSS_URL="$1"
 MAKEMKV_BIN_URL="$2"
 
+TARGET_SYSTEM_LIB_DIR="/usr/lib"
+TARGET_SYSTEM_INCLUDE_DIR="/usr/include"
+if xx-info is-cross; then
+    case "$(xx-info arch)" in
+        386)
+            TARGET_SYSTEM_LIB_DIR="$TARGET_SYSTEM_LIB_DIR/i386-linux-gnu"
+            TARGET_SYSTEM_INCLUDE_DIR="$TARGET_SYSTEM_INCLUDE_DIR/i386-linux-gnu"
+            ;;
+        *)
+            TARGET_SYSTEM_LIB_DIR="$TARGET_SYSTEM_LIB_DIR/$(xx-info)"
+            TARGET_SYSTEM_INCLUDE_DIR="$TARGET_SYSTEM_INCLUDE_DIR/$(xx-info)"
+            ;;
+    esac
+fi
+
 if [ -z "$MAKEMKV_OSS_URL" ]; then
     log "ERROR: MakeMKV OSS URL missing."
     exit 1
@@ -56,6 +71,7 @@ xx-apt-get install -y --no-install-recommends \
     binutils \
     gcc \
     g++ \
+    libcurl4 \
     libgcc-12-dev \
     libstdc++-12-dev \
     libc6-dev \
@@ -95,6 +111,7 @@ log "Configuring fdk-aac..."
         --build=$(TARGETPLATFORM= xx-info) \
         --host=$(xx-info) \
         --prefix=/usr \
+        --libdir=$TARGET_SYSTEM_LIB_DIR \
         --enable-static \
         --disable-shared \
         --with-pic \
@@ -104,7 +121,7 @@ log "Compiling fdk-aac..."
 make -C /tmp/fdk-aac -j$(nproc)
 
 log "Installing fdk-aac..."
-make DESTDIR=$(xx-info sysroot) -C /tmp/fdk-aac install
+make -C /tmp/fdk-aac install
 
 #
 # Compile ffmpeg.
@@ -118,10 +135,15 @@ log "Configuring ffmpeg..."
             --enable-cross-compile \
             --cross-prefix=$(xx-info)- \
             --arch=$(xx-info pkg-arch) \
+            --libdir=$TARGET_SYSTEM_LIB_DIR \
+            --incdir=$TARGET_SYSTEM_INCLUDE_DIR \
         "
+        if [ "$(xx-info arch)" = "386" ]; then
+            CROSS_FLAGS="$CROSS_FLAGS --extra-libs=-lm"
+        fi
     fi
 
-    cd /tmp/ffmpeg && PKG_CONFIG_PATH=$(xx-info sysroot)/usr/lib/pkgconfig ./configure \
+    cd /tmp/ffmpeg && ./configure \
         --cc=$(xx-info)-gcc \
         $CROSS_FLAGS \
         --target-os=linux \
@@ -138,7 +160,7 @@ log "Compiling ffmpeg..."
 make -C /tmp/ffmpeg -j$(nproc)
 
 log "Installing ffmpeg..."
-make DESTDIR=$(xx-info sysroot) -C /tmp/ffmpeg install
+make -C /tmp/ffmpeg install
 
 #
 # Compile MakeMKV OSS.
@@ -146,7 +168,7 @@ make DESTDIR=$(xx-info sysroot) -C /tmp/ffmpeg install
 
 log "Configuring MakeMKV OSS..."
 (
-    cd /tmp/makemkv-oss && OBJCOPY=$(xx-info)-objcopy ./configure \
+    cd /tmp/makemkv-oss && PKG_CONFIG_PATH=$TARGET_SYSTEM_LIB_DIR/pkgconfig OBJCOPY=$(xx-info)-objcopy ./configure \
         --prefix=/ \
         --disable-gui \
 )
@@ -191,14 +213,14 @@ LDD=ldd
 if xx-info is-cross; then
     LDD="$(xx-info)-ldd"
     #export CT_XLDD_VERBOSE=1
-    export CT_XLDD_LIBRARY_PATH="$MAKEMKV_ROOT_DIR/lib:/usr/lib/$(xx-info)"
+    export CT_XLDD_LIBRARY_PATH="$MAKEMKV_ROOT_DIR/lib:$TARGET_SYSTEM_LIB_DIR"
     ln -sv "$SCRIPT_DIR/cross-compile-ldd" "$(dirname "$(which "$(xx-info)-gcc")")/$(xx-info)-ldd"
 fi
 
 # Add needed liraries that are not catched by tracking dependencies.  These are
 # loaded dynamically via dlopen.
 log "Adding extra libraries..."
-find "$(xx-info sysroot)"usr/lib -name "libcurl.so.4*" -exec cp -av {} "$MAKEMKV_ROOT_DIR"/lib/ ';'
+find "$TARGET_SYSTEM_LIB_DIR" -name "libcurl.so.4*" -exec cp -av {} "$MAKEMKV_ROOT_DIR"/lib/ ';'
 if [ -z "$(ls -l "$MAKEMKV_ROOT_DIR"/lib/libcurl.so.4*)" ]; then
     log "ERROR: Could not find libcurl."
     exit 1
