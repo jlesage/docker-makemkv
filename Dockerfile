@@ -71,7 +71,7 @@ RUN \
         font-croscore \
         py3-pip
 RUN \
-    pip install apprise        
+    pip install --no-cache-dir apprise        
 
 # Generate and install favicons.
 RUN \
