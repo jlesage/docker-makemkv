@@ -68,7 +68,10 @@ RUN \
         # For the GUI.
         qt5-qtbase-x11 \
         adwaita-qt \
-        font-croscore
+        font-croscore \
+        py3-pip
+RUN \
+    pip install apprise        
 
 # Generate and install favicons.
 RUN \
@@ -102,7 +105,8 @@ ENV \
     AUTO_DISC_RIPPER_MIN_TITLE_LENGTH= \
     AUTO_DISC_RIPPER_BD_MODE=mkv \
     AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR=0 \
-    AUTO_DISC_RIPPER_NO_GUI_PROGRESS=0
+    AUTO_DISC_RIPPER_NO_GUI_PROGRESS=0 \
+    APPRISE_URL=
 
 # Define mountable directories.
 VOLUME ["/storage"]
