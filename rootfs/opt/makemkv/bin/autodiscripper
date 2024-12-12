@@ -20,6 +20,19 @@ log_makemkvcon() {
     fi
 }
 
+send_apprise_notification() {
+    local title="$1"
+    local message="$2"
+    #local priority="${3:-info}" # Supported values: 'low', 'info', 'warning', 'error', 'critical'
+
+    if [ -n "$APPRISE_URL" ]; then
+        apprise -t "$title" -b "$message" "$APPRISE_URL" || \
+        log "ERROR: Failed to send notification via Apprise."
+    else
+        log "APPRISE_URL is not set. Skipping notification."
+    fi
+}
+send_apprise_notification "Script Started" "The automatic disc ripper script has started."
 log_yad() {
     if [ -n "${YAD_LOGFILE:-}" ]; then
         # Control the progress bar for current action.
@@ -173,6 +186,14 @@ process_disc() {
         rm -f "$YAD_LOGFILE"
     fi
 
+    if [ "$MAKEMKV_CLI_RC" -eq 0 ]; then
+        log "Disc rip terminated successfully."
+        send_apprise_notification "Disc Rip Completed" "Disc '$LABEL' ripped successfully to $OUTPUT_DIR" "info"
+    else
+        log "Disc rip terminated with failure."
+        send_apprise_notification "Disc Rip Failed" "Disc '$LABEL' rip failed. Check logs for details." "error"
+    fi
+
     return $MAKEMKV_CLI_RC
 }
 
@@ -227,8 +248,10 @@ while true; do
             if [ "$DRV_FLAGS" -eq 0 ]; then
                 # Not a DVD/BluRay video disc.
                 log "Not backing up disc: Not a DVD or BluRay video disc."
+                send_apprise_notification "Error" "Not backing up disk $DRV_LABEL : Not a DVD or BluRay video disk."
             elif [ "$FIRST_RUN" -eq 1 ]; then
                 log "Not backing up disc: Service first run.  Eject and re-insert the disc to rip it."
+                send_apprise_notification "First Run Skip" "Not backing up disc $DRV_LABEL: Service first run.  Eject and re-insert the disc to rip it."
             else
                 # Process disc.
                 log "Starting disc rip..."
@@ -252,6 +275,7 @@ while true; do
                             sleep 5
                         else
                             log "ERROR: Failed to eject drive $DRV_ID ($DRV_DEV): $EJECT_ERR."
+                            send_apprise_notification "Eject Error" "Failed to eject drive $DRV_ID ($DRV_DEV): $EJECT_ERR."
                             break
                         fi
                     done
