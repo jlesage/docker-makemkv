@@ -13,6 +13,10 @@ log() {
     echo "$@"
 }
 
+debug() {
+    is-bool-val-false "${CONTAINER_DEBUG:-0}" || echo "$@"
+}
+
 log_makemkvcon() {
     if [ "${LAST_MSG:-UNSET}" != "$*" ]; then
         echo "$MAKEMKVCON_LOG_PREFIX $*"
@@ -107,7 +111,7 @@ process_makemkvcon_output() {
                     # MSG:2003,0,3,"Error 'Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN' occurred while reading '/BDMV/STREAM/00007.m2ts' at offset '3729653760'","Error '%1' occurred while reading '%2' at offset '%3'","Scsi error - NOT READY:MEDIUM NOT PRESENT - TRAY OPEN","/BDMV/STREAM/00007.m2ts","3729653760"
                     #
                     # NOTE: The message code 2003 is used for multiple kind of
-                    # SCSI errors.  We don't have to terminate with the
+                    # SCSI errors. We don't have to terminate with the
                     # following message, since in some cases it is harmless.
                     # See:
                     #   https://www.makemkv.com/forum/viewtopic.php?t=961#p38393
@@ -180,15 +184,15 @@ STATE_DIR="$(mktemp -d)"
 FIRST_RUN=1
 HANDLE_DRIVE_ID=
 
-if [ "${1:-}" == "--drive-id" ]; then
+if [ "${1:-}" = "--drive-id" ]; then
     HANDLE_DRIVE_ID="${2:-}"
 fi
 
 # If the created state directory doesn't have the execute permission, we won't
-# be able to access/read/write files under it.  This may happen with a bad UMASK
+# be able to access/read/write files under it. This may happen with a bad UMASK
 # value.
 if [ ! -x "$STATE_DIR" ]; then
-    log "ERROR: Cannot access state directory.  Verify UMASK value."
+    log "ERROR: Cannot access state directory. Verify UMASK value."
     rm -r "$STATE_DIR"
     exit 1
 fi
@@ -197,6 +201,7 @@ while true; do
     # Fetch information about optical drives.
     DRIVES_INFO="$(mktemp)"
 
+    debug "Scanning drives..."
     if [ -n "$HANDLE_DRIVE_ID" ]; then
         $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:$HANDLE_DRIVE_ID," > "$DRIVES_INFO" 2>&1
     else
@@ -216,11 +221,13 @@ while true; do
         DRV_INFO_FILE="$STATE_DIR/d$DRV_ID"
 
         if [ "$DRV_STATE" -ne 2 ]; then
-            # No disc, tray opened or not a valid drive.  Skip it.
+            # No disc, tray opened or not a valid drive. Skip it.
+            [ -z "$DRV_DEV" ] || debug "No disc in drive $DRV_ID ($DRV_DEV): skipping."
             echo > "$DRV_INFO_FILE"
             continue
         elif [ "$DRV" = "$(test ! -f "$DRV_INFO_FILE" || cat "$DRV_INFO_FILE")" ]; then
-            # Disc already processed.  Skip it.
+            # Disc already processed. Skip it.
+            debug "Disc in drive $DRV_ID ($DRV_DEV) already processed: skipping."
             continue
         else
             log "Disc detected in drive $DRV_ID ($DRV_DEV): $DRV_LABEL."
@@ -228,7 +235,7 @@ while true; do
                 # Not a DVD/BluRay video disc.
                 log "Not backing up disc: Not a DVD or BluRay video disc."
             elif [ "$FIRST_RUN" -eq 1 ]; then
-                log "Not backing up disc: Service first run.  Eject and re-insert the disc to rip it."
+                log "Not backing up disc: Service first run. Eject and re-insert the disc to rip it."
             else
                 # Process disc.
                 log "Starting disc rip..."
@@ -247,7 +254,7 @@ while true; do
                             log "Disc ejected."
                             break
                         elif [ "$EJECT_TRIES" -lt 5 ] && echo "$EJECT_ERR" | grep -q "Resource busy" ; then
-                            log "Failed to eject disc: drive busy.  Retrying..."
+                            log "Failed to eject disc: drive busy. Retrying..."
                             EJECT_TRIES="$(expr $EJECT_TRIES + 1)"
                             sleep 5
                         else
@@ -261,8 +268,11 @@ while true; do
         fi
     done < "$DRIVES_INFO"
     rm "$DRIVES_INFO"
+
     [ "$FIRST_RUN" -eq 0 ] || log "Ready."
     FIRST_RUN=0
+
+    debug "Waiting ${AUTO_DISC_RIPPER_INTERVAL:-5} seconds..."
     sleep "${AUTO_DISC_RIPPER_INTERVAL:-5}"
 done
 
