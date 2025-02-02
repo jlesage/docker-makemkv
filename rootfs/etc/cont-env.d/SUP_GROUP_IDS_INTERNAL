@@ -9,12 +9,8 @@ set -u # Treat unset variables as an error.
 
 GRPS=$(mktemp)
 
-DRIVES_INFO="/tmp/.drives_info"
-if [ ! -f "$DRIVES_INFO" ]; then
-    lsscsi -g -k | grep -w "cd/dvd" | tr -s ' ' > "$DRIVES_INFO"
-fi
-
-while read -r DRV; do
+lsscsi -g -k | grep -w "cd/dvd" | tr -s ' ' | while read -r DRV
+do
     SR_DEV="$(echo "$DRV" | rev | cut -d' ' -f2 | rev)"
     SG_DEV="$(echo "$DRV" | rev | cut -d' ' -f1 | rev)"
 
@@ -22,17 +18,17 @@ while read -r DRV; do
     if [ -e "$SR_DEV" ]; then
         # Save the associated group.
         G="$(stat -c "%g" "$SR_DEV")"
-        echo "$G" >> "$GRPS"
+        [ "$G" -eq 0 ] || echo "$G" >> "$GRPS"
     fi
     if [ -e "$SG_DEV" ]; then
         # Save the associated group.
         G="$(stat -c "%g" "$SG_DEV")"
-        echo "$G" >> "$GRPS"
+        [ "$G" -eq 0 ] || echo "$G" >> "$GRPS"
     fi
-done < "$DRIVES_INFO"
+done
 
 # Print supplementary group IDs.
-if [ "$(cat "$GRPS")" != "" ]; then
+if [ -n "$(cat "$GRPS")" ]; then
     cat "$GRPS" | grep -v '^$' | grep -v '^0$' | sort -nub | tr '\n' ','
     rm "$GRPS"
 else

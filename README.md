@@ -649,13 +649,14 @@ The easiest way to determine the right Linux devices to expose is to run the
 container (without `--device` parameter) and look at its log: during the
 startup, messages similar to these ones are outputed:
 ```
-[cont-init.d] 54-check-optical-drive.sh: executing...
-[cont-init.d] 54-check-optical-drive.sh: looking for usable optical drives...
-[cont-init.d] 54-check-optical-drive.sh: found optical drive [/dev/sr0, /dev/sg3], but it is not usable because:
-[cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sr0 is not exposed to the container.
-[cont-init.d] 54-check-optical-drive.sh:   --> the host device /dev/sg3 is not exposed to the container.
-[cont-init.d] 54-check-optical-drive.sh: no usable optical drive found.
-[cont-init.d] 54-check-optical-drive.sh: exited 0.
+[cont-init   ] 54-check-optical-drive.sh: looking for usable optical drives...
+[cont-init   ] 54-check-optical-drive.sh: found optical drive 'hp HLDS DVDRW GUD1N LD02' [/dev/sr0, /dev/sg3]
+[cont-init   ] 54-check-optical-drive.sh:   [ OK ]   associated SCSI Generic (sg) device detected: /dev/sg3.
+[cont-init   ] 54-check-optical-drive.sh:   [ ERR ]  the host device /dev/sg3 is not exposed to the container.
+[cont-init   ] 54-check-optical-drive.sh:   [ OK ]   associated SCSI CD-ROM (sr) device detected: /dev/sr0.
+[cont-init   ] 54-check-optical-drive.sh:   [ WARN ] the host device /dev/sr0 is not exposed to the container.
+[cont-init   ] 54-check-optical-drive.sh:            performance or ability to use the device will suffer.
+[cont-init   ] 54-check-optical-drive.sh: no usable optical drives found.
 ```
 
 In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
