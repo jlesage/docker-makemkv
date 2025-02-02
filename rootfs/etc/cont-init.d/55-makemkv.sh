@@ -3,13 +3,6 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
 
-# NOTE: Since makemkvcon is used here only to list devices, user's settings
-#       are not needed.  Thus, use a non-existing home directory.  This is
-#       a workaround for a bug where makemkvcon clears the `settings.conf`
-#       configuration file when it contains an expired beta key.
-#       See https://github.com/jlesage/docker-makemkv/issues/172
-MAKEMKV_CLI="env HOME=/home/nobody LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/makemkv/bin/makemkvcon"
-
 # Generate machine id
 if [ ! -f /config/machine-id ]; then
     echo "generating machine-id..."
@@ -47,7 +40,7 @@ fi
 # Create link for MakeMKV config directory.
 # The only configuration location MakeMKV looks for seems to be
 # "$HOME/.MakeMKV".
-# NOTE: Make sure to re-create the link.  The `/config` might have been restored
+# NOTE: Make sure to re-create the link. The `/config` might have been restored
 #       from a backup, so the symlink might no longer be one.
 rm -rf /config/.MakeMKV
 ln -s /config /config/.MakeMKV
@@ -65,7 +58,7 @@ case  "${MAKEMKV_KEY:-UNSET}" in
         set +e
         /opt/makemkv/bin/makemkv-update-beta-key /config/settings.conf
         if [ "$?" -ne 0 ]; then
-            echo "ERROR: Failed to update beta key."
+            echo "ERROR: failed to update beta key."
         fi
         set -e
         ;;
@@ -73,11 +66,6 @@ case  "${MAKEMKV_KEY:-UNSET}" in
         /opt/makemkv/bin/makemkv-set-key "$MAKEMKV_KEY" /config/settings.conf
         ;;
 esac
-
-# Save drives information as seen by MakeMKV.  This is used by auto disc ripper
-# services.
-echo "getting supported drives..."
-$MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:[0-9]\+,[0|1|2]," > /tmp/.makemkv_supported_drives || true
 
 # Take ownership of the output directory.
 take-ownership --not-recursive /output
