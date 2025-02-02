@@ -65,6 +65,7 @@ RUN \
         lsscsi \
         # For the eject command.
         util-linux-misc \
+        sg3_utils \
         # For the GUI.
         qt5-qtbase-x11 \
         adwaita-qt \

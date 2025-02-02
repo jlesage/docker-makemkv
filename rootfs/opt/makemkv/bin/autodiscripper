@@ -127,6 +127,40 @@ process_makemkvcon_output() {
     done
 }
 
+eject_disc_from_sr_dev() {
+    eject -F "$1"
+}
+
+eject_disc_from_sg_dev() {
+    sg_prevent --allow "$1" && sg_start --eject "$1"
+}
+
+eject_disc() {
+    # This function is called with the drive device provided by MakeMKV. It
+    # seems that this device is always the 'sr' device, even if it not available
+    # to the container. Thus, get both the 'sr' and 'sg' devices and try the
+    # eject on the existing device.
+    drv_devs="$(lsscsi -b -k -g | grep -w "$1" | awk '{print $2,$3}')"
+    for drv_dev in $drv_devs
+    do
+        # Ignore this device if it doesn't exist.
+        [ -e "$drv_dev" ] || continue
+
+        if [ "${drv_dev#/dev/sr}" != "$drv_dev" ]; then
+            # sr dev
+            eject_disc_from_sr_dev "$drv_dev"
+            return $?
+        elif [ "${drv_dev#/dev/sg}" != "$drv_dev" ]; then
+            # sg dev
+            eject_disc_from_sg_dev "$drv_dev"
+            return $?
+        else
+            return 1
+        fi
+    done
+    return 1
+}
+
 process_disc() {
     SRC="$1"
     LABEL="${2:-$(date +%Y-%m-%d-%H-%M-%S)}"
@@ -249,7 +283,7 @@ while true; do
                     EJECT_TRIES=0
                     while true; do
                         log "Ejecting disc from drive $DRV_ID ($DRV_DEV)..."
-                        EJECT_ERR="$(eject "$DRV_DEV" 2>&1)"
+                        EJECT_ERR="$(eject_disc "$DRV_DEV" 2>&1)"
                         if [ "$?" -eq 0 ]; then
                             log "Disc ejected."
                             break
