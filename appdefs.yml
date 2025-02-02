@@ -25,10 +25,10 @@ app:
   unraid:
     extra_description: >-
       **NOTE**: For the container to have access to your optical drive(s), you
-      need to add them to your container configuration.  This is done by adding
-      a new "Device".  An optical drive is represented by two Linux device
-      files: "/dev/srX" and "/dev/sgY".  For optimal performance, the container
-      needs both of them.  To determine the right devices to use, start the
+      need to add them to your container configuration. This is done by adding
+      a new "Device". An optical drive is represented by two Linux device
+      files: "/dev/srX" and "/dev/sgY". For optimal performance, the container
+      needs both of them. To determine the right devices to use, start the
       container and look at its log.
     support_url: https://forums.unraid.net/topic/58352-support-makemkv/
     category: "MediaApp:Video"
@@ -40,23 +40,24 @@ app:
       - title: Access to Optical Drive(s)
         level: 2
         content: |-
-          By default, a Docker container doesn't have access to host's devices.  However,
+          By default, a Docker container doesn't have access to host's devices. However,
           access to one or more devices can be granted with the `--device DEV` parameter.
 
           In the Linux world, an optical drive is represented by two different device
           files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
 
           For best performance, it is recommended to expose both these devices to the
-          container.  For example, for an optical drive represented by `/dev/sr0` and
+          container. For example, for an optical drive represented by `/dev/sr0` and
           `/dev/sg1`, the following parameters would be added to the `docker run`
           command:
           ```
           --device /dev/sr0 --device /dev/sg1
           ```
 
-          **NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
-          expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
-          could be affected.
+          > [!NOTE]
+          > For an optical drive to be detected by MakeMKV, it is mandatory to
+          > expose `/dev/sgY` to the container. `/dev/srX` is optional, but performance
+          > could be affected.
 
           The easiest way to determine the right Linux devices to expose is to run the
           container (without `--device` parameter) and look at its log: during the
@@ -72,11 +73,12 @@ app:
           [cont-init   ] 54-check-optical-drive.sh: no usable optical drives found.
           ```
 
-          In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+          In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` need to be
           exposed to the container.
 
-          **NOTE**: The container's log can be viewed by running the command
-          `docker logs <container name>`.
+          > [!NOTE]
+          > The container's log can be viewed by running the command
+          > `docker logs <container name>`.
 
           Alternatively, the devices can be found by executing the following command on
           the **host**:
@@ -86,7 +88,7 @@ app:
           ```
 
           From the command's output, the last two columns associated to the optical drive
-          indicate the Linux devices that should be exposed to the container.  In the
+          indicate the Linux devices that should be exposed to the container. In the
           following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
 
           ```
@@ -98,8 +100,8 @@ app:
       - title: Automatic Disc Ripper
         level: 2
         content: |-
-          This container has an automatic disc ripper built-in.  When enabled, any DVD or
-          Blu-ray video disc inserted into an optical drive is automatically ripped.  In
+          This container has an automatic disc ripper built-in. When enabled, any DVD or
+          Blu-ray video disc inserted into an optical drive is automatically ripped. In
           other words, MakeMKV decrypts and extracts all titles (such as the main movie,
           bonus features, etc) from the disc to MKV files.
 
@@ -115,22 +117,27 @@ app:
           See the [Environment Variables](#environment-variables) section for details
           about setting environment variables.
 
-          **NOTE**: All titles, audio tracks, chapters, subtitles, etc are
-                    extracted/preserved.
+          > [!NOTE]
+          > All titles, audio tracks, chapters, subtitles, etc are extracted/preserved.
 
-          **NOTE**: Titles and audio tracks are kept in their original format.  They are
-                    not transcoded or converted to other formats or into smaller sizes.
+          > [!NOTE]
+          > Titles and audio tracks are kept in their original format. They are not
+          > transcoded or converted to other formats or into smaller sizes.
 
-          **NOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+          > [!NOTE]
+          > Ripped Blu-ray discs can take a large amount of disc space (~40GB).
 
-          **NOTE**: MKV Files are written to the `/output` folder of the container.
+          > [!NOTE]
+          > MKV Files are written to the `/output` folder of the container.
 
-          **NOTE**: The automatic disc ripper processes all available optical drives.
+          > [!NOTE]
+          > The automatic disc ripper processes all available optical drives.
 
-          **NOTE**: When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set
-                    to `1`), it is recommended, to minimize impact on ripping speed, to
-                    increase the interval at which the presence of new discs is checked
-                    (`AUTO_DISC_RIPPER_INTERVAL`).
+          > [!NOTE]
+          > When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set to `1`),
+          > it is recommended, to minimize impact on ripping speed, to increase the
+          > interval at which the presence of new discs is checked
+          > (`AUTO_DISC_RIPPER_INTERVAL`).
       - title: Troubleshooting
         level: 2
       - title: Expired Beta Key
@@ -139,13 +146,14 @@ app:
           If the beta key is expired, just restart the container to automatically fetch
           and install the latest one.
 
-          **NOTE**: Once beta key expires, it can take few days before a new key is made
-          available by the author of MakeMKV.  During this time, the application is not
-          functional.
+          > [!NOTE]
+          > Once beta key expires, it can take few days before a new key is made available
+          > by the author of MakeMKV. During this time, the application is not functional.
 
-          **NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
-          be set to `BETA`.  See the [Environment Variables](#environment-variables)
-          section for more details.
+          > [!NOTE]
+          > For this solution to work, the `MAKEMKV_KEY` environment variable must be set
+          > to `BETA`. See the [Environment Variables](#environment-variables) section for
+          > more details.
   changelog:
     - version: 24.12.1
       date: 2024-12-07
@@ -431,7 +439,7 @@ app:
     - version: 1.9.5
       date: 2018-10-26
       changes:
-        - 'Updated OpenJDK to version 11.0.1.  This fixes an issue where MakeMKV would crash with certain BluRay discs.'
+        - 'Updated OpenJDK to version 11.0.1. This fixes an issue where MakeMKV would crash with certain BluRay discs.'
         - 'Auto disc ripper: Make sure to abort if tray is opened.'
     - version: 1.9.4
       date: 2018-10-02
@@ -616,18 +624,18 @@ container:
   environment_variables:
     - name: MAKEMKV_KEY
       description: >-
-        MakeMKV registration key to use.  The key is written to the
-        configuration file during container startup.  When set to `BETA`, the
-        latest beta key is automatically used.  When set to `UNSET`, no key is
+        MakeMKV registration key to use. The key is written to the
+        configuration file during container startup. When set to `BETA`, the
+        latest beta key is automatically used. When set to `UNSET`, no key is
         automatically written to the configuration file.
       type: public
       default: "BETA"
       unraid_template:
         title: "License Key"
         description: >-
-          MakeMKV registration key to use.  The key is written to the
-          configuration file during container startup.  When set to "BETA", the
-          latest beta key is automatically used.  When set to "UNSET", no key
+          MakeMKV registration key to use. The key is written to the
+          configuration file during container startup. When set to "BETA", the
+          latest beta key is automatically used. When set to "UNSET", no key
           is automatically written to the configuration file.
         display: always
         required: false
@@ -659,14 +667,14 @@ container:
     - name: AUTO_DISC_RIPPER_MAKEMKV_PROFILE
       description: >-
         Filename of the custom MakeMKV profile the automatic disc ripper should
-        use.  The profile is expected to be found under the `/config` folder of
+        use. The profile is expected to be found under the `/config` folder of
         the container, unless an absolute path is specified.
       type: public
       unraid_template:
         title: "Automatic Disc Ripper: Custom MakeMKV Profile"
         description: >-
           Filename of the custom MakeMKV profile the automatic disc ripper should
-          use.  The profile is expected to be found under the /config folder of
+          use. The profile is expected to be found under the /config folder of
           the container, unless an absolute path is specified.
         display: advanced
         required: false
@@ -687,14 +695,14 @@ container:
     - name: AUTO_DISC_RIPPER_PARALLEL_RIP
       description: >-
         When set to `1`, discs from all available optical drives are ripped in
-        parallel.  Else, each disc from optical drives is ripped one at time.
+        parallel. Else, each disc from optical drives is ripped one at time.
       type: public
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Parallel"
         description: >-
           When set to 1, discs from all available optical drives are ripped in
-          parallel.  Else, each disc from optical drives is ripped one at time.
+          parallel. Else, each disc from optical drives is ripped one at time.
         display: always
         required: false
         mask: false
@@ -710,8 +718,8 @@ container:
         mask: false
     - name: AUTO_DISC_RIPPER_MIN_TITLE_LENGTH
       description: >-
-        Titles with a length less than this value are ignored.  Length is in
-        seconds.  By default, no value is set, meaning that value from MakeMKV's
+        Titles with a length less than this value are ignored. Length is in
+        seconds. By default, no value is set, meaning that value from MakeMKV's
         configuration file is taken.
       type: public
       unraid_template:
@@ -721,28 +729,28 @@ container:
         mask: false
     - name: AUTO_DISC_RIPPER_BD_MODE
       description: >-
-        Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of
-        MKV files are produced.  When set to `backup`, a copy of the (decrypted)
+        Rip mode of Blu-ray discs. `mkv` is the default mode, where a set of
+        MKV files are produced. When set to `backup`, a copy of the (decrypted)
         file system is created instead. **NOTE**: This applies to Blu-ray discs
-        only.  For DVD discs, MKV files are always produced.
+        only. For DVD discs, MKV files are always produced.
       type: public
       default: mkv
       unraid_template:
         title: "Automatic Disc Ripper: Blu-ray Rip Mode"
         description: >-
-          Rip mode of Blu-ray discs.  "mkv" is the default mode, where a set of
-          MKV files are produced.  When set to "backup", a copy of the (decrypted)
+          Rip mode of Blu-ray discs. "mkv" is the default mode, where a set of
+          MKV files are produced. When set to "backup", a copy of the (decrypted)
           file system is created instead. [b]NOTE[/b]: This applies to Blu-ray
-          discs only.  For DVD, MKV files are always produced.
+          discs only. For DVD, MKV files are always produced.
         display: always
         required: false
         mask: false
     - name: AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR
       description: >-
         When set to `0`, files are written to `/output/DISC_LABEL/`, where
-        `DISC_LABEL` is the label/name of the disc.  If this directory exists,
+        `DISC_LABEL` is the label/name of the disc. If this directory exists,
         then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX`
-        are random readable characters.  When set to `1`, the
+        are random readable characters. When set to `1`, the
         `/output/DISC_LABEL-XXXXXX` pattern is always used.
       type: public
       default: 0
@@ -750,9 +758,9 @@ container:
         title: "Automatic Disc Ripper: Force Unique Output Directory"
         description: >-
           When set to 0, files are written to "/output/DISC_LABEL/", where
-          "DISC_LABEL" is the label/name of the disc.  If this directory exists,
+          "DISC_LABEL" is the label/name of the disc. If this directory exists,
           then files are written to "/output/DISC_LABEL-XXXXXX", where
-          "XXXXXX" are random readable characters.  When set to 1, the
+          "XXXXXX" are random readable characters. When set to 1, the
           "/output/DISC_LABEL-XXXXXX" pattern is always used.
         display: always
         required: false
@@ -783,7 +791,7 @@ container:
       unraid_template:
         title: Output Directory
         description: >-
-          This is the default output folder for converted videos.  Also used by
+          This is the default output folder for converted videos. Also used by
           the automatic disc ripper.
         display: always-hide
         required: true

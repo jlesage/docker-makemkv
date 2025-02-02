@@ -141,16 +141,16 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`VNC_LISTENING_PORT`| Port used by the VNC server to serve the UI of the application. This port is used internally by the container and it is usually not required to be changed. By default, a container is created with the default bridge network, meaning that, to be accessible, each internal container port must be mapped to an external port (using the `-p` or `--publish` argument). However, if the container is created with another network type, changing the port used by the container might be useful to prevent conflict with other services/containers. **NOTE**: a value of `-1` disables listening, meaning that the application's UI won't be accessible over VNC. | `5900` |
 |`VNC_PASSWORD`| Password needed to connect to the application's GUI. See the [VNC Password](#vnc-password) section for more details. | (no value) |
 |`ENABLE_CJK_FONT`| When set to `1`, open-source computer font `WenQuanYi Zen Hei` is installed. This font contains a large range of Chinese/Japanese/Korean characters. | `0` |
-|`MAKEMKV_KEY`| MakeMKV registration key to use.  The key is written to the configuration file during container startup.  When set to `BETA`, the latest beta key is automatically used.  When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
+|`MAKEMKV_KEY`| MakeMKV registration key to use. The key is written to the configuration file during container startup. When set to `BETA`, the latest beta key is automatically used. When set to `UNSET`, no key is automatically written to the configuration file. | `BETA` |
 |`MAKEMKV_GUI`| Setting this to `1` enables the MakeMKV, `0` disables it. | `1` |
 |`AUTO_DISC_RIPPER`| When set to `1`, the automatic disc ripper is enabled. | `0` |
-|`AUTO_DISC_RIPPER_MAKEMKV_PROFILE`| Filename of the custom MakeMKV profile the automatic disc ripper should use.  The profile is expected to be found under the `/config` folder of the container, unless an absolute path is specified. | (no value) |
+|`AUTO_DISC_RIPPER_MAKEMKV_PROFILE`| Filename of the custom MakeMKV profile the automatic disc ripper should use. The profile is expected to be found under the `/config` folder of the container, unless an absolute path is specified. | (no value) |
 |`AUTO_DISC_RIPPER_EJECT`| When set to `1`, disc is ejected from the drive when ripping is terminated. | `0` |
-|`AUTO_DISC_RIPPER_PARALLEL_RIP`| When set to `1`, discs from all available optical drives are ripped in parallel.  Else, each disc from optical drives is ripped one at time. | `0` |
+|`AUTO_DISC_RIPPER_PARALLEL_RIP`| When set to `1`, discs from all available optical drives are ripped in parallel. Else, each disc from optical drives is ripped one at time. | `0` |
 |`AUTO_DISC_RIPPER_INTERVAL`| Interval, in seconds, the automatic disc ripper checks for the presence of a DVD/Blu-ray discs. | `5` |
-|`AUTO_DISC_RIPPER_MIN_TITLE_LENGTH`| Titles with a length less than this value are ignored.  Length is in seconds.  By default, no value is set, meaning that value from MakeMKV's configuration file is taken. | (no value) |
-|`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs.  `mkv` is the default mode, where a set of MKV files are produced.  When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only.  For DVD discs, MKV files are always produced. | `mkv` |
-|`AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR`| When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc.  If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters.  When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used. | `0` |
+|`AUTO_DISC_RIPPER_MIN_TITLE_LENGTH`| Titles with a length less than this value are ignored. Length is in seconds. By default, no value is set, meaning that value from MakeMKV's configuration file is taken. | (no value) |
+|`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs. `mkv` is the default mode, where a set of MKV files are produced. When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only. For DVD discs, MKV files are always produced. | `mkv` |
+|`AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR`| When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc. If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters. When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used. | `0` |
 |`AUTO_DISC_RIPPER_NO_GUI_PROGRESS`| When set to `1`, progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI. | `0` |
 
 #### Deployment Considerations
@@ -627,23 +627,24 @@ creation.
 
 ## Access to Optical Drive(s)
 
-By default, a Docker container doesn't have access to host's devices.  However,
+By default, a Docker container doesn't have access to host's devices. However,
 access to one or more devices can be granted with the `--device DEV` parameter.
 
 In the Linux world, an optical drive is represented by two different device
 files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
 
 For best performance, it is recommended to expose both these devices to the
-container.  For example, for an optical drive represented by `/dev/sr0` and
+container. For example, for an optical drive represented by `/dev/sr0` and
 `/dev/sg1`, the following parameters would be added to the `docker run`
 command:
 ```
 --device /dev/sr0 --device /dev/sg1
 ```
 
-**NOTE**: For an optical drive to be detected by MakeMKV, it is mandatory to
-expose `/dev/sgY` to the container.  `/dev/srX` is optional, but performance
-could be affected.
+> [!NOTE]
+> For an optical drive to be detected by MakeMKV, it is mandatory to
+> expose `/dev/sgY` to the container. `/dev/srX` is optional, but performance
+> could be affected.
 
 The easiest way to determine the right Linux devices to expose is to run the
 container (without `--device` parameter) and look at its log: during the
@@ -659,11 +660,12 @@ startup, messages similar to these ones are outputed:
 [cont-init   ] 54-check-optical-drive.sh: no usable optical drives found.
 ```
 
-In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` needs to be
+In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` need to be
 exposed to the container.
 
-**NOTE**: The container's log can be viewed by running the command
-`docker logs <container name>`.
+> [!NOTE]
+> The container's log can be viewed by running the command
+> `docker logs <container name>`.
 
 Alternatively, the devices can be found by executing the following command on
 the **host**:
@@ -673,7 +675,7 @@ lsscsi -g
 ```
 
 From the command's output, the last two columns associated to the optical drive
-indicate the Linux devices that should be exposed to the container.  In the
+indicate the Linux devices that should be exposed to the container. In the
 following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
 
 ```
@@ -685,8 +687,8 @@ following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
 
 ## Automatic Disc Ripper
 
-This container has an automatic disc ripper built-in.  When enabled, any DVD or
-Blu-ray video disc inserted into an optical drive is automatically ripped.  In
+This container has an automatic disc ripper built-in. When enabled, any DVD or
+Blu-ray video disc inserted into an optical drive is automatically ripped. In
 other words, MakeMKV decrypts and extracts all titles (such as the main movie,
 bonus features, etc) from the disc to MKV files.
 
@@ -702,22 +704,27 @@ setting the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
 See the [Environment Variables](#environment-variables) section for details
 about setting environment variables.
 
-**NOTE**: All titles, audio tracks, chapters, subtitles, etc are
-          extracted/preserved.
+> [!NOTE]
+> All titles, audio tracks, chapters, subtitles, etc are extracted/preserved.
 
-**NOTE**: Titles and audio tracks are kept in their original format.  They are
-          not transcoded or converted to other formats or into smaller sizes.
+> [!NOTE]
+> Titles and audio tracks are kept in their original format. They are not
+> transcoded or converted to other formats or into smaller sizes.
 
-**NOTE**: Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+> [!NOTE]
+> Ripped Blu-ray discs can take a large amount of disc space (~40GB).
 
-**NOTE**: MKV Files are written to the `/output` folder of the container.
+> [!NOTE]
+> MKV Files are written to the `/output` folder of the container.
 
-**NOTE**: The automatic disc ripper processes all available optical drives.
+> [!NOTE]
+> The automatic disc ripper processes all available optical drives.
 
-**NOTE**: When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set
-          to `1`), it is recommended, to minimize impact on ripping speed, to
-          increase the interval at which the presence of new discs is checked
-          (`AUTO_DISC_RIPPER_INTERVAL`).
+> [!NOTE]
+> When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set to `1`),
+> it is recommended, to minimize impact on ripping speed, to increase the
+> interval at which the presence of new discs is checked
+> (`AUTO_DISC_RIPPER_INTERVAL`).
 
 ## Troubleshooting
 
@@ -726,13 +733,14 @@ about setting environment variables.
 If the beta key is expired, just restart the container to automatically fetch
 and install the latest one.
 
-**NOTE**: Once beta key expires, it can take few days before a new key is made
-available by the author of MakeMKV.  During this time, the application is not
-functional.
+> [!NOTE]
+> Once beta key expires, it can take few days before a new key is made available
+> by the author of MakeMKV. During this time, the application is not functional.
 
-**NOTE**: For this solution to work, the `MAKEMKV_KEY` environment variable must
-be set to `BETA`.  See the [Environment Variables](#environment-variables)
-section for more details.
+> [!NOTE]
+> For this solution to work, the `MAKEMKV_KEY` environment variable must be set
+> to `BETA`. See the [Environment Variables](#environment-variables) section for
+> more details.
 
 ## Support or Contact
 
