@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when a disc rip has been started from the
+# MakeMKV GUI. This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The status code.
+#   - The text associated to the status code.
+#
+
+CODE="$1"
+TEXT="$2"
+
+echo "$CODE: $TEXT"

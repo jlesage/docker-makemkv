@@ -1,0 +1,99 @@
+--- a/makemkvgui/src/mainwnd.cpp	2025-02-02 15:00:34.845219818 -0500
++++ b/makemkvgui/src/mainwnd.cpp	2025-02-02 15:28:02.209420527 -0500
+@@ -26,6 +26,8 @@
+ #include "drivebox.h"
+ #include "image_defs.h"
+ 
++#include <QProcess>
++
+ MainWnd* MainWnd::m_myself_static=NULL;
+ 
+ static const Qt::WindowFlags mainWindowFlags =
+@@ -1057,6 +1059,68 @@
+     logtext_cursor.movePosition(QTextCursor::Start);
+ }
+ 
++void MainWnd::InvokeShellHook(unsigned long Code, const QString &Text, const QString &Path)
++{
++    QStringList processArgs;
++
++    AP_UiTitleCollection* coll = &m_app->m_TitleCollection;
++    QString discTitle;
++
++    if (coll->GetCount() > 0)
++    {
++        discTitle = GetInfo(coll, ap_iaName);
++    }
++
++    switch (Code)
++    {
++    case 5014:
++        // Started.
++        processArgs << "/config/hooks/gui_disc_rip_started.sh";
++        processArgs << discTitle;
++        processArgs << Path;
++        break;
++    case 5036:
++        // Terminated with success.
++        processArgs << "/config/hooks/gui_disc_rip_terminated.sh";
++        processArgs << discTitle;
++        processArgs << Path;
++        processArgs << "SUCCESS";
++        processArgs << Text;
++        break;
++    case 5037:
++        // Terminated with failure(s).
++        processArgs << "/config/hooks/gui_disc_rip_terminated.sh";
++        processArgs << discTitle;
++        processArgs << Path;
++        processArgs << "FAILURE";
++        processArgs << Text;
++        break;
++    default:
++        break;
++    }
++
++    if (!processArgs.isEmpty() && QFileInfo::exists(processArgs.first()))
++    {
++        QProcess process;
++        process.setProgram("/bin/sh");
++        process.setArguments(processArgs);
++        process.startDetached();
++    }
++
++    if (QFileInfo::exists("/config/hooks/gui_raw.sh"))
++    {
++        processArgs.clear();
++        processArgs << "/config/hooks/gui_raw.sh";
++        processArgs << QString::number(Code);
++        processArgs << Text;
++
++        QProcess process;
++        process.setProgram("/bin/sh");
++        process.setArguments(processArgs);
++        process.startDetached();
++    }
++}
++
+ 
+ int MainWnd::ReportUiMessage(
+     unsigned long Code,
+@@ -1070,6 +1134,8 @@
+         return 0;
+     }
+ 
++    InvokeShellHook(Code, QStringFromUtf8(Text), saveFolderBox->text());
++
+     // look if this is a dialog-box message and dispatch it here
+     if (( (Flags&AP_UIMSG_BOX_MASK) == AP_UIMSG_BOXOK ) ||
+         ( (Flags&AP_UIMSG_BOX_MASK) == AP_UIMSG_BOXERROR ) ||
+--- a/makemkvgui/src/mainwnd.h	2025-02-02 20:07:45.844270527 -0500
++++ b/makemkvgui/src/mainwnd.h	2025-02-02 20:08:50.626638936 -0500
+@@ -142,6 +142,7 @@
+     void SetTotalName(unsigned long Name);
+ private:
+     void DoProcessLogMessage(QString Message,unsigned int Flags,uint64_t ExtraData);
++    void InvokeShellHook(unsigned long Code, const QString &Text, const QString &Path);
+     int ReportUiMessage(unsigned long Code,unsigned long Flags,const utf8_t* Text,uint64_t ExtraData);
+     int ReportUiDialog(unsigned long Code,unsigned long Flags,unsigned int Count,const unsigned int Codes[],const utf8_t* Text[],utf8_t* Buffer);
+     void Update_TitleTree_from_app(bool setFolder);

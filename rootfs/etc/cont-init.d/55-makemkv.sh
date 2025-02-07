@@ -29,6 +29,9 @@ if [ ! -f /config/settings.conf ] || [ "$(stat -c "%s" /config/settings.conf)" -
 fi
 [ -f "$XDG_CONFIG_HOME"/QtProject.conf ] || cp -v /defaults/QtProject.conf "$XDG_CONFIG_HOME"/
 
+# Copy example hooks if needed.
+[ -d /config/hooks ] || cp -rv /defaults/hooks /config/hooks
+
 # Make sure the data directory is correctly set.
 if grep -q "^[ \t]*app_DataDir[ \t]*=" /config/settings.conf; then
     sed -i 's|^[ \t]*app_DataDir[ \t]*=.*|app_DataDir = "/config/data"|' /config/settings.conf

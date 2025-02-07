@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when the automatic disc ripper started
+# ripping a disc. This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The MakeMKV drive ID.
+#   - The disc label/title.
+#   - The output directory.
+#
+
+DRV_ID="$1"
+DISC_LABEL="$2"
+OUTPUT_DIR="$3"
+
+echo "The automatic disc ripper started ripping disc '$DISC_LABEL' (drive $DRV_ID) to '$OUTPUT_DIR'."

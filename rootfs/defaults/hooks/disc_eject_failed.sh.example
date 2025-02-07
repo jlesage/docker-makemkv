@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when the automatic disc ripper failed to
+# eject a disc. This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The MakeMKV drive ID.
+#   - The error message associated to the failure.
+#
+
+DRV_ID="$1"
+ERROR_MSG="$2"
+
+echo "The automatic disc ripper failed to eject disc (from drive $DRV_ID): ${ERROR_MSG:-unknown error}."

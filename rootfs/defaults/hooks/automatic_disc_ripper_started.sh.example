@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when the automatic disc ripper starts.
+# This script is always invoked with /bin/sh (shebang ignored).
+#
+# No parameters are passed to this script.
+#
+
+echo "The automatic disc ripper has been started."

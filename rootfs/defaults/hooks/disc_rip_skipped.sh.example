@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when the automatic disc ripper skipped
+# a disc. This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The MakeMKV drive ID.
+#   - The disc label/title.
+#   - The reason why disc has been skipped.
+#
+
+DRV_ID="$1"
+DISC_LABEL="$2"
+REASON="$3"
+
+REASON_MSG=
+case "$REASON" in
+    ALREADY_PROCESS)
+        REASON_MSG="disc was already processed"
+        ;;
+    SERVICE_FIRST_RUN)
+        REASON_MSG="disc was already present at startup"
+        ;;
+    NOT_VIDEO_DISC)
+        REASON_MSG="not a video disc"
+        ;;
+    *)
+        REASON_MSG="unknown reason"
+        ;;
+esac
+
+echo "The automatic disc ripper did not rip disc '$DISC_LABEL' (drive $DRV_ID): $REASON_MSG."

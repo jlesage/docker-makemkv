@@ -17,6 +17,19 @@ debug() {
     is-bool-val-false "${CONTAINER_DEBUG:-0}" || echo "$@"
 }
 
+invoke_hook() {
+    hook_file="$1"
+    hook_name="$2"
+    shift
+    shift
+
+    if [ -f /config/hooks/"$hook_file" ]; then
+        log "Executing $hook_name hook..."
+        /bin/sh /config/hooks/"$hook_file" "$@"
+        log " $hook_name hook exited with $?"
+    fi
+}
+
 log_makemkvcon() {
     if [ "${LAST_MSG:-UNSET}" != "$*" ]; then
         echo "$MAKEMKVCON_LOG_PREFIX $*"
@@ -172,6 +185,9 @@ process_disc() {
         OUTPUT_DIR="/output/$LABEL"
     fi
 
+    # Call hook.
+    invoke_hook disc_rip_started.sh disc-rip-started "$DRV_ID" "$DRV_LABEL" "$OUTPUT_DIR"
+
     mkdir "$OUTPUT_DIR"
 
     MAKEMKV_COMMON_OPTS="-r --progress=-same"
@@ -211,6 +227,9 @@ process_disc() {
         rm -f "$YAD_LOGFILE"
     fi
 
+    # Call hook.
+    invoke_hook disc_rip_terminated.sh disc-rip-terminated "$DRV_ID" "$DRV_LABEL" "$OUTPUT_DIR" "$([ "$MAKEMKV_CLI_RC" -eq 0 ] && echo "SUCCESS" || echo "FAILURE")"
+
     return $MAKEMKV_CLI_RC
 }
 
@@ -230,6 +249,9 @@ if [ ! -x "$STATE_DIR" ]; then
     rm -r "$STATE_DIR"
     exit 1
 fi
+
+# Call hook.
+invoke_hook automatic_disc_ripper_started.sh automatic-disc-ripper-stared
 
 while true; do
     # Fetch information about optical drives.
@@ -262,14 +284,20 @@ while true; do
         elif [ "$DRV" = "$(test ! -f "$DRV_INFO_FILE" || cat "$DRV_INFO_FILE")" ]; then
             # Disc already processed. Skip it.
             debug "Disc in drive $DRV_ID ($DRV_DEV) already processed: skipping."
+            # Call hook.
+            invoke_hook disc_rip_skipped.sh disc-rip-skipped "$DRV_ID" "$DRV_LABEL" "ALREADY_PROCESSED"
             continue
         else
             log "Disc detected in drive $DRV_ID ($DRV_DEV): $DRV_LABEL."
             if [ "$DRV_FLAGS" -eq 0 ]; then
                 # Not a DVD/BluRay video disc.
                 log "Not backing up disc: Not a DVD or BluRay video disc."
+                # Call hook.
+                invoke_hook disc_rip_skipped.sh disc-rip-skipped "$DRV_ID" "$DRV_LABEL" "NOT_VIDEO_DISC"
             elif [ "$FIRST_RUN" -eq 1 ]; then
                 log "Not backing up disc: Service first run. Eject and re-insert the disc to rip it."
+                # Call hook.
+                invoke_hook disc_rip_skipped.sh disc-rip-skipped "$DRV_ID" "$DRV_LABEL" "SERVICE_FIRST_RUN"
             else
                 # Process disc.
                 log "Starting disc rip..."
@@ -293,6 +321,8 @@ while true; do
                             sleep 5
                         else
                             log "ERROR: Failed to eject drive $DRV_ID ($DRV_DEV): $EJECT_ERR."
+                            # Call hook.
+                            invoke_hook disc_eject_failed.sh disc-eject-failed "$DRV_ID" "$EJECT_ERR"
                             break
                         fi
                     done

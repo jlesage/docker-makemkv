@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when a disc rip has been started from the
+# MakeMKV GUI. This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The disc label/title.
+#   - The output directory.
+#   - The status.
+#   - The message associated to the status.
+#
+
+DISC_LABEL="$1"
+OUTPUT_DIR="$2"
+STATUS="$3"
+MESSAGE="$4"
+
+if [ "$STATUS" = "SUCCESS" ]; then
+    echo "MakeMKV terminated ripping disc '$DISC_LABEL' to '$OUTPUT_DIR'."
+else
+    echo "MakeMKV failed to rip disc '$DISC_LABEL' to '$OUTPUT_DIR': $MESSAGE"
+fi
