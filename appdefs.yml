@@ -191,6 +191,18 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 25.02.1
+      date: 2025-02-09
+      changes:
+        - 'Updated MakeMKV to version 1.17.9.'
+        - 'Improved detection of optical drive usability issues.'
+        - 'Improved disc ejection mechanism.'
+        - 'Fixed optical drive detection by MakeMKV when using a license key.'
+        - 'Added support for hooks.'
+        - 'Updated baseimage to version 4.7.1, which brings the following changes (since last used version):'
+        - '2:Added environment variable that allows configuring the web authentication token lifetime.'
+        - '2:Fixed compatibility issues that were introduced with support of GTK4 applications.'
+        - '2:Rebuild against latest distro images to get security fixes.'
     - version: 24.12.1
       date: 2024-12-07
       changes:
