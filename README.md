@@ -753,11 +753,11 @@ The following table describe available hooks:
 
 | Container location | Description | Parameter(s) |
 |--------------------|-------------|--------------|
-| `/config/hooks/automatic_disc_ripper_started.sh | Hook executed when the automatic disc ripper starts. | None |
-| `/config/hooks/disc_rip_started.sh | Hook executed when the automatic disc ripper started to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the output directory. |
-| `/config/hooks/disc_rip_terminated.sh | Hook executed when the automatic disc ripper terminated to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. The third third argument is the output directory. Finally, the fourth argument is the status (`SUCCESS` or `FAILURE`). |
-| `/config/hooks/disc_rip_skipped.sh | Hook executed when the automatic disc ripper skipped a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the reason. The reason can have the following values: `ALREADY_PROCESSED`, `NOT_VIDEO_DISC` and `SERVICE_FIRST_RUN`. |
-| `/config/hooks/disc_eject_failed.sh | Hook executed when the automatic disc ripper failed to eject a disc. | The first argument is the MakeMKV drive ID. The second argument is the error message. |
+| `/config/hooks/automatic_disc_ripper_started.sh` | Hook executed when the automatic disc ripper starts. | None |
+| `/config/hooks/disc_rip_started.sh` | Hook executed when the automatic disc ripper started to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the output directory. |
+| `/config/hooks/disc_rip_terminated.sh` | Hook executed when the automatic disc ripper terminated to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. The third third argument is the output directory. Finally, the fourth argument is the status (`SUCCESS` or `FAILURE`). |
+| `/config/hooks/disc_rip_skipped.sh` | Hook executed when the automatic disc ripper skipped a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the reason. The reason can have the following values: `ALREADY_PROCESSED`, `NOT_VIDEO_DISC` and `SERVICE_FIRST_RUN`. |
+| `/config/hooks/disc_eject_failed.sh` | Hook executed when the automatic disc ripper failed to eject a disc. | The first argument is the MakeMKV drive ID. The second argument is the error message. |
 | `/config/hooks/gui_disc_rip_started.sh` | Hook executed when a disc rip has been started from MakeMKV GUI. | The first argument is the disc label. The second argument is the output directory. |
 | `/config/hooks/gui_disc_rip_terminated.sh` | Hook executed when a disc rip from the MakeMKV GUI has been completed. | The first argument is the disc label. The second argument is the output directory. The third argument is the status (`SUCCESS` or `FAILURE`). Finally, the fourth argument is the message associated to the status. |
 | `/config/hooks/gui_raw.sh` | This hook is executed everytime a status is provided by MakeMKV. It can be used for debugging purpose. | The first argument is the status code. The second argument is the text associated to the status code. |
