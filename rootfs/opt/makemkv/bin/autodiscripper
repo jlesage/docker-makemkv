@@ -152,7 +152,10 @@ eject_disc() {
     # This function is called with the drive device provided by MakeMKV. It
     # seems that this device is always the 'sr' device, even if it not available
     # to the container. Thus, get both the 'sr' and 'sg' devices and try the
-    # eject on the existing device.
+    # eject on existing devices.
+
+    last_err="unknown error"
+
     drv_devs="$(lsscsi -b -k -g | grep -w "$1" | awk '{print $2,$3}')"
     for drv_dev in $drv_devs
     do
@@ -161,16 +164,16 @@ eject_disc() {
 
         if [ "${drv_dev#/dev/sr}" != "$drv_dev" ]; then
             # sr dev
-            eject_disc_from_sr_dev "$drv_dev"
-            return $?
+            last_err="$(eject_disc_from_sr_dev "$drv_dev" 2>&1)"
+            [ $? -ne 0 ] || return 0
         elif [ "${drv_dev#/dev/sg}" != "$drv_dev" ]; then
             # sg dev
-            eject_disc_from_sg_dev "$drv_dev"
-            return $?
-        else
-            return 1
+            last_err="$(eject_disc_from_sg_dev "$drv_dev" 2>&1)"
+            [ $? -ne 0 ] || return 0
         fi
     done
+
+    [ -n "$last_err" ] && echo "$last_err" || echo "unknown error"
     return 1
 }
 
