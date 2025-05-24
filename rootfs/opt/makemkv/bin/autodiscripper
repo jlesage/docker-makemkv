@@ -181,6 +181,15 @@ process_disc() {
     SRC="$1"
     LABEL="${2:-$(date +%Y-%m-%d-%H-%M-%S)}"
     IS_BD="${3:-0}"
+    MODE=mkv
+
+    if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
+        log "Backup mode enabled for Blu-ray video disc."
+        MODE=backup
+    elif [ "$IS_BD" -ne 1 ] && [ "${AUTO_DISC_RIPPER_DVD_MODE:-mkv}" = "backup" ]; then
+        log "Backup mode enabled for DVD video disc."
+        MODE=backup
+    fi
 
     if [ -d "/output/$LABEL" ] || [ "${AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR:-0}" -ne 0 ]; then
         OUTPUT_DIR="$(mktemp -du "/output/${LABEL}-XXXXXX")"
@@ -197,7 +206,7 @@ process_disc() {
     if [ "${AUTO_DISC_RIPPER_MIN_TITLE_LENGTH:-UNSET}" != "UNSET" ]; then
         MAKEMKV_COMMON_OPTS="$MAKEMKV_COMMON_OPTS --minlength=$AUTO_DISC_RIPPER_MIN_TITLE_LENGTH"
     fi
-    if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:-UNSET}" != "UNSET" ]; then
+    if [ "$MODE" = "mkv" ] && [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:-UNSET}" != "UNSET" ]; then
         if [ "${AUTO_DISC_RIPPER_MAKEMKV_PROFILE:0:1}" = "/" ]; then
             MAKEMKV_PROFILE_PATH="$AUTO_DISC_RIPPER_MAKEMKV_PROFILE"
         else
@@ -216,9 +225,12 @@ process_disc() {
     fi
 
     MAKEMKV_CLI_RC=1
-    if [ "$IS_BD" -eq 1 ] && [ "${AUTO_DISC_RIPPER_BD_MODE:-mkv}" = "backup" ]; then
-        log "Backup mode enabled for Blu-ray disc."
+    if [ "$IS_BD" -eq 1 ] && [ "$MODE" = "backup" ]; then
         $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"
+        MAKEMKV_CLI_RC=$?
+    elif [ "$IS_BD" -ne 1 ] && [ "$MODE" = "backup" ]; then
+        # An ISO file is produced in DVD mode.
+        $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS --decrypt backup "$SRC" "$OUTPUT_DIR"/"$LABEL".iso | process_makemkvcon_output "$SRC"
         MAKEMKV_CLI_RC=$?
     else
         $MAKEMKV_CLI $MAKEMKV_COMMON_OPTS mkv "$SRC" all "$OUTPUT_DIR" | process_makemkvcon_output "$SRC"

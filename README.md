@@ -150,7 +150,8 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`AUTO_DISC_RIPPER_PARALLEL_RIP`| When set to `1`, discs from all available optical drives are ripped in parallel. Else, each disc from optical drives is ripped one at time. | `0` |
 |`AUTO_DISC_RIPPER_INTERVAL`| Interval, in seconds, the automatic disc ripper checks for the presence of a DVD/Blu-ray discs. | `5` |
 |`AUTO_DISC_RIPPER_MIN_TITLE_LENGTH`| Titles with a length less than this value are ignored. Length is in seconds. By default, no value is set, meaning that value from MakeMKV's configuration file is taken. | (no value) |
-|`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs. `mkv` is the default mode, where a set of MKV files are produced. When set to `backup`, a copy of the (decrypted) file system is created instead. **NOTE**: This applies to Blu-ray discs only. For DVD discs, MKV files are always produced. | `mkv` |
+|`AUTO_DISC_RIPPER_BD_MODE`| Rip mode of Blu-ray discs. `mkv` is the default mode, where a set of MKV files are produced. When set to `backup`, a copy of the (decrypted) file system of the disc is created instead. | `mkv` |
+|`AUTO_DISC_RIPPER_DVD_MODE`| Rip mode of DVD discs. `mkv` is the default mode, where a set of MKV files are produced. When set to `backup`, a copy of the (decrypted) file system of the disc is instead created as an ISO file. | `mkv` |
 |`AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR`| When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc. If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters. When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used. | `0` |
 |`AUTO_DISC_RIPPER_NO_GUI_PROGRESS`| When set to `1`, progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI. | `0` |
 

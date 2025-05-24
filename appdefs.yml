@@ -792,8 +792,7 @@ container:
       description: >-
         Rip mode of Blu-ray discs. `mkv` is the default mode, where a set of
         MKV files are produced. When set to `backup`, a copy of the (decrypted)
-        file system is created instead. **NOTE**: This applies to Blu-ray discs
-        only. For DVD discs, MKV files are always produced.
+        file system of the disc is created instead.
       type: public
       default: mkv
       unraid_template:
@@ -801,8 +800,23 @@ container:
         description: >-
           Rip mode of Blu-ray discs. "mkv" is the default mode, where a set of
           MKV files are produced. When set to "backup", a copy of the (decrypted)
-          file system is created instead. [b]NOTE[/b]: This applies to Blu-ray
-          discs only. For DVD, MKV files are always produced.
+          file system of the disc is created instead.
+        display: always
+        required: false
+        mask: false
+    - name: AUTO_DISC_RIPPER_DVD_MODE
+      description: >-
+        Rip mode of DVD discs. `mkv` is the default mode, where a set of MKV
+        files are produced. When set to `backup`, a copy of the (decrypted)
+        file system of the disc is instead created as an ISO file.
+      type: public
+      default: mkv
+      unraid_template:
+        title: "Automatic Disc Ripper: DVD Rip Mode"
+        description: >-
+          Rip mode of DVD discs. "mkv" is the default mode, where a set of MKV
+          files are produced. When set to "backup", a copy of the (decrypted)
+          file system of the disc is instead created as an ISO file.
         display: always
         required: false
         mask: false
