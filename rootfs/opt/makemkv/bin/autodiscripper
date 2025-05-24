@@ -189,7 +189,7 @@ process_disc() {
     fi
 
     # Call hook.
-    invoke_hook disc_rip_started.sh disc-rip-started "$DRV_ID" "$DRV_LABEL" "$OUTPUT_DIR"
+    invoke_hook disc_rip_started.sh disc-rip-started "$(echo $SRC | cut -d':' -f2)" "$LABEL" "$OUTPUT_DIR"
 
     mkdir "$OUTPUT_DIR"
 
