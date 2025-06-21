@@ -26,7 +26,7 @@ fi
 
 # Download the web page.
 TMPFILE="$(mktemp)"
-wget --timeout 10 -qO "$TMPFILE" 'https://www.makemkv.com/forum/viewtopic.php?f=5&t=1053'
+wget --timeout 10 -qO "$TMPFILE" 'https://forum.makemkv.com/forum/viewtopic.php?f=5&t=1053'
 if [ "$?" -ne 0 ]; then
     echo "ERROR: Failed to fetch download key."
     exit 1
