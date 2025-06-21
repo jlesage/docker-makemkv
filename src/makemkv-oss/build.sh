@@ -38,7 +38,7 @@ fi
 apk --no-cache add \
     curl \
     clang \
-    llvm13 \
+    llvm \
     make \
     patch \
     qtchooser \
@@ -81,6 +81,7 @@ log "Patching MakeMKV..."
 patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/fix-include.patch"
 patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/launch-url.patch"
 patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/hooks.patch"
+patch -d /tmp/makemkv -p1 < "$SCRIPT_DIR/fix-musl-compile.patch"
 
 log "Configuring MakeMKV..."
 (

@@ -1,0 +1,25 @@
+#
+# musl libc dropped the definitions of the obsolete stat64, dirent64, statfs64,
+# etc types and functions. They are legacy glibc-isms and not part of the POSIX
+# standard.
+#
+--- a/libabi/src/sys_linux.cpp	2025-06-21 11:10:50.588725720 -0400
++++ b/libabi/src/sys_linux.cpp	2025-06-21 11:12:50.480900218 -0400
+@@ -37,6 +37,17 @@
+ #define SYSABI_USE_READDIR_R
+ #endif
+ 
++#if defined(__linux__) && !defined(__GLIBC__)
++#define stat64 stat
++#define lstat64 lstat
++#define fstat64 fstat
++#define fstatfs64 fstatfs
++#define dirent64 dirent
++#define statfs64 statfs
++#define readdir64 readdir
++#define readdir64_r readdir_r
++#endif
++
+ static void statcvt(SYS_stat *buf,struct stat64 *st)
+ {
+     buf->st_mode = st->st_mode;

@@ -32,7 +32,7 @@ RUN xx-verify \
     /opt/makemkv/lib/libmmbd.so.0
 
 # Build MakeMKV open source binaries.
-FROM --platform=$BUILDPLATFORM alpine:3.16 AS makemkv-oss
+FROM --platform=$BUILDPLATFORM alpine:3.19 AS makemkv-oss
 ARG TARGETPLATFORM
 ARG MAKEMKV_OSS_URL
 COPY --from=xx / /
@@ -44,7 +44,7 @@ RUN xx-verify \
     /tmp/makemkv-install/usr/bin/mmgplsrv
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.16-v4.8.0
+FROM jlesage/baseimage-gui:alpine-3.19-v4.8.0
 
 ARG DOCKER_IMAGE_VERSION
 ARG MAKEMKV_VERSION
