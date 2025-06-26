@@ -35,33 +35,31 @@ app:
   documentation:
     overview: |-
       A fully automated mode is also available: insert a DVD or Blu-ray disc into an
-      optical drive and let MakeMKV rips it without any user interaction.
+      optical drive and let {{ app.friendly_name }} rips it without any user interaction.
     sections:
-      - title: Access to Optical Drive(s)
+      - title: Access to Optical Drives
         level: 2
         content: |-
-          By default, a Docker container doesn't have access to host's devices. However,
-          access to one or more devices can be granted with the `--device DEV` parameter.
+          By default, a Docker container does not have access to host's devices. However,
+          access to one or more devices can be granted with the `--device DEV` parameter
+          of the `docker run` command.
 
-          In the Linux world, an optical drive is represented by two different device
-          files: `/dev/srX` and `/dev/sgY`, where `X` and `Y` are numbers.
+          In Linux, optical drives are represented by two device files named `/dev/srX`
+          and `/dev/sgY`, where `X` and `Y` are numbers (e.g., `/dev/sr0`, `/dev/sg0` for
+          the first drive, `/dev/sr1`, `/dev/srg1` for the second, etc). To allow
+          {{ app.friendly_name }} to access the first drive, use this parameter:
 
-          For best performance, it is recommended to expose both these devices to the
-          container. For example, for an optical drive represented by `/dev/sr0` and
-          `/dev/sg1`, the following parameters would be added to the `docker run`
-          command:
           ```
           --device /dev/sr0 --device /dev/sg1
           ```
 
           > [!NOTE]
-          > For an optical drive to be detected by MakeMKV, it is mandatory to
-          > expose `/dev/sgY` to the container. `/dev/srX` is optional, but performance
-          > could be affected.
+          > For an optical drive to be detected by {{ app.friendly_name }}, it is
+          > mandatory to expose `/dev/sgY` to the container. Exposing `/dev/srX` is
+          > optional, but performance could be affected.
 
-          The easiest way to determine the right Linux devices to expose is to run the
-          container (without `--device` parameter) and look at its log: during the
-          startup, messages similar to these ones are outputed:
+          To identify the correct Linux devices to expose, check the container's log
+          during startup. Look for messages like:
           ```
           [cont-init   ] 54-check-optical-drive.sh: looking for usable optical drives...
           [cont-init   ] 54-check-optical-drive.sh: found optical drive 'hp HLDS DVDRW GUD1N LD02' [/dev/sr0, /dev/sg3]
@@ -73,23 +71,21 @@ app:
           [cont-init   ] 54-check-optical-drive.sh: no usable optical drives found.
           ```
 
-          In this case, it's clearly indicated that `/dev/sr0` and `/dev/sg3` need to be
-          exposed to the container.
+          This indicates that `/dev/sr0` and `/dev/sg3` need to be exposed to the
+          container.
 
-          > [!NOTE]
-          > The container's log can be viewed by running the command
-          > `docker logs <container name>`.
+          > [!TIP]
+          > View the container’s log by running `docker logs <container_name>`.
 
-          Alternatively, the devices can be found by executing the following command on
-          the **host**:
+          Alternatively, identify Linux devices from the host by running:
 
           ```
           lsscsi -g
           ```
 
-          From the command's output, the last two columns associated to the optical drive
-          indicate the Linux devices that should be exposed to the container. In the
-          following output example, `/dev/sr0` and `/dev/sg3` would be exposed:
+          The output's last two columns for an optical drive indicate the devices to
+          expose. The following example shows that `/dev/sr0` and `/dev/sg3` should be
+          exposed:
 
           ```
           [0:0:0:0]    disk    ATA      TOSHIBA DT01ACA0 A800  /dev/sda   /dev/sg0
@@ -100,91 +96,89 @@ app:
       - title: Automatic Disc Ripper
         level: 2
         content: |-
-          This container has an automatic disc ripper built-in. When enabled, any DVD or
-          Blu-ray video disc inserted into an optical drive is automatically ripped. In
-          other words, MakeMKV decrypts and extracts all titles (such as the main movie,
-          bonus features, etc) from the disc to MKV files.
+          This container includes an automatic disc ripper. When enabled, any DVD or
+          Blu-ray video disc inserted into an optical drive is automatically ripped.
+          {{ app.friendly_name }} decrypts and extracts all titles (e.g. main movie,
+          bonus features) into MKV files.
 
-          To enable the automatic disc ripper, set the environment variable
+          Enable the automatic disc ripper by setting the environment variable
           `AUTO_DISC_RIPPER` to `1`.
 
-          To eject the disc from the drive when ripping is terminated, set the environment
-          variable `AUTO_DISC_RIPPER_EJECT` to `1`.
+          To eject the disc when ripping completes, set the environment variable
+          `AUTO_DISC_RIPPER_EJECT` to `1`.
 
-          If multiple drives are available, discs can be ripped simultaneously by
-          setting the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
+          If multiple drives are available, simultaneous ripping is supported by setting
+          the environment variable `AUTO_DISC_RIPPER_PARALLEL_RIP` to `1`.
 
-          See the [Environment Variables](#environment-variables) section for details
-          about setting environment variables.
-
-          > [!NOTE]
-          > All titles, audio tracks, chapters, subtitles, etc are extracted/preserved.
+          See the [Environment Variables](#environment-variables) for details on
+          configuring environment variables.
 
           > [!NOTE]
-          > Titles and audio tracks are kept in their original format. They are not
-          > transcoded or converted to other formats or into smaller sizes.
+          > All titles, audio tracks, chapters, subtitles, etc., are extracted and
+          > preserved.
 
           > [!NOTE]
-          > Ripped Blu-ray discs can take a large amount of disc space (~40GB).
+          > Titles and audio tracks remain in their original formats. They are not
+          > transcoded or compressed.
 
           > [!NOTE]
-          > MKV Files are written to the `/output` folder of the container.
+          > Ripped Blu-ray discs may require significant disk space (e.g., ~40 GB).
+
+          > [!NOTE]
+          > MKV files are written to the container’s /output directory.
 
           > [!NOTE]
           > The automatic disc ripper processes all available optical drives.
 
           > [!NOTE]
-          > When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP` is set to `1`),
-          > it is recommended, to minimize impact on ripping speed, to increase the
-          > interval at which the presence of new discs is checked
-          > (`AUTO_DISC_RIPPER_INTERVAL`).
+          > When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP=1`), it is
+          > recommended to increase the interval for checking new discs using
+          > `AUTO_DISC_RIPPER_INTERVAL`, to reduce performance impact.
       - title: Hooks
         level: 2
         content: |-
-          Custom actions can be performed at different disc ripping stages using hooks.
-          Hooks are shell scripts executed by both the MakeMKV GUI and the automatic
-          disc ripper.
+          Custom actions can be performed at various disc-ripping stages using hooks.
+          Hooks are shell scripts executed by both the {{ app.friendly_name }} GUI and the
+          automatic disc ripper.
 
           > [!NOTE]
-          > Hooks are always invoked via `/bin/sh`, ignoring any shebang the script may
-          > have.
+          > Hooks are always executed using /bin/sh, regardless of the script’s shebang.
 
-          Hooks are optional and by default no one is defined. A hook is defined and
-          executed when a script is found at a specific location.
+          Hooks are optional. By default, none are defined. A hook is executed when a
+          script exists at a specific path.
 
-          The following table describe available hooks:
+          The table below lists all supported hooks:
 
-          | Container location | Description | Parameter(s) |
+          | Container Path | Description | Parameter(s) |
           |--------------------|-------------|--------------|
-          | `/config/hooks/automatic_disc_ripper_started.sh` | Hook executed when the automatic disc ripper starts. | None |
-          | `/config/hooks/disc_rip_started.sh` | Hook executed when the automatic disc ripper started to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the output directory. |
-          | `/config/hooks/disc_rip_terminated.sh` | Hook executed when the automatic disc ripper terminated to rip a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. The third third argument is the output directory. Finally, the fourth argument is the status (`SUCCESS` or `FAILURE`). |
-          | `/config/hooks/disc_rip_skipped.sh` | Hook executed when the automatic disc ripper skipped a disc. | The first argument is the MakeMKV drive ID. The second argument is the disc label. Finally, the third argument is the reason. The reason can have the following values: `ALREADY_PROCESSED`, `NOT_VIDEO_DISC` and `SERVICE_FIRST_RUN`. |
-          | `/config/hooks/disc_eject_failed.sh` | Hook executed when the automatic disc ripper failed to eject a disc. | The first argument is the MakeMKV drive ID. The second argument is the error message. |
-          | `/config/hooks/gui_disc_rip_started.sh` | Hook executed when a disc rip has been started from MakeMKV GUI. | The first argument is the disc label. The second argument is the output directory. |
-          | `/config/hooks/gui_disc_rip_terminated.sh` | Hook executed when a disc rip from the MakeMKV GUI has been completed. | The first argument is the disc label. The second argument is the output directory. The third argument is the status (`SUCCESS` or `FAILURE`). Finally, the fourth argument is the message associated to the status. |
-          | `/config/hooks/gui_raw.sh` | This hook is executed everytime a status is provided by MakeMKV. It can be used for debugging purpose. | The first argument is the status code. The second argument is the text associated to the status code. |
+          | `/config/hooks/automatic_disc_ripper_started.sh` | Called when the automatic disc ripper starts. | None |
+          | `/config/hooks/disc_rip_started.sh` | Called when a disc begins ripping automatically. | The first argument is the {{ app.friendly_name }} drive ID. The second argument is the disc label. The third argument is the output directory. |
+          | `/config/hooks/disc_rip_terminated.sh` | Called when a disc ripping completes. | The first argument is the {{ app.friendly_name }} drive ID. The second argument is the disc label. The third third argument is the output directory. The fourth argument is the status (`SUCCESS` or `FAILURE`). |
+          | `/config/hooks/disc_rip_skipped.sh` | Called when a disc is skipped. | The first argument is the {{ app.friendly_name }} drive ID. The second argument is the disc label. The third argument is the reason (`ALREADY_PROCESSED`, `NOT_VIDEO_DISC`, or `SERVICE_FIRST_RUN`). |
+          | `/config/hooks/disc_eject_failed.sh` | Called if the disc eject fails. | The first argument is the {{ app.friendly_name }} drive ID. The second argument is the error message. |
+          | `/config/hooks/gui_disc_rip_started.sh` | Called when disc ripping starts via the GUI. | The first argument is the disc label. The second argument is the output directory. |
+          | `/config/hooks/gui_disc_rip_terminated.sh` | Called when disc ripping from GUI completes. | The first argument is the disc label. The second argument is the output directory. The third argument is the status (`SUCCESS` or `FAILURE`). The fourth argument is the message associated to the status. |
+          | `/config/hooks/gui_raw.sh` | Called on any {{ app.friendly_name }} status update (useful for debugging). | The first argument is the status code. The second argument is the status message. |
 
-          During the first start of the container, example hooks are installed in the
-          `/config/hooks/` folder of the container. Example scripts have the suffix
-          `.example`. These are good starting point for creating custom scripts.
+          > [!TIP]
+          > Example hooks are installed in `/config/hooks/` with a `.example` suffix. They
+          > can be used as a starting point.
 
-          > [!NOTE]
-          > Keep in mind that this container has the minimal set of packages required to
-          > run MakeMKV. If a hook requires additional software, consider using the
-          > `INSTALL_PACKAGES` environment variable to install any missing packages. See
-          > the [Environment Variables](#environment-variables) section for more details.
+          > [!TIP]
+          > Use the `INSTALL_PACKAGES` environment variable to install additional
+          > packages needed by features implemented via hooks.
       - title: Troubleshooting
         level: 2
       - title: Expired Beta Key
         level: 3
         content: |-
-          If the beta key is expired, just restart the container to automatically fetch
-          and install the latest one.
+          If the beta key has expired, simply restart the container. It will automatically
+          fetch and install the latest key (if available).
 
           > [!NOTE]
-          > Once beta key expires, it can take few days before a new key is made available
-          > by the author of MakeMKV. During this time, the application is not functional.
+          > After a beta key expires, it may take a few days for a new key to be released
+          > by the author of {{ app.friendly_name }}. During this period, the application
+          > will not function.
 
           > [!NOTE]
           > For this solution to work, the `MAKEMKV_KEY` environment variable must be set
@@ -898,9 +892,9 @@ container:
   devices:
     - path: /dev/sr0
       description: >-
-        This is the first Linux device file representing the optical drive.
+        First linux device file corresponding to the optical drive.
       include_in_quick_start: true
     - path: /dev/sg2
       description: >-
-        This is the second Linux device file representing the optical drive.
+        Second linux device file corresponding to the optical drive.
       include_in_quick_start: true

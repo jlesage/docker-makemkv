@@ -52,8 +52,8 @@ Where:
   - `/docker/appdata/makemkv`: Stores the application's configuration, state, logs, and any files requiring persistency.
   - `/home/user`: Contains files from the host that need to be accessible to the application.
   - `/home/user/MakeMKV/output`: This is where extracted videos are written.
-  - `/dev/sr0`: This is the first Linux device file representing the optical drive.
-  - `/dev/sg2`: This is the second Linux device file representing the optical drive.
+  - `/dev/sr0`: First linux device file corresponding to the optical drive.
+  - `/dev/sg2`: Second linux device file corresponding to the optical drive.
 
 Access the MakeMKV GUI by browsing to `http://your-host-ip:5800`.
 Files from the host appear under the `/storage` folder in the container.
