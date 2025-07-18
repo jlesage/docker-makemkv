@@ -71,6 +71,6 @@ case  "${MAKEMKV_KEY:-UNSET}" in
 esac
 
 # Take ownership of the output directory.
-take-ownership --not-recursive /output
+take-ownership --not-recursive --skip-if-writable /output
 
 # vim:ft=sh:ts=4:sw=4:et:sts=4
