@@ -15,6 +15,7 @@ fi
 #       See https://github.com/jlesage/docker-makemkv/issues/172
 TMP_HOME="$(mktemp -d)"
 cp /config/settings.conf "$TMP_HOME"
+ln -s "$TMP_HOME" "$TMP_HOME"/.MakeMKV
 
 # Remove settings that are not needed to list drives.
 sed -i '/^app_ShowDebug[= ]/d' "$TMP_HOME"/settings.conf
