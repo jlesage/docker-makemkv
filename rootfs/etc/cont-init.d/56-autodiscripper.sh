@@ -26,7 +26,21 @@ MAKEMKV_CLI="env HOME=$TMP_HOME LD_PRELOAD=/opt/makemkv/lib/libwrapper.so /opt/m
 
 # Save drives information as seen by MakeMKV.
 echo "getting supported drives..."
+set +e
 $MAKEMKV_CLI -r --cache=1 --noscan info disc:9999 > "$TMP_HOME"/makemkvcon.output
+MAKEMKV_CLI_RC="$?"
+set -e
+
+if [ "$MAKEMKV_CLI_RC" -ne 0 ]; then
+    echo "ERROR: failed to get supported drives:"
+    cat "$TMP_HOME"/makemkvcon.output | awk -F '","' '
+        /^MSG:/ {
+            sub(/^MSG:[^,]*,[^,]*,[^,]*,"/, "", $1);
+            print $1;
+        }' | sed 's/^/    /'
+
+#    cat "$TMP_HOME"/makemkvcon.output | grep "^MSG:" | cut -d ',' -f4 | tr -d '"' | sed 's/^/  /'
+fi
 
 # Extract found drives.
 grep "^DRV:[0-9]\+,[0|1|2]," "$TMP_HOME"/makemkvcon.output > /tmp/.makemkv_supported_drives || true
