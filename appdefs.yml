@@ -185,6 +185,11 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 25.08.1
+      date: 2025-08-02
+      changes:
+        - 'Fixed an issue where the wrong configuration file was used when checking for available drives, causing the registered key to be ignored.'
+        - 'The container will no longer fail to start if MakeMKV cannot retrieve available drives. Instead, errors are logged and the automatic disc ripper is disabled.'
     - version: 25.07.2
       date: 2025-07-27
       changes:
