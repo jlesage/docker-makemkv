@@ -160,6 +160,8 @@ the `-e` parameter in the format `<VARIABLE_NAME>=<VALUE>`.
 |`AUTO_DISC_RIPPER_DVD_MODE`| Rip mode of DVD discs. `mkv` is the default mode, where a set of MKV files are produced. When set to `backup`, a copy of the (decrypted) file system of the disc is instead created as an ISO file. | `mkv` |
 |`AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR`| When set to `0`, files are written to `/output/DISC_LABEL/`, where `DISC_LABEL` is the label/name of the disc. If this directory exists, then files are written to `/output/DISC_LABEL-XXXXXX`, where `XXXXXX` are random readable characters. When set to `1`, the `/output/DISC_LABEL-XXXXXX` pattern is always used. | `0` |
 |`AUTO_DISC_RIPPER_NO_GUI_PROGRESS`| When set to `1`, progress of discs ripped by the automatic disc ripper is not shown in the MakeMKV GUI. | `0` |
+|`ENABLE_DOCKER_LOGGING`| When set to `1`, streams all MakeMKV output to Docker stdout for better container monitoring. Automatically enabled if notification support is configured. | `0` |
+|`NOTIFY_START`| When set to `1` and notifications are configured, sends a notification when a rip starts. | `1` |
 
 #### Deployment Considerations
 
@@ -786,6 +788,30 @@ configuring environment variables.
 > When parallel mode is enabled (`AUTO_DISC_RIPPER_PARALLEL_RIP=1`), it is
 > recommended to increase the interval for checking new discs using
 > `AUTO_DISC_RIPPER_INTERVAL`, to reduce performance impact.
+
+## Notifications
+
+The container supports optional notifications for disc ripping events via [Apprise](https://github.com/caronc/apprise), which provides support for 80+ notification services including Discord, Slack, Telegram, Email, Pushover, and many more.
+
+To enable notifications:
+
+1. Create an `apprise.yml` configuration file in your `/config` directory
+2. Add your notification service URLs according to the [Apprise documentation](https://github.com/caronc/apprise/wiki)
+
+Example `apprise.yml`:
+```yaml
+urls:
+  - discord://webhook_id/webhook_token
+  - mailto://username:password@gmail.com
+  - slack://TokenA/TokenB/TokenC
+```
+
+Once configured, you'll receive notifications for:
+- **Rip Started** - When a disc ripping begins (can be disabled with `NOTIFY_START=0`)
+- **Rip Complete** - When a disc is successfully ripped
+- **Rip Failed** - When a disc ripping fails or partially fails
+
+Note that notifications require debug logging to be enabled, which happens automatically when an `apprise.yml` file is present.
 
 ## Hooks
 
