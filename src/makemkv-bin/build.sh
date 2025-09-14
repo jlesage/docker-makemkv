@@ -10,7 +10,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 
-FFMPEG_VERSION=5.1.6
+FFMPEG_VERSION=7.1.1
 FDK_AAC_VERSION=2.0.3
 
 FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
