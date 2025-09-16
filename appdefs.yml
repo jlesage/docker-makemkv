@@ -185,6 +185,10 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 25.09.1
+      date: 2025-09-15
+      changes:
+        - 'Updated FFmpeg to version 7.1.1.'
     - version: 25.08.1
       date: 2025-08-02
       changes:
