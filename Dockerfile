@@ -44,7 +44,7 @@ RUN xx-verify \
     /tmp/makemkv-install/usr/bin/mmgplsrv
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.19-v4.10.1
+FROM jlesage/baseimage-gui:alpine-3.19-v4.10.2
 
 ARG DOCKER_IMAGE_VERSION
 ARG MAKEMKV_VERSION
