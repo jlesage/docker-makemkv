@@ -1,7 +1,6 @@
 #!/bin/sh
 #
-# Get the supplementary group ID(s) needed to access optical drive(s).  These
-# will be added to the ones provided by $SUP_GROUP_IDS.
+# Get the supplementary group ID(s) needed to access optical drive(s).
 #
 
 set -e # Exit immediately if a command exits with a non-zero status.
