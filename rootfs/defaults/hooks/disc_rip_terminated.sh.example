@@ -16,7 +16,7 @@ OUTPUT_DIR="$3"
 STATUS="$4"
 
 case "$STATUS" in
-    0)
+    "SUCCESS")
         echo "The automatic disc ripper successfully ripped disc '$DISC_LABEL' (drive $DRV_ID)."
         ;;
     *)
