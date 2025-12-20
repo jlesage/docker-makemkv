@@ -25,7 +25,7 @@ if [ "$(xx-info march)" = "i386" ]; then
     export LD="$(xx-info)-ld -m elf_i386"
 fi
 
-function log {
+log() {
     echo ">>> $*"
 }
 

@@ -23,7 +23,7 @@ export CXXFLAGS="$CFLAGS"
 export CPPFLAGS="$CFLAGS"
 export LDFLAGS="-Wl,--as-needed"
 
-function log {
+log() {
     echo ">>> $*"
 }
 

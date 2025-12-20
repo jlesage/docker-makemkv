@@ -18,7 +18,7 @@ FDK_AAC_URL=https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.
 
 MAKEMKV_ROOT_DIR=/opt/makemkv
 
-function log {
+log() {
     echo ">>> $*"
 }
 

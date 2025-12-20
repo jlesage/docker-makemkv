@@ -25,7 +25,7 @@ usage() {
 "
 }
 
-function log {
+log() {
     echo ">>> $*"
 }
 
