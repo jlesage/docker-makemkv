@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Invoke hook if defined.
-if [ -x /config/hooks/debug_message_logged.sh ]; then
-    /config/hooks/debug_message_logged.sh "$1"
+if [ -f /config/hooks/debug_message_logged.sh ]; then
+    /bin/sh /config/hooks/debug_message_logged.sh "$1"
 fi
 
 # No need to match anything.
