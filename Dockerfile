@@ -61,6 +61,8 @@ RUN \
         sed \
         # For the init script.
         findutils \
+        # For the automatic disc ripper.
+        xdpyinfo \
         # For optical drive detection.
         lsscsi \
         # For the eject command.
