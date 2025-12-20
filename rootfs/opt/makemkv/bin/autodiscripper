@@ -17,6 +17,23 @@ debug() {
     is-bool-val-false "${CONTAINER_DEBUG:-0}" || echo "$@"
 }
 
+scan_drives() {
+    tmp_home="$(mktemp -d)"
+    cp /config/settings.conf "$tmp_home"
+    ln -s "$tmp_home" "$tmp_home"/.MakeMKV
+
+    # Remove settings that are not needed to list drives.
+    sed -i '/^app_ShowDebug[= ]/d' "$tmp_home"/settings.conf
+    sed -i '/^app_UpdateEnable[= ]/d' "$tmp_home"/settings.conf
+    echo 'app_UpdateEnable = "0"' >> "$tmp_home"/settings.conf
+
+    env HOME="$tmp_home" LD_PRELOAD=/opt/makemkv/lib/libwrapper.so \
+        /opt/makemkv/bin/makemkvcon \
+            -r --cache=1 info disc:9999
+
+    rm -rf "$tmp_home"
+}
+
 invoke_hook() {
     hook_file="$1"
     hook_name="$2"
@@ -274,9 +291,9 @@ while true; do
 
     debug "Scanning drives..."
     if [ -n "$HANDLE_DRIVE_ID" ]; then
-        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:$HANDLE_DRIVE_ID," > "$DRIVES_INFO" 2>&1
+        scan_drives | grep "^DRV:$HANDLE_DRIVE_ID," > "$DRIVES_INFO" 2>&1
     else
-        $MAKEMKV_CLI -r --cache=1 info disc:9999 | grep "^DRV:" > "$DRIVES_INFO" 2>&1
+        scan_drives | grep "^DRV:" > "$DRIVES_INFO" 2>&1
     fi
 
     # Loop through all drives.
