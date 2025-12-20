@@ -897,6 +897,7 @@ The table below lists all supported hooks:
 | `/config/hooks/gui_disc_rip_started.sh` | Called when disc ripping starts via the GUI. | The first argument is the disc label. The second argument is the output directory. |
 | `/config/hooks/gui_disc_rip_terminated.sh` | Called when disc ripping from GUI completes. | The first argument is the disc label. The second argument is the output directory. The third argument is the status (`SUCCESS` or `FAILURE`). The fourth argument is the message associated to the status. |
 | `/config/hooks/gui_raw.sh` | Called on any MakeMKV status update (useful for debugging). | The first argument is the status code. The second argument is the status message. |
+| `/config/hook/debug_message_logged.sh` | Called when a debug message is logged by MakeMKV. The `Log debug messages` option must be enabled in MakeMKV settings. | The first argument is the logged message. |
 
 > [!TIP]
 > Example hooks are installed in `/config/hooks/` with a `.example` suffix. They

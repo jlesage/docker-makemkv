@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# This is an example of a hook invoked when MakeMKV logs a debug message.
+# This script is always invoked with /bin/sh (shebang ignored).
+#
+# The following parameters are passed to this hook:
+#   - The logged message.
+#
+
+DEBUG_MSG="$1"
+
+echo "MakeMKV message: $DEBUG_MSG"
