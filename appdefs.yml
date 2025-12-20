@@ -186,6 +186,16 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 25.12.2
+      date: 2025-12-20
+      changes:
+        - 'Added hook for MakeMKV debug messages.'
+        - 'Adjusted placement of the automatic disc ripper GUI progress.'
+        - 'Updated FFmpeg to version 7.1.3.'
+        - 'Updated baseimage to version 4.10.4, which brings the following changes:'
+        - '2:Web audio is now automatically re-enabled upon first user interaction.'
+        - '2:Improved robustness of GPU devices detection.'
+        - '2:Command key on Mac devices has been remapped to better match Linux application interactions.'
     - version: 25.12.1
       date: 2025-12-07
       changes:
