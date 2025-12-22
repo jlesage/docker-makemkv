@@ -186,6 +186,11 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 25.12.3
+      date: 2025-12-22
+      changes:
+        - 'Updated baseimage to version 4.10.5, which brings the following changes:'
+        - '2:Fixed key combinations in some Linux applications broken by the Command key remapping.'
     - version: 25.12.2
       date: 2025-12-20
       changes:
