@@ -15,7 +15,8 @@ modern web browser, requiring no installation or configuration on the client
 A fully automated mode is also available: insert a DVD or Blu-ray disc into an
 optical drive and let MakeMKV rips it without any user interaction.
 
-> This Docker container is entirely unofficial and not made by the creators of MakeMKV.
+> This Docker container is entirely unofficial and not made by the creators of
+> MakeMKV.
 
 ---
 

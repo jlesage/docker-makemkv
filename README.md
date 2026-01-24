@@ -16,7 +16,8 @@ A fully automated mode is also available: insert a DVD or Blu-ray disc into an
 optical drive and let MakeMKV rips it without any user interaction.
 
 > [!NOTE]
-> This Docker container is entirely unofficial and not made by the creators of MakeMKV.
+> This Docker container is entirely unofficial and not made by the creators of
+> MakeMKV.
 
 ---
 
@@ -765,6 +766,7 @@ To enable GPU acceleration, the host must have compatible open-source kernel
 drivers installed, and the GPU device `/dev/dri` must be exposed to the
 container. For example, this is done by adding the `--device /dev/dri`
 argument to the `docker run` command.
+
 ## Shell Access
 
 To access the shell of a running container, execute the following command:
