@@ -761,11 +761,6 @@ container:
       default: "BETA"
       unraid_template:
         title: "License Key"
-        description: >-
-          MakeMKV registration key to use. The key is written to the
-          configuration file during container startup. When set to "BETA", the
-          latest beta key is automatically used. When set to "UNSET", no key
-          is automatically written to the configuration file.
         display: always
         required: false
         mask: false
@@ -776,8 +771,6 @@ container:
       default: 1
       unraid_template:
         title: "MakeMKV GUI State"
-        description: >-
-          Setting this to 1 enables the MakeMKV GUI, 0 disables it.
         display: advanced
         required: false
         mask: false
@@ -788,8 +781,6 @@ container:
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Enabled"
-        description: >-
-          Set to 1 to enable automatic rippping of DVD/Blu-ray discs.
         display: always
         required: false
         mask: false
@@ -801,10 +792,6 @@ container:
       type: public
       unraid_template:
         title: "Automatic Disc Ripper: Custom MakeMKV Profile"
-        description: >-
-          Filename of the custom MakeMKV profile the automatic disc ripper should
-          use. The profile is expected to be found under the /config folder of
-          the container, unless an absolute path is specified.
         display: advanced
         required: false
         mask: false
@@ -816,8 +803,6 @@ container:
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Eject"
-        description: >-
-          Set to 1 to eject disc when ripping is terminated.
         display: always
         required: false
         mask: false
@@ -829,9 +814,6 @@ container:
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Parallel"
-        description: >-
-          When set to 1, discs from all available optical drives are ripped in
-          parallel. Else, each disc from optical drives is ripped one at time.
         display: always
         required: false
         mask: false
@@ -865,10 +847,6 @@ container:
       default: mkv
       unraid_template:
         title: "Automatic Disc Ripper: Blu-ray Rip Mode"
-        description: >-
-          Rip mode of Blu-ray discs. "mkv" is the default mode, where a set of
-          MKV files are produced. When set to "backup", a copy of the (decrypted)
-          file system of the disc is created instead.
         display: always
         required: false
         mask: false
@@ -881,10 +859,6 @@ container:
       default: mkv
       unraid_template:
         title: "Automatic Disc Ripper: DVD Rip Mode"
-        description: >-
-          Rip mode of DVD discs. "mkv" is the default mode, where a set of MKV
-          files are produced. When set to "backup", a copy of the (decrypted)
-          file system of the disc is instead created as an ISO file.
         display: always
         required: false
         mask: false
@@ -899,12 +873,6 @@ container:
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Force Unique Output Directory"
-        description: >-
-          When set to 0, files are written to "/output/DISC_LABEL/", where
-          "DISC_LABEL" is the label/name of the disc. If this directory exists,
-          then files are written to "/output/DISC_LABEL-XXXXXX", where
-          "XXXXXX" are random readable characters. When set to 1, the
-          "/output/DISC_LABEL-XXXXXX" pattern is always used.
         display: always
         required: false
         mask: false
@@ -916,9 +884,6 @@ container:
       default: 0
       unraid_template:
         title: "Automatic Disc Ripper: Disable Progress in GUI"
-        description: >-
-          When set to 1, progress of discs ripped by the automatic disc ripper
-          is not shown in the MakeMKV GUI.
         display: always
         required: false
         mask: false
@@ -933,9 +898,6 @@ container:
       include_in_quick_start: true
       unraid_template:
         title: Output Directory
-        description: >-
-          This is the default output folder for converted videos. Also used by
-          the automatic disc ripper.
         display: always-hide
         required: true
         mask: false
