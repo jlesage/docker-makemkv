@@ -186,6 +186,10 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 26.01.2
+      date: 2026-01-30
+      changes:
+        - 'Updated MakeMKV to version 1.18.3.'
     - version: 26.01.1
       date: 2026-01-04
       changes:
