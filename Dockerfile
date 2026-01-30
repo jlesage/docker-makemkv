@@ -73,6 +73,13 @@ RUN \
         adwaita-qt \
         font-croscore
 
+# Install Python and Apprise for optional notifications
+RUN \
+    add-pkg \
+        python3 \
+        py3-pip && \
+    pip3 install --break-system-packages --no-cache-dir apprise
+
 # Generate and install favicons.
 RUN \
     APP_ICON_URL=https://raw.githubusercontent.com/jlesage/docker-templates/master/jlesage/images/makemkv-icon.png && \
@@ -106,7 +113,9 @@ ENV \
     AUTO_DISC_RIPPER_BD_MODE=mkv \
     AUTO_DISC_RIPPER_DVD_MODE=mkv \
     AUTO_DISC_RIPPER_FORCE_UNIQUE_OUTPUT_DIR=0 \
-    AUTO_DISC_RIPPER_NO_GUI_PROGRESS=0
+    AUTO_DISC_RIPPER_NO_GUI_PROGRESS=0 \
+    ENABLE_DOCKER_LOGGING=0 \
+    NOTIFY_START=1
 
 # Define mountable directories.
 VOLUME ["/storage"]

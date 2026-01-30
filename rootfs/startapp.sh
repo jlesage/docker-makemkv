@@ -22,6 +22,11 @@ if is-bool-val-true "${CONTAINER_DEBUG:-0}"; then
     DEBUG_ARGS="debug /config/log/makemkv/debug.txt"
 fi
 
+# Start the log watcher in the background if enhanced logging is enabled
+if is-bool-val-true "${ENABLE_DOCKER_LOGGING:-0}" || [ -f "/config/apprise.yml" ]; then
+    /usr/bin/makemkv-log-watcher.sh &
+fi
+
 cd /storage
 exec /opt/makemkv/bin/makemkv $DEBUG_ARGS -std
 
