@@ -186,6 +186,11 @@ app:
           > to `BETA`. See the [Environment Variables](#environment-variables) section for
           > more details.
   changelog:
+    - version: 26.02.2
+      date: 2026-02-19
+      changes:
+        - 'Updated baseimage to version 4.11.1, bringing the following changes:'
+        - '2:Fixed issue where taking ownership of directory would fail.'
     - version: 26.02.1
       date: 2026-02-18
       changes:
