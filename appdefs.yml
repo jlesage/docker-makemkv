@@ -189,7 +189,7 @@ app:
     - version: 26.02.1
       date: 2026-02-18
       changes:
-        - 'Updated baseimage to version 4.11.0, bringing the following end-user improvements:'
+        - 'Updated baseimage to version 4.11.0, bringing the following improvements:'
         - '2:Added a web terminal providing shell access to the container.'
         - '2:Fixed audio being paused when switching to another browser tab.'
         - '2:Web file manager is now displayed in a modal window.'
