@@ -868,6 +868,15 @@ exposed:
 [4:0:0:0]    cd/dvd  hp HLDS  DVDRW  GUD1N     LD02  /dev/sr0   /dev/sg3
 ```
 
+**NOTE**: Some distros (e.g. Manjaro) do not load the SCSI generic driver by
+default, so you will not see any devices like:`/dev/sg*`. You have to load the
+module manually by doing:
+```
+sudo modprobe sg
+```
+To permanently start the module at bootup, you would have to edit
+`/etc/modules-load.d/modules.conf` and add `sg` at its end.
+
 ## Automatic Disc Ripper
 
 This container includes an automatic disc ripper. When enabled, any DVD or
