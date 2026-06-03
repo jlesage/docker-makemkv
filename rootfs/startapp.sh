@@ -5,7 +5,6 @@
 #       location MakeMKV looks for seems to be "$HOME/.MakeMKV"
 
 #export QT_DEBUG_PLUGINS=1
-export HOME=/config
 
 # Added to avoid the following error message:
 #   MESA-LOADER: failed to open swrast: Error loading shared library
