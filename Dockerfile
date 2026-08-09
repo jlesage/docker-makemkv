@@ -23,6 +23,7 @@ ARG TARGETPLATFORM
 ARG MAKEMKV_OSS_URL
 ARG MAKEMKV_BIN_URL
 COPY --from=xx / /
+COPY deps /deps
 COPY src/makemkv-bin /build
 RUN /build/build.sh "${MAKEMKV_OSS_URL}" "${MAKEMKV_BIN_URL}"
 RUN xx-verify \
@@ -36,6 +37,7 @@ FROM --platform=$BUILDPLATFORM alpine:3.19 AS makemkv-oss
 ARG TARGETPLATFORM
 ARG MAKEMKV_OSS_URL
 COPY --from=xx / /
+COPY deps /deps
 COPY src/makemkv-oss /build
 RUN /build/build.sh "${MAKEMKV_OSS_URL}"
 RUN xx-verify \

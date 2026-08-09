@@ -29,6 +29,45 @@ log() {
     echo ">>> $*"
 }
 
+# Extract a tarball from a local path, /deps/<basename>, or a remote URL.
+# Compression is derived from the file extension (.tar.gz, .tgz, .tar.xz, …).
+# Usage: extract_tarball <url_or_path> <dest_dir>
+extract_tarball() {
+    _src="$1"
+    _dest="$2"
+    _local_file=""
+    _compress=""
+
+    mkdir -p "$_dest"
+
+    if [ -f "$_src" ]; then
+        _local_file="$_src"
+    else
+        _base="$(basename "${_src%%[\?#]*}")"
+        if [ -f "/deps/$_base" ]; then
+            _local_file="/deps/$_base"
+        fi
+    fi
+
+    _base="$(basename "${_src%%[\?#]*}")"
+    case "$_base" in
+        *.tar.gz|*.tgz) _compress=z ;;
+        *.tar.xz|*.txz) _compress=J ;;
+        *.tar.bz2|*.tbz2) _compress=j ;;
+        *.tar) _compress="" ;;
+        *)
+            log "ERROR: Unsupported archive type: $_base"
+            exit 1
+            ;;
+    esac
+
+    if [ -n "$_local_file" ]; then
+        tar -x${_compress} --strip-components 1 -f "$_local_file" -C "$_dest"
+    else
+        curl -# -L -f "$_src" | tar -x${_compress} --strip-components 1 -C "$_dest"
+    fi
+}
+
 MAKEMKV_URL="$1"
 
 if [ -z "$MAKEMKV_URL" ]; then
@@ -68,8 +107,7 @@ fi
 #
 
 log "Downloading MakeMKV..."
-mkdir /tmp/makemkv
-curl -# -L -f ${MAKEMKV_URL} | tar xz --strip 1 -C /tmp/makemkv
+extract_tarball "${MAKEMKV_URL}" /tmp/makemkv
 
 #
 # Compile MakeMKV.
