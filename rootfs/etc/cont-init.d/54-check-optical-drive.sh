@@ -64,11 +64,11 @@ echo 0 > "$USABLE_DRIVES_FOUND"
 
 lsscsi | grep -w "cd/dvd" | awk '{print $1}' | tr -d '[]' | while read -r DRV_ID
 do
-    DRV="$(lsscsi -b -k -g "$DRV_ID" | tr -s ' ' | xargs)"
+    DRV="$(lsscsi -g "$DRV_ID" | tr -s ' ' | xargs)"
     DRV_NAME="$(lsscsi -c "$DRV_ID" | grep Vendor: | sed -r 's/(Vendor:|Model:|Rev:)//g' | tr -s ' ' | xargs)"
 
-    SR_DEV="$(echo "$DRV" | awk '{print $2}')"
-    SG_DEV="$(echo "$DRV" | awk '{print $3}')"
+    SR_DEV="$(echo "$DRV" | awk '{print $(NF-1)}')"
+    SG_DEV="$(echo "$DRV" | awk '{print $(NF)}')"
 
     #
     # MakeMKV requires the sg device to work. The sr device is optional, but
