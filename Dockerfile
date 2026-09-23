@@ -8,7 +8,7 @@
 ARG DOCKER_IMAGE_VERSION=
 
 # Define software versions.
-ARG MAKEMKV_VERSION=1.18.4
+ARG MAKEMKV_VERSION=2.0.0
 
 # Define software download URLs.
 ARG MAKEMKV_OSS_URL=https://www.makemkv.com/download/makemkv-oss-${MAKEMKV_VERSION}.tar.gz
