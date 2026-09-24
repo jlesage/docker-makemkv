@@ -1,0 +1,10 @@
+# Apprise Configuration for MakeMKV Enhanced
+# 
+# Copy this file to your config directory as apprise.yml
+# 
+# Documentation: https://github.com/caronc/apprise/wiki
+# Supported services: https://github.com/caronc/apprise#supported-notifications
+#
+# Example for Discord:
+urls:
+  - discord://WEBHOOK_ID/WEBHOOK_TOKEN
